@@ -1,10 +1,36 @@
 @import url('https://fonts.cdnfonts.com/css/ss-broad');
+@import url('https://fonts.cdnfonts.com/css/geist');
 @import "tailwindcss";
 
 @theme inline {
   --font-sans: 'SS Broad', sans-serif;
   --font-display: 'SS Broad', sans-serif;
+  --font-geist: 'Geist', sans-serif;
   --color-brand-blue: #0033ff;
+
+  --animate-shake-top: shake-top 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+
+  @keyframes shake-top {
+    0% {
+      transform: translateY(0);
+    }
+
+    25% {
+      transform: translateY(12px);
+    }
+
+    50% {
+      transform: translateY(-6px);
+    }
+
+    75% {
+      transform: translateY(3px);
+    }
+
+    100% {
+      transform: translateY(0);
+    }
+  }
 }
 
 body {
@@ -18,6 +44,7 @@ body {
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-50%);
   }
@@ -28,3 +55,113 @@ body {
   width: max-content;
   animation: marquee 20s linear infinite;
 }
+
+/* Lenis Smooth Scroll styles */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* =============================================
+   IRIDESCENT FLARE BURST — Hero click effect
+   ============================================= */
+
+.flare-burst {
+  width: 0;
+  height: 0;
+}
+
+/* --- Concentric Additive Layers for Overexposed Blending (Geometry Dash style) --- */
+
+/* 1. Core White: Smallest, extremely bright white center with intense bloom */
+.flare-core-white {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  transform: translate(-50%, -50%) scale(0.2);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 1) 50%,
+    transparent 100%
+  );
+  filter: blur(2px) brightness(3.5) drop-shadow(0 0 10px rgba(255, 255, 255, 1));
+  mix-blend-mode: plus-lighter;
+  animation: flare-fast-anim 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 2. Core Cyan: Medium, intense primary color glow with saturation boost */
+.flare-core-cyan {
+  position: absolute;
+  width: 110px;
+  height: 110px;
+  transform: translate(-50%, -50%) scale(0.2);
+  border-radius: 50%;
+  mix-blend-mode: plus-lighter;
+  animation: flare-fast-anim 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 3. Core Magenta: Largest, highly saturated secondary color aura */
+.flare-core-magenta {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  transform: translate(-50%, -50%) scale(0.2);
+  border-radius: 50%;
+  mix-blend-mode: plus-lighter;
+  animation: flare-fast-anim 0.48s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Shared extremely snappy scale up & fade animation */
+@keyframes flare-fast-anim {
+  0%   { transform: translate(-50%, -50%) scale(0.1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
+}
+
+/* --- Outer halo ring: thin iridescent ring expanding outward --- */
+.flare-halo {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  transform: translate(-50%, -50%) scale(0.2);
+  border-radius: 50%;
+  mix-blend-mode: plus-lighter;
+  animation: flare-halo-anim 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes flare-halo-anim {
+  0%   { transform: translate(-50%, -50%) scale(0.1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(2.6); opacity: 0; }
+}
+
+/* --- Chromatic streak: horizontal lens anamorphic flare line --- */
+.flare-streak {
+  position: absolute;
+  width: 240px;
+  height: 4px;
+  transform: translate(-50%, -50%) scaleX(0.1);
+  mix-blend-mode: plus-lighter;
+  animation: flare-streak-anim 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes flare-streak-anim {
+  0%   { transform: translate(-50%, -50%) scaleX(0.1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scaleX(1.4); opacity: 0; }
+}
