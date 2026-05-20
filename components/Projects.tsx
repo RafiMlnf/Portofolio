@@ -150,12 +150,11 @@ const IframePreview = ({ src, title, isDarkMode }: { src: string; title: string;
   }, []);
 
   return (
-    <div 
-      ref={wrapperRef} 
+    <div
+      ref={wrapperRef}
       style={{ height: `${height}px` }}
-      className={`w-full mb-4 border relative overflow-hidden bg-[#121212] group/iframe ${
-        isDarkMode ? "border-white/10" : "border-black/10"
-      }`}
+      className={`w-full mb-4 border relative overflow-hidden bg-[#121212] group/iframe ${isDarkMode ? "border-white/10" : "border-black/10"
+        }`}
     >
       <iframe
         src={src}
@@ -170,7 +169,7 @@ const IframePreview = ({ src, title, isDarkMode }: { src: string; title: string;
         loading="lazy"
       />
       {/* Interaction hint overlay */}
-      <a 
+      <a
         href={src}
         target="_blank"
         rel="noopener noreferrer"
@@ -189,9 +188,8 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
     <section id="projects" className="relative w-full px-4 md:px-8 lg:px-10 py-16 md:py-28 select-none overflow-hidden">
 
       {/* Background Y2K Dotted Matrix Pattern */}
-      <div className={`absolute inset-0 opacity-[0.03] pointer-events-none ${
-        isDarkMode ? "text-white" : "text-black"
-      }`}>
+      <div className={`absolute inset-0 opacity-[0.03] pointer-events-none ${isDarkMode ? "text-white" : "text-black"
+        }`}>
         <svg width="100%" height="100%">
           <pattern id="projects-dots" width="24" height="24" patternUnits="userSpaceOnUse">
             <circle cx="2" cy="2" r="1" fill="currentColor" />
@@ -202,7 +200,7 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
 
       {/* Section Header */}
       <div className="mb-10 md:mb-16 relative z-10">
-        <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tighter text-brand-blue uppercase flex items-center gap-3">
+        <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tighter text-brand-blue flex items-center gap-3">
           04 / PRoJECTS
         </h2>
         <div className="text-[10px] sm:text-xs font-display font-light opacity-50 tracking-widest mt-2 uppercase">
@@ -219,10 +217,10 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
               key={cat}
               onClick={() => setSelectedCategory(cat)}
               className={`px-4 py-2 border font-display text-[9px] sm:text-[10px] md:text-xs font-bold tracking-widest transition-all duration-300 flex items-center gap-2 ${selectedCategory === cat
-                  ? "bg-brand-blue text-white border-brand-blue"
-                  : isDarkMode
-                    ? "border-white/20 hover:border-white text-white hover:bg-white/5"
-                    : "border-black/20 hover:border-black text-black hover:bg-black/5"
+                ? "bg-brand-blue text-white border-brand-blue"
+                : isDarkMode
+                  ? "border-white/20 hover:border-white text-white hover:bg-white/5"
+                  : "border-black/20 hover:border-black text-black hover:bg-black/5"
                 }`}
             >
               {cat === "DEVELOPMENT" && <OSWindowIcon className="w-3 h-3" />}
@@ -241,8 +239,8 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
             <div
               key={p.id}
               className={`border p-4 flex flex-col justify-between transition-all duration-300 group relative hover:-translate-y-1 hover:shadow-[4px_4px_0px_#0033ff] ${isDarkMode
-                  ? "border-white/10 hover:border-white bg-[#0e0e0e]"
-                  : "border-black/10 hover:border-black bg-white"
+                ? "border-white/10 hover:border-white bg-[#0e0e0e]"
+                : "border-black/10 hover:border-black bg-white"
                 }`}
             >
               {/* Category & Year */}
@@ -276,8 +274,8 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                     <span
                       key={tag}
                       className={`text-[7px] font-display tracking-widest px-1.5 py-0.5 border ${isDarkMode
-                          ? "border-white/10 text-white/60 bg-[#161616]"
-                          : "border-black/10 text-black/60 bg-neutral-100"
+                        ? "border-white/10 text-white/60 bg-[#161616]"
+                        : "border-black/10 text-black/60 bg-neutral-100"
                         }`}
                     >
                       {tag}

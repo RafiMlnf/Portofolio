@@ -364,11 +364,22 @@ export default function Hero({ isDarkMode }: { isDarkMode: boolean }) {
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
 
-    // Generate mathematically randomized dynamic HSL colors
-    const hue1 = Math.floor(Math.random() * 360);
-    const hue2 = (hue1 + 60 + Math.floor(Math.random() * 120)) % 360;
-    const primaryColor = `hsl(${hue1}, 100%, 55%)`;
-    const secondaryColor = `hsl(${hue2}, 100%, 50%)`;
+    // Generate dynamic colors based on isDarkMode (poster electric blue & white for dark mode)
+    let primaryColor = "";
+    let secondaryColor = "";
+
+    if (isDarkMode) {
+      // Electric Blue (around 228) and White/Ice-blue
+      const blueHue = 228 + (Math.random() - 0.5) * 8; // 224 to 232 (electric blue)
+      primaryColor = `hsl(${blueHue}, 100%, 50%)`;
+      secondaryColor = Math.random() > 0.5 ? "rgb(255, 255, 255)" : `hsl(${blueHue}, 100%, 82%)`;
+    } else {
+      // CMYK subtractive colors: vibrant randomized HSL spectrum
+      const hue1 = Math.floor(Math.random() * 360);
+      const hue2 = (hue1 + 60 + Math.floor(Math.random() * 120)) % 360;
+      primaryColor = `hsl(${hue1}, 100%, 50%)`;
+      secondaryColor = `hsl(${hue2}, 100%, 50%)`;
+    }
 
     // Trigger shockwave animation (canvas ring)
     shockwavesRef.current.push({
@@ -441,54 +452,85 @@ export default function Hero({ isDarkMode }: { isDarkMode: boolean }) {
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
 
       {/* Iridescent Flare Bursts (DOM overlay, fixed to viewport) */}
-      {flares.map(flare => (
-        <div
-          key={flare.id}
-          className="flare-burst pointer-events-none"
-          style={{
-            position: "fixed",
-            left: flare.x,
-            top: flare.y,
-            transform: "translate(-50%, -50%)",
-            zIndex: 9999,
-          }}
-        >
-          {/* Concentric Additive Layers for Overexposed Blending */}
-          <div className="flare-core-white" />
-          
-          <div 
-            className="flare-core-cyan" 
+      {flares.map(flare => {
+        const blendMode = isDarkMode ? "plus-lighter" : "multiply";
+        const brightnessVal = isDarkMode ? "3" : "0.95";
+        const saturateVal = isDarkMode ? "3" : "2";
+
+        return (
+          <div
+            key={flare.id}
+            className="flare-burst pointer-events-none"
             style={{
-              background: `radial-gradient(circle, ${flare.primary} 0%, ${flare.primary} 35%, transparent 100%)`,
-              filter: `blur(4px) brightness(3) saturate(3) drop-shadow(0 0 12px ${flare.primary})`
+              position: "fixed",
+              left: flare.x,
+              top: flare.y,
+              transform: "translate(-50%, -50%)",
+              zIndex: 9999,
             }}
-          />
-          
-          <div 
-            className="flare-core-magenta" 
-            style={{
-              background: `radial-gradient(circle, ${flare.secondary} 0%, ${flare.secondary} 35%, transparent 100%)`,
-              filter: `blur(8px) brightness(3) saturate(3) drop-shadow(0 0 18px ${flare.secondary})`
-            }}
-          />
-          
-          <div 
-            className="flare-halo" 
-            style={{
-              background: `radial-gradient(circle, transparent 40%, ${flare.secondary} 52%, ${flare.primary} 65%, transparent 85%)`,
-              filter: "blur(3px) brightness(2.5) saturate(2)"
-            }}
-          />
-          
-          <div 
-            className="flare-streak" 
-            style={{
-              background: `linear-gradient(90deg, transparent 0%, ${flare.primary} 15%, rgba(255, 255, 255, 1) 40%, ${flare.secondary} 50%, rgba(255, 255, 255, 1) 60%, ${flare.primary} 85%, transparent 100%)`,
-              filter: "blur(0.5px) brightness(3) saturate(2.5) drop-shadow(0 0 5px rgba(255, 255, 255, 0.8))"
-            }}
-          />
-        </div>
-      ))}
+          >
+            {/* Concentric Additive/Subtractive Layers */}
+            <div 
+              className="flare-core-white" 
+              style={{
+                mixBlendMode: blendMode,
+                background: isDarkMode 
+                  ? "radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 50%, transparent 100%)"
+                  : "radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.8) 50%, transparent 100%)",
+                filter: isDarkMode 
+                  ? "blur(2px) brightness(3.5) drop-shadow(0 0 10px rgba(255, 255, 255, 1))"
+                  : "blur(2px) brightness(0.8) drop-shadow(0 0 10px rgba(0, 0, 0, 0.45))"
+              }}
+            />
+            
+            <div 
+              className="flare-core-cyan" 
+              style={{
+                mixBlendMode: blendMode,
+                background: `radial-gradient(circle, ${flare.primary} 0%, ${flare.primary} 35%, transparent 100%)`,
+                filter: isDarkMode
+                  ? `blur(4px) brightness(${brightnessVal}) saturate(${saturateVal}) drop-shadow(0 0 12px ${flare.primary})`
+                  : `blur(4px) brightness(${brightnessVal}) saturate(${saturateVal})`
+              }}
+            />
+            
+            <div 
+              className="flare-core-magenta" 
+              style={{
+                mixBlendMode: blendMode,
+                background: `radial-gradient(circle, ${flare.secondary} 0%, ${flare.secondary} 35%, transparent 100%)`,
+                filter: isDarkMode
+                  ? `blur(8px) brightness(${brightnessVal}) saturate(${saturateVal}) drop-shadow(0 0 18px ${flare.secondary})`
+                  : `blur(8px) brightness(${brightnessVal}) saturate(${saturateVal})`
+              }}
+            />
+            
+            <div 
+              className="flare-halo" 
+              style={{
+                mixBlendMode: blendMode,
+                background: `radial-gradient(circle, ${flare.primary} 0%, ${flare.secondary} 50%, transparent 80%)`,
+                filter: isDarkMode
+                  ? `blur(3px) brightness(2.5) saturate(2)`
+                  : `blur(3px) brightness(0.9) saturate(1.8)`
+              }}
+            />
+            
+            <div 
+              className="flare-streak" 
+              style={{
+                mixBlendMode: blendMode,
+                background: isDarkMode
+                  ? `linear-gradient(90deg, transparent 0%, ${flare.primary} 15%, rgba(255, 255, 255, 1) 40%, ${flare.secondary} 50%, rgba(255, 255, 255, 1) 60%, ${flare.primary} 85%, transparent 100%)`
+                  : `linear-gradient(90deg, transparent 0%, ${flare.primary} 15%, rgba(0, 0, 0, 1) 40%, ${flare.secondary} 50%, rgba(0, 0, 0, 1) 60%, ${flare.primary} 85%, transparent 100%)`,
+                filter: isDarkMode
+                  ? `blur(0.5px) brightness(3) saturate(2.5) drop-shadow(0 0 5px rgba(255, 255, 255, 0.8))`
+                  : `blur(0.5px) brightness(0.95) saturate(2.2)`
+              }}
+            />
+          </div>
+        );
+      })}
 
       {/* Interactive hints */}
       <div className={`absolute bottom-6 left-1/2 -translate-x-1/2 text-[8px] sm:text-[9px] font-display tracking-widest pointer-events-none opacity-40 uppercase transition-opacity duration-300 text-center`}>

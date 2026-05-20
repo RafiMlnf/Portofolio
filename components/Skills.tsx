@@ -71,9 +71,8 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
     <section id="skills" className="relative w-full px-4 md:px-8 lg:px-10 py-16 md:py-28 select-none overflow-hidden">
 
       {/* Background Y2K Diagonal Striped Pattern */}
-      <div className={`absolute inset-0 opacity-[0.02] pointer-events-none ${
-        isDarkMode ? "text-white" : "text-black"
-      }`}>
+      <div className={`absolute inset-0 opacity-[0.02] pointer-events-none ${isDarkMode ? "text-white" : "text-black"
+        }`}>
         <svg width="100%" height="100%">
           <pattern id="skills-stripes" width="20" height="20" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
             <line x1="0" y1="0" x2="0" y2="20" stroke="currentColor" strokeWidth="2" />
@@ -84,8 +83,8 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
 
       {/* Section Header */}
       <div className="mb-10 md:mb-16 relative z-10">
-        <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tighter text-brand-blue uppercase">
-          03 / SkILLS
+        <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tighter text-brand-blue">
+          03 / SkILLs
         </h2>
         <div className="text-[10px] sm:text-xs font-display font-light opacity-50 tracking-widest mt-2 uppercase">
           // EXPERTISE_STACK_V3
@@ -94,9 +93,8 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
         {/* Left: Skills grid */}
-        <div className={`flex flex-col gap-6 pb-10 lg:pb-0 lg:pr-12 border-b lg:border-b-0 lg:border-r transition-colors duration-300 ${
-          isDarkMode ? "border-white/10" : "border-black/10"
-        }`}>
+        <div className={`flex flex-col gap-6 pb-10 lg:pb-0 lg:pr-12 border-b lg:border-b-0 lg:border-r transition-colors duration-300 ${isDarkMode ? "border-white/10" : "border-black/10"
+          }`}>
           <span className={`font-display text-[9px] font-bold tracking-widest ${isDarkMode ? "text-white/40" : "text-black/40"}`}>
             // CAPABILITIES
           </span>
@@ -104,9 +102,8 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
             {skills.map((skill, index) => (
               <div
                 key={index}
-                className={`p-4 border transition-all duration-300 flex items-center justify-between font-display text-[10px] sm:text-xs font-bold tracking-widest hover:bg-brand-blue hover:text-white group ${
-                  isDarkMode ? "border-white/20 hover:border-white" : "border-black/20 hover:border-black"
-                }`}
+                className={`p-4 border transition-all duration-300 flex items-center justify-between font-display text-[10px] sm:text-xs font-bold tracking-widest hover:bg-brand-blue hover:text-white group ${isDarkMode ? "border-white/20 hover:border-white" : "border-black/20 hover:border-black"
+                  }`}
               >
                 <span>{skill.name}</span>
                 <span className={`transition-colors duration-300 ${isDarkMode ? "text-white/60" : "text-black/60"} group-hover:text-white`}>
@@ -127,11 +124,10 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
             {coreStack.map((tech, index) => (
               <div
                 key={index}
-                className={`group relative flex items-center gap-2.5 px-3 py-2.5 border transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#0033ff] ${
-                  isDarkMode
-                    ? "border-white/10 hover:border-white bg-[#0e0e0e]"
-                    : "border-black/10 hover:border-black bg-white"
-                }`}
+                className={`group relative flex items-center gap-2.5 px-3 py-2.5 border transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#0033ff] ${isDarkMode
+                  ? "border-white/10 hover:border-white bg-[#0e0e0e]"
+                  : "border-black/10 hover:border-black bg-white"
+                  }`}
               >
                 <img
                   src={tech.iconUrl}

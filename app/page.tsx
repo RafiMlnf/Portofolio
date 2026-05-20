@@ -243,7 +243,7 @@ export default function Home() {
       lenisRef.current?.scrollTo(0);
     } else {
       const target = document.querySelector(href);
-      if (target) {
+      if (target instanceof HTMLElement) {
         lenisRef.current?.scrollTo(target);
       }
     }
