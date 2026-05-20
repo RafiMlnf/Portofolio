@@ -3,16 +3,36 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
-const statuses = [
+const TEXTS = [
   "PORTOFOLIO",
-  "DOTS",
   "RAFI MAULANA FIRDAUS",
-  "CREATIVE DEV"
+  "CREATIVE DEV",
+  "HELLO, WELCOME",
+  "APA KABAR?",
+  "KEREN YAK???",
+  "; )"
 ];
 
-const GlitchChar = ({ char, isUpper }: { char: string, isUpper: boolean }) => {
-  if (char === " ") return <span className="inline-block w-1 sm:w-1.5"></span>;
+const DOTS_KEY = "DOTS";
+const DOTS_CHANCE = 0.33;
+const TEXT_DURATION = 4500; // ms — regular texts stay this long
+const DOTS_DURATION = 2000; // ms — dots only flash for 2s
 
+/**
+ * - If current is DOTS → must pick a text (no consecutive DOTS)
+ * - Otherwise → 33% DOTS, 67% from TEXTS excluding current
+ */
+function pickNext(currentKey: string): string {
+  if (currentKey === DOTS_KEY) {
+    return TEXTS[Math.floor(Math.random() * TEXTS.length)];
+  }
+  if (Math.random() < DOTS_CHANCE) return DOTS_KEY;
+  const pool = TEXTS.filter((t) => t !== currentKey);
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+const GlitchChar = ({ char, isUpper }: { char: string; isUpper: boolean }) => {
+  if (char === " ") return <span className="inline-block w-1 sm:w-1.5"></span>;
   return (
     <motion.span
       layout
@@ -27,14 +47,12 @@ const GlitchChar = ({ char, isUpper }: { char: string, isUpper: boolean }) => {
 
 const ScrambleText = ({ text }: { text: string }) => {
   const [cases, setCases] = useState<boolean[]>(text.split("").map(() => true));
-
   useEffect(() => {
     const interval = setInterval(() => {
       setCases(text.split("").map(() => Math.random() > 0.5));
-    }, 1000); // Change exactly every 0.5 seconds simultaneously
+    }, 1000);
     return () => clearInterval(interval);
   }, [text]);
-
   return (
     <div className="flex items-center">
       {text.split("").map((char, i) => (
@@ -45,24 +63,34 @@ const ScrambleText = ({ text }: { text: string }) => {
 };
 
 export default function AnimatedStatus() {
-  const [index, setIndex] = useState(0);
+  const [current, setCurrent] = useState<string>(TEXTS[0]);
   const [boxWidth, setBoxWidth] = useState<number>(100);
   const contentRef = useRef<HTMLDivElement>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Recursive variable-duration scheduler
   useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % statuses.length);
-    }, 4500); // 4.5 seconds per status to enjoy the slow glitch
-    return () => clearInterval(interval);
+    const schedule = (key: string) => {
+      const delay = key === DOTS_KEY ? DOTS_DURATION : TEXT_DURATION;
+      timerRef.current = setTimeout(() => {
+        const next = pickNext(key);
+        setCurrent(next);
+        schedule(next);
+      }, delay);
+    };
+
+    schedule(current);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const currentStatus = statuses[index];
-
-  // Live width measurement of the dynamic glitching text
+  // Live width measurement
   useEffect(() => {
     if (!contentRef.current) return;
     const observer = new ResizeObserver((entries) => {
-      for (let entry of entries) {
+      for (const entry of entries) {
         setBoxWidth(entry.target.getBoundingClientRect().width);
       }
     });
@@ -81,21 +109,21 @@ export default function AnimatedStatus() {
         <div ref={contentRef} className="w-max flex items-center justify-center px-3">
           <AnimatePresence mode="wait">
             <motion.div
-              key={currentStatus}
+              key={current}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.4 }}
               className="flex items-center justify-center"
             >
-              {currentStatus === "DOTS" ? (
+              {current === DOTS_KEY ? (
                 <div className="flex gap-1 items-center justify-center">
                   <motion.span animate={{ y: [0, -3, 0] }} transition={{ duration: 1, repeat: Infinity, ease: "easeInOut", delay: 0 }} className="inline-block">.</motion.span>
                   <motion.span animate={{ y: [0, -3, 0] }} transition={{ duration: 1, repeat: Infinity, ease: "easeInOut", delay: 0.2 }} className="inline-block">.</motion.span>
                   <motion.span animate={{ y: [0, -3, 0] }} transition={{ duration: 1, repeat: Infinity, ease: "easeInOut", delay: 0.4 }} className="inline-block">.</motion.span>
                 </div>
               ) : (
-                <ScrambleText text={currentStatus} />
+                <ScrambleText text={current} />
               )}
             </motion.div>
           </AnimatePresence>
