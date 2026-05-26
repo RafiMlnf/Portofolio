@@ -94,6 +94,7 @@ export default function CustomCursor({ isDarkMode, onEdgeHit }: CustomCursorProp
         height: SIZE,
         pointerEvents: "none",
         zIndex: 99999,
+        mixBlendMode: "difference",
         // Start off-screen
         transform: `translate(-200px, -200px)`,
         willChange: "transform",
@@ -132,7 +133,6 @@ export default function CustomCursor({ isDarkMode, onEdgeHit }: CustomCursorProp
           style={{
             display: "block",
             userSelect: "none",
-            filter: isDarkMode ? "none" : "invert(1)",
           }}
           priority
         />

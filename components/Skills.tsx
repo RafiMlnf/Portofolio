@@ -1,16 +1,69 @@
+"use client";
+
 import React from "react";
+import { motion } from "motion/react";
 
 const coreStack = [
-  { name: "PHOTOSHOP", iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/photoshop/photoshop-original.svg" },
-  { name: "PREMIERE PRO", iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/premierepro/premierepro-original.svg" },
-  { name: "JAVASCRIPT", iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" },
-  { name: "TYPESCRIPT", iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" },
-  { name: "DART", iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg" },
-  { name: "REDIS", iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg" },
-  { name: "PHP", iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" },
-  { name: "NEXT.JS", iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" },
-  { name: "REACT", iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" },
-  { name: "FLUTTER", iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" },
+  {
+    name: "PHOTOSHOP",
+    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/photoshop/photoshop-original.svg",
+    year: "Mulai 2020",
+    description: "Manipulasi gambar, desain aset grafis, dan mockup visual."
+  },
+  {
+    name: "PREMIERE PRO",
+    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/premierepro/premierepro-original.svg",
+    year: "Mulai 2021",
+    description: "Editing video, perakitan footage, dan visual storytelling."
+  },
+  {
+    name: "JAVASCRIPT",
+    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
+    year: "Mulai 2021",
+    description: "Pemrograman logika interaktif dan manipulasi DOM dinamis."
+  },
+  {
+    name: "TYPESCRIPT",
+    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg",
+    year: "Mulai 2023",
+    description: "Penulisan kode aman dengan static typing pada skala aplikasi besar."
+  },
+  {
+    name: "DART",
+    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg",
+    year: "Mulai 2022",
+    description: "Bahasa pemrograman utama untuk framework Flutter."
+  },
+  {
+    name: "REDIS",
+    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg",
+    year: "Mulai 2023",
+    description: "Penyimpanan caching cepat dan manajemen sesi database."
+  },
+  {
+    name: "PHP",
+    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg",
+    year: "Mulai 2021",
+    description: "Pengembangan sisi server, REST API, dan integrasi database."
+  },
+  {
+    name: "NEXT.JS",
+    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg",
+    year: "Mulai 2023",
+    description: "Framework React modern dengan SSR dan optimasi performa tinggi."
+  },
+  {
+    name: "REACT",
+    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
+    year: "Mulai 2022",
+    description: "Pembuatan antarmuka web reaktif berbasis komponen modular."
+  },
+  {
+    name: "FLUTTER",
+    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg",
+    year: "Mulai 2022",
+    description: "Pengembangan aplikasi mobile native multiplatform (Android/iOS)."
+  },
 ];
 
 // Y2K & Brutalist SVG Icons
@@ -67,6 +120,8 @@ const skills = [
 ];
 
 export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
+  const [activeTech, setActiveTech] = React.useState<string | null>(null);
+
   return (
     <section id="skills" className="relative w-full px-4 md:px-8 lg:px-10 py-16 md:py-28 select-none overflow-hidden">
 
@@ -120,26 +175,68 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
             // CORE_STACK
           </span>
 
-          <div className="flex flex-wrap gap-3">
-            {coreStack.map((tech, index) => (
-              <div
-                key={index}
-                className={`group relative flex items-center gap-2.5 px-3 py-2.5 border transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#0033ff] ${isDarkMode
-                  ? "border-white/10 hover:border-white bg-[#0e0e0e]"
-                  : "border-black/10 hover:border-black bg-white"
-                  }`}
-              >
-                <img
-                  src={tech.iconUrl}
-                  alt={tech.name}
-                  className="w-4 h-4 object-contain"
-                />
-                <span className="font-display text-[8px] sm:text-[9px] font-bold tracking-widest">
-                  {tech.name}
-                </span>
-              </div>
-            ))}
-          </div>
+          <motion.div layout transition={{ layout: { type: "spring", stiffness: 400, damping: 35 } }} className="flex flex-wrap gap-3">
+            {coreStack.map((tech, index) => {
+              const isActive = activeTech === tech.name;
+              return (
+                <motion.div
+                  layout
+                  layoutId={`badge-${tech.name}`}
+                  key={tech.name}
+                  onClick={() => setActiveTech(isActive ? null : tech.name)}
+                  transition={{ layout: { type: "spring", stiffness: 400, damping: 35 } }}
+                  className={`group relative flex items-center gap-2.5 px-3 py-2.5 border cursor-pointer select-none ${
+                    isDarkMode
+                      ? isActive
+                        ? "border-brand-blue bg-[#161616] shadow-[3px_3px_0px_#0033ff]"
+                        : "border-white/10 hover:border-white bg-[#0e0e0e] hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#0033ff]"
+                      : isActive
+                        ? "border-brand-blue bg-blue-50/50 shadow-[3px_3px_0px_#0033ff]"
+                        : "border-black/10 hover:border-black bg-white hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#0033ff]"
+                  } transition-[border-color,background-color,box-shadow,transform] duration-200`}
+                >
+                  <img
+                    src={tech.iconUrl}
+                    alt={tech.name}
+                    className="w-4 h-4 object-contain flex-shrink-0"
+                  />
+                  <span className="font-display text-[8px] sm:text-[9px] font-bold tracking-widest flex-shrink-0">
+                    {tech.name}
+                  </span>
+
+                  {/* Expanding detail panel */}
+                  <motion.div
+                    initial={false}
+                    animate={{
+                      maxWidth: isActive ? 500 : 0,
+                      opacity: isActive ? 1 : 0,
+                      marginLeft: isActive ? 0 : -6,
+                    }}
+                    transition={{
+                      maxWidth: { type: "spring", stiffness: 320, damping: 32 },
+                      opacity: { duration: isActive ? 0.2 : 0.1, delay: isActive ? 0.1 : 0 },
+                      marginLeft: { type: "spring", stiffness: 320, damping: 32 },
+                    }}
+                    className="flex items-center gap-2 text-[8px] sm:text-[9px] overflow-hidden"
+                    style={{ willChange: "max-width, opacity" }}
+                  >
+                    {/* Divider */}
+                    <div className={`w-px h-3 flex-shrink-0 ${isDarkMode ? "bg-white/20" : "bg-black/20"}`} />
+                    {/* Year */}
+                    <span className="font-mono text-brand-blue font-black tracking-widest whitespace-nowrap flex-shrink-0">
+                      [{tech.year}]
+                    </span>
+                    {/* Divider */}
+                    <div className={`w-px h-3 flex-shrink-0 ${isDarkMode ? "bg-white/20" : "bg-black/20"}`} />
+                    {/* Description */}
+                    <span className="font-sans font-light normal-case tracking-normal leading-relaxed whitespace-nowrap flex-shrink-0" style={{ opacity: 0.7 }}>
+                      {tech.description}
+                    </span>
+                  </motion.div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
         </div>
       </div>
     </section>
