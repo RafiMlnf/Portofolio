@@ -3,350 +3,479 @@
 import React from "react";
 import { motion, AnimatePresence } from "motion/react";
 
-
-
+/* ─── Animation Variants ─── */
 const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 20 },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] as const },
+    transition: { duration: 0.5, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] as const },
   }),
 };
 
+const fadeIn = {
+  hidden: { opacity: 0 },
+  visible: (i: number) => ({
+    opacity: 1,
+    transition: { duration: 0.6, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] as const },
+  }),
+};
+
+/* ─── Data ─── */
+const tags = ["DESIGNER", "DEVELOPER", "CREATIVE"];
+
+const quickStats = [
+  { val: "3+", label: "YRS EXP" },
+  { val: "15+", label: "PROJECTS" },
+  { val: "∞", label: "CURIOSITY" },
+];
+
+
+/* ─── Bottom Bar Buttons ─── */
+const barActions = [
+  {
+    id: "cv",
+    label: "LIHAT CV",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-3.5 h-3.5">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5 19.5 4.5m0 0H8.25m11.25 0v11.25" />
+      </svg>
+    ),
+  },
+  {
+    id: "music",
+    label: "SETEL MUSIK",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-3.5 h-3.5">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 10l12-3M9 14a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm12-3a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+      </svg>
+    ),
+  },
+  {
+    id: "github",
+    label: "GITHUB",
+    href: "https://github.com/RafiMlnf",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
+        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+      </svg>
+    ),
+  },
+  {
+    id: "instagram",
+    label: "INSTAGRAM",
+    href: "https://instagram.com/rafimlnf",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+      </svg>
+    ),
+  },
+  {
+    id: "scroll-down",
+    label: "NEXT SECTION",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-3.5 h-3.5">
+        <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+      </svg>
+    ),
+  },
+];
+
+/* ─── Component ─── */
 export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
   const [isCvOpen, setIsCvOpen] = React.useState(false);
-  const [activeBadge, setActiveBadge] = React.useState<string | null>(null);
-  const [imageError, setImageError] = React.useState(false);
 
-  const border = isDarkMode ? "border-white" : "border-black";
-  const borderFaint = isDarkMode ? "border-white/15" : "border-black/15";
+  const border = isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)";
   const fg = isDarkMode ? "text-white" : "text-black";
   const fgMuted = isDarkMode ? "text-white/40" : "text-black/35";
-  const bg = isDarkMode ? "bg-black" : "bg-[#f4f4f0]";
+  const bgSection = isDarkMode ? "bg-black" : "bg-[#f4f4f0]";
+
+  const handleBarAction = (id: string, href?: string) => {
+    if (id === "cv") { setIsCvOpen(true); return; }
+    if (id === "music") {
+      window.dispatchEvent(new CustomEvent("toggle-music-player"));
+      return;
+    }
+    if (id === "scroll-down") {
+      document.querySelector("#skills")?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+    if (href) window.open(href, "_blank", "noopener,noreferrer");
+  };
 
   return (
-    <section
-      id="profile"
-      className={`relative w-full px-4 md:px-8 lg:px-10 py-20 md:py-32 select-none overflow-hidden ${bg}`}
-    >
-
-      {/* ── SECTION HEADER ── */}
-      <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        custom={0}
-        variants={fadeUp}
-        className="mb-10 md:mb-16 relative z-10"
+    <>
+      <section
+        id="profile"
+        className={`relative w-full select-none overflow-hidden ${bgSection}`}
+        style={{
+          height: "calc(100vh - 57px)", // exact viewport minus navbar
+          display: "flex",
+          flexDirection: "column",
+        }}
       >
-        <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tighter text-brand-blue">
-          02 / PROFILE
-        </h2>
-        <div className={`text-[10px] sm:text-xs font-display font-light tracking-widest mt-2 uppercase ${fgMuted}`}>
-          // IDENTITY_DOSSIER_V2
-        </div>
-      </motion.div>
-
-      {/* ── MAIN BODY ── */}
-      <div className="flex flex-col lg:flex-row gap-0">
-
-        {/* ── LEFT COLUMN (PHOTO & STATS) ── */}
-        <div className="w-full lg:w-[340px] xl:w-[380px] flex-shrink-0 flex flex-col gap-0 mb-12 lg:mb-0 lg:border-r lg:pr-10 xl:pr-14"
-          style={{ borderColor: isDarkMode ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.15)" }}
+        {/* ═══ MAIN 3-COLUMN GRID ═══ */}
+        <div
+          className="flex flex-1 overflow-hidden"
+          style={{ minHeight: 0 }}
         >
-          {/* PHOTO FRAME — brutalist art element */}
+
+          {/* ── LEFT COLUMN ── */}
           <motion.div
             initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            custom={1.5}
-            variants={fadeUp}
-            className={`border-t ${borderFaint} pt-8 pb-10`}
+            animate="visible"
+            className="flex flex-col justify-between px-8 py-10 flex-shrink-0"
+            style={{
+              width: "360px",
+              borderRight: `1px solid ${border}`,
+            }}
           >
-            <div className="relative w-full aspect-[4/5] max-w-[320px] mx-auto lg:mx-0">
-              {/* Outer border box */}
-              <div className={`absolute inset-0 border-2 ${border} overflow-hidden bg-black/5 dark:bg-white/5`}>
-                {!imageError ? (
-                  <img
-                    src="/avatar.png"
-                    onError={() => setImageError(true)}
-                    alt="Rafi Maulana Firdaus"
-                    className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-300"
-                  />
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center bg-brand-blue/10 dark:bg-brand-blue/5 text-center p-4">
-                    <svg className="w-12 h-12 text-brand-blue mb-3 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                    </svg>
-                    <span className="font-display text-[10px] font-bold tracking-widest text-brand-blue uppercase mb-1">
-                      TEMPATKAN FOTO DI SINI
-                    </span>
-                    <span className="font-mono text-[8px] opacity-45">
-                      /public/rafi.jpg
-                    </span>
-                  </div>
-                )}
-              </div>
-              {/* Offset inner box style element */}
-              <div
-                className="absolute border-2 -z-10 pointer-events-none"
-                style={{
-                  top: "6%", left: "6%",
-                  right: "-6%", bottom: "-6%",
-                  borderColor: isDarkMode ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.15)",
-                }}
-              />
-              {/* Floating label */}
-              <div className="absolute -top-3 left-4">
-                <span className={`font-display text-[8px] font-bold tracking-[0.3em] uppercase px-2 ${bg} ${fgMuted}`}>
-                  BANDUNG, ID
-                </span>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* STATS — minimal typographic */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            custom={2.5}
-            variants={fadeUp}
-            className={`border-t ${borderFaint}`}
-          >
-            {[
-              { val: "3+", desc: "Tahun berkecimpung di dunia desain & kreatif" },
-              { val: "15+", desc: "Proyek yang selesai dirampungkan" },
-              { val: "∞", desc: "Rasa ingin tahu yang tidak pernah padam" },
-            ].map((s, i) => (
-              <div
-                key={i}
-                className={`flex items-baseline gap-4 py-5 border-b ${borderFaint}`}
-              >
-                <span className={`font-display text-3xl md:text-4xl font-extrabold tracking-tighter text-brand-blue flex-shrink-0 w-16`}>
-                  {s.val}
-                </span>
-                <span
-                  style={{ fontFamily: "'Geist', sans-serif" }}
-                  className={`text-[11px] sm:text-xs leading-snug ${fgMuted}`}
-                >
-                  {s.desc}
-                </span>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-
-        {/* ── RIGHT COLUMN (NAME, BIO, TAGS, CV) ── */}
-        <div className="flex-1 lg:pl-16 xl:pl-24 flex flex-col gap-0">
-
-          {/* NAME & BIO GRID — Grid list layout with thin separator */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-0">
-            {/* Left Cell: Name */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-              custom={1}
-              variants={fadeUp}
-              className={`md:col-span-5 border-t ${borderFaint} pt-8 md:pt-12 pb-10 md:pb-14 pr-0 md:pr-8`}
-            >
-              <h2
-                className={`font-display font-extrabold tracking-tighter ${fg}`}
-              >
-                <span className="block text-[56px] sm:text-[72px] md:text-[88px] lg:text-[100px] leading-[0.88]">
-                  r<span style={{ fontFamily: "'Geist', sans-serif" }} className="font-extrabold tracking-tight">afi</span>
-                </span>
-                <span style={{ fontFamily: "'Geist', sans-serif" }} className={`block text-[32px] sm:text-[40px] md:text-[50px] lg:text-[58px] leading-[1.05] font-bold tracking-tight ${fgMuted}`}>Maulana</span>
-                <span style={{ fontFamily: "'Geist', sans-serif" }} className={`block text-[32px] sm:text-[40px] md:text-[50px] lg:text-[58px] leading-[1.05] font-bold tracking-tight ${fgMuted}`}>Firdaus</span>
-              </h2>
+            {/* Section tag */}
+            <motion.div custom={0} variants={fadeUp} className="flex items-center gap-2.5">
+              <span className={`font-display text-[14px] font-extrabold tracking-[0.3em] uppercase ${fg}`}>PROFILE</span>
             </motion.div>
 
-            {/* Right Cell: Bio Paragraph */}
+            {/* Name */}
+            <div className="flex flex-col gap-1">
+              <motion.div custom={1} variants={fadeUp}>
+                <span className={`font-display block text-[11px] font-bold tracking-[0.4em] uppercase mb-4 ${fgMuted}`}>
+                  BANDUNG, INDONESIA
+                </span>
+              </motion.div>
+
+              <motion.h2
+                custom={2}
+                variants={fadeUp}
+                className={`font-geist font-extrabold tracking-tighter leading-none ${fg}`}
+                style={{ fontFamily: "'Geist', sans-serif" }}
+              >
+                <span className="block" style={{ fontSize: "clamp(48px, 4.8vw, 76px)", lineHeight: 0.9 }}>
+                  Rafi
+                </span>
+                <span
+                  className={`block font-medium tracking-normal mt-2 ${fgMuted}`}
+                  style={{ fontSize: "clamp(15px, 1.5vw, 21px)", lineHeight: 1.25 }}
+                >
+                  Maulana Firdaus
+                </span>
+              </motion.h2>
+            </div>
+
+            {/* Bio */}
+            <motion.div custom={3} variants={fadeUp} className="flex gap-3 items-start">
+              <div className="w-[2px] flex-shrink-0 self-stretch bg-brand-blue mt-1" />
+              <p
+                className={`text-[13px] leading-[1.75] font-light ${isDarkMode ? "text-white/55" : "text-black/55"}`}
+                style={{ fontFamily: "'Geist', sans-serif" }}
+              >
+                Kreator dengan latar belakang kuat di bidang visual dan pembangunan — graphic design, musik, dan pengembangan digital.
+              </p>
+            </motion.div>
+
+            {/* Role tags */}
+            <motion.div custom={4} variants={fadeUp} className="flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <span
+                  key={tag}
+                  className={`font-display text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1.5 border ${
+                    isDarkMode
+                      ? "border-white/15 text-white/50"
+                      : "border-black/15 text-black/45"
+                  }`}
+                >
+                  {tag}
+                </span>
+              ))}
+            </motion.div>
+
+            {/* Quick stats */}
+            <motion.div custom={5} variants={fadeUp} className="flex gap-6">
+              {quickStats.map((s) => (
+                <div key={s.val} className="flex flex-col gap-0.5">
+                  <span className="font-display text-[28px] font-extrabold tracking-tighter text-brand-blue leading-none">
+                    {s.val}
+                  </span>
+                  <span className={`font-display text-[8px] font-bold tracking-[0.22em] uppercase ${fgMuted}`}>
+                    {s.label}
+                  </span>
+                </div>
+              ))}
+            </motion.div>
+          </motion.div>
+
+          {/* ── CENTER COLUMN — Photo ── */}
+          <div
+            className="flex-1 relative flex items-end justify-center overflow-hidden"
+            style={{ minWidth: 0 }}
+          >
+            {/* Subtle grid overlay */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                backgroundImage: isDarkMode
+                  ? "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)"
+                  : "linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px)",
+                backgroundSize: "60px 60px",
+              }}
+            />
+
+            {/* Photo — sits at bottom, bleeds to edges */}
             <motion.div
               initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-              custom={2}
-              variants={fadeUp}
-              className={`md:col-span-7 border-t md:border-l ${borderFaint} pt-8 md:pt-12 pb-10 md:pb-14 pl-0 md:pl-8 flex items-center`}
+              animate="visible"
+              custom={0}
+              variants={fadeIn}
+              className="relative w-full flex justify-center"
+              style={{ height: "90%" }}
             >
-              {/* Pull quote accent */}
-              <div className="flex gap-5 items-start">
-                <div className="w-1 flex-shrink-0 self-stretch bg-brand-blue" />
-                <p
-                  style={{ fontFamily: "'Geist', sans-serif" }}
-                  className={`text-sm sm:text-[15px] md:text-base leading-[1.75] font-light ${isDarkMode ? "text-white/70" : "text-black/65"
-                    }`}
-                >
-                  Seorang kreator dengan latar belakang kuat di bidang visual dan pembangunan — graphic design, musik, dan pengembangan produk digital. Berpenalaran tinggi dalam estetika, visual storytelling, dan ideasi konten. Terbiasa menjembatani sisi teknis dan kreatif dalam satu alur kerja yang kohesif.
-                </p>
+              <img
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80&fit=crop&crop=face"
+                alt="rAFI mAULANA fIRDAUS"
+                className="h-full object-cover object-top"
+                style={{
+                  maxWidth: "340px",
+                  width: "100%",
+                  filter: isDarkMode ? "grayscale(0.15)" : "grayscale(0.05)",
+                  maskImage: "linear-gradient(to top, transparent 0%, black 18%, black 100%)",
+                  WebkitMaskImage: "linear-gradient(to top, transparent 0%, black 18%, black 100%)",
+                }}
+              />
+
+              {/* Center cross-hair accent */}
+              <div className="absolute top-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 pointer-events-none">
+                <span className={`font-display text-[8px] font-bold tracking-[0.4em] uppercase ${fgMuted}`}>
+                </span>
               </div>
             </motion.div>
           </div>
 
-          {/* ROLE TAG ROW */}
+          {/* ── RIGHT COLUMN ── */}
           <motion.div
             initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            custom={3}
-            variants={fadeUp}
-            className={`border-t ${borderFaint} py-6 flex flex-wrap gap-4`}
+            animate="visible"
+            className="flex flex-col justify-between px-8 py-10 flex-shrink-0 items-end text-right"
+            style={{
+              width: "300px",
+              borderLeft: `1px solid ${border}`,
+            }}
           >
-            {[
-              {
-                tag: "DESIGNER",
-                desc: "VISUAL & UI",
-                bgHover: "hover:bg-white hover:text-black dark:hover:bg-white dark:hover:text-black",
-                accent: "border-brand-blue/30 hover:border-brand-blue",
-                shadow: "hover:shadow-[3px_3px_0px_rgba(0,51,255,1)]",
-                icon: (
-                  <svg className="w-4.5 h-4.5 transition-transform duration-300 group-hover:rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                )
-              },
-              {
-                tag: "DEVELOPER",
-                desc: "LOGIC & TECH",
-                bgHover: "hover:bg-brand-blue hover:text-white hover:border-brand-blue",
-                accent: "border-brand-blue/30",
-                shadow: "hover:shadow-[3px_3px_0px_#00c3ff]",
-                icon: (
-                  <svg className="w-4.5 h-4.5 transition-transform duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                  </svg>
-                )
-              },
-              {
-                tag: "CREATIVE",
-                desc: "IDEAS & SOUND",
-                bgHover: "bg-brand-blue text-white border-brand-blue",
-                accent: "",
-                shadow: "shadow-[3px_3px_0px_rgba(0,0,0,0.15)] dark:shadow-[3px_3px_0px_rgba(255,255,255,0.15)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none",
-                icon: (
-                  <svg className="w-4.5 h-4.5 animate-[spin_6s_linear_infinite]" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 0L14.6 9.4L24 12L14.6 14.6L12 24L9.4 14.6L0 12L9.4 9.4Z" />
-                  </svg>
-                )
-              }
-            ].map((role) => (
-              <button
-                key={role.tag}
-                onClick={() => setActiveBadge(activeBadge === role.tag ? null : role.tag)}
-                className={`group relative flex items-center gap-3 px-4 py-3 border-2 font-display transition-all duration-300 ${border} ${fg} ${role.accent} ${role.bgHover} ${role.shadow} text-left cursor-pointer outline-none ${
-                  activeBadge === role.tag
-                    ? role.tag === "DESIGNER"
-                      ? "bg-white text-black dark:bg-white dark:text-black border-brand-blue shadow-[3px_3px_0px_rgba(0,51,255,1)]"
-                      : role.tag === "DEVELOPER"
-                        ? "bg-brand-blue text-white border-brand-blue shadow-[3px_3px_0px_#00c3ff]"
-                        : "bg-brand-blue text-white border-brand-blue translate-x-0.5 translate-y-0.5 shadow-none"
-                    : ""
-                }`}
-              >
-                {/* Icon wrapper */}
-                <div className="flex items-center justify-center">
-                  {role.icon}
-                </div>
-                
-                {/* Text wrapper */}
-                <div className="flex flex-col items-start leading-none gap-1">
-                  <span className="text-[10px] sm:text-xs font-black tracking-[0.25em]">
-                    {role.tag}
-                  </span>
-                  <span className="text-[7px] sm:text-[8px] font-bold tracking-[0.15em] opacity-40 group-hover:opacity-100 transition-opacity">
-                    {role.desc}
-                  </span>
-                </div>
-              </button>
-            ))}
-          </motion.div>
+            {/* Availability badge */}
+            <motion.div custom={0.5} variants={fadeUp} className="flex items-center gap-2 flex-row-reverse">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
+              </span>
+              <span className={`font-display text-[9px] font-bold tracking-[0.25em] uppercase ${isDarkMode ? "text-amber-400" : "text-amber-600"}`}>
+                CONSIDERING INTERESTING OFFERS
+              </span>
+            </motion.div>
 
-          {/* ACTIVE BADGE EXPLANATION BOX */}
-          <AnimatePresence>
-            {activeBadge && (
-              <motion.div
-                initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                animate={{ opacity: 1, height: "auto", marginTop: 16 }}
-                exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                className="overflow-hidden"
-              >
-                <div
-                  className={`border-2 ${border} p-5 relative ${isDarkMode ? "bg-[#0c0c0c]" : "bg-white"} shadow-[4px_4px_0px_#0033ff]`}
-                >
-                  {/* Accent tag */}
-                  <div className="flex items-center justify-between mb-3 border-b pb-2" style={{ borderColor: isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)" }}>
-                    <span className="font-display text-[9px] font-black tracking-widest text-brand-blue flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 bg-brand-blue animate-ping rounded-full" />
-                      KENAPA SAYA SEORANG {activeBadge}?
-                    </span>
-                    <button
-                      onClick={() => setActiveBadge(null)}
-                      className={`font-display text-[9px] font-bold tracking-widest uppercase hover:text-brand-blue cursor-pointer ${fgMuted}`}
-                    >
-                      TUTUP ×
-                    </button>
-                  </div>
-                  
-                  {/* Explanation Text */}
-                  <p
+            {/* Current status */}
+            <motion.div custom={1.5} variants={fadeUp} className="flex flex-col gap-3 items-end">
+              <span className={`font-display text-[9px] font-bold tracking-[0.35em] uppercase ${fgMuted}`}>
+                CURRENTLY
+              </span>
+              <div className="flex flex-col gap-2 items-end">
+                <div className="flex flex-col gap-0.5 items-end">
+                  <span className={`font-display text-[10px] font-bold tracking-[0.15em] uppercase ${isDarkMode ? "text-white/80" : "text-black/75"}`}>
+                    Full Stack Web Developer
+                  </span>
+                  <span
+                    className={`text-[11px] leading-[1.5] font-light text-right ${isDarkMode ? "text-white/50" : "text-black/45"}`}
                     style={{ fontFamily: "'Geist', sans-serif" }}
-                    className={`text-xs sm:text-sm leading-relaxed font-light ${isDarkMode ? "text-white/80" : "text-black/75"}`}
                   >
-                    {activeBadge === "DESIGNER" && (
-                      "Bagi saya, desain bukan sekadar mempercantik visual, melainkan media bercerita (visual storytelling) dan pemecahan masalah. Latar belakang saya di bidang graphic design dan estetika Y2K/Brutalist mendorong saya untuk merancang antarmuka yang berkarakter, berani, namun tetap fungsional dan intuitif bagi pengguna."
-                    )}
-                    {activeBadge === "DEVELOPER" && (
-                      "Sebagai developer, saya senang merealisasikan ide kreatif menjadi produk digital yang hidup. Dengan keahlian di bidang pengembangan frontend modern seperti React 19 dan Next.js, saya fokus pada penulisan kode yang bersih, arsitektur performan, serta integrasi teknologi audio yang presisi."
-                    )}
-                    {activeBadge === "CREATIVE" && (
-                      "Sisi kreatif adalah penghubung dari seluruh keahlian saya. Dari eksplorasi aransemen musik hingga ideasi konten visual, saya terbiasa menjembatani pemikiran teknis dan artistik dalam satu alur kerja yang sinergis demi menciptakan karya yang autentik dan memiliki kedalaman makna."
-                    )}
-                  </p>
+                    Magang @ PT Menara Terus Makmur
+                  </span>
+                  <span
+                    className={`font-display text-[8px] font-bold tracking-[0.25em] uppercase ${fgMuted}`}
+                  >
+                    Cikarang, Jawa Barat
+                  </span>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                <div className={`w-full h-px ${isDarkMode ? "bg-white/8" : "bg-black/8"}`} />
+                <div className="flex flex-col gap-0.5 items-end">
+                  <span className={`font-display text-[10px] font-bold tracking-[0.15em] uppercase ${isDarkMode ? "text-white/80" : "text-black/75"}`}>
+                    Mahasiswa Semester Akhir
+                  </span>
+                  <span
+                    className={`text-[11px] leading-[1.5] font-light text-right ${isDarkMode ? "text-white/50" : "text-black/45"}`}
+                    style={{ fontFamily: "'Geist', sans-serif" }}
+                  >
+                    Sedang menyusun skripsi
+                  </span>
+                </div>
+              </div>
+            </motion.div>
 
-          {/* CV BUTTON — brutalist */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            custom={4}
-            variants={fadeUp}
-            className={`border-t ${borderFaint} pt-6`}
-          >
-            <button
-              onClick={() => setIsCvOpen(true)}
-              className={`group relative inline-flex items-center gap-4 px-6 py-4 border-2 font-display text-[10px] sm:text-xs font-bold tracking-[0.25em] uppercase transition-all duration-200 cursor-pointer overflow-hidden ${isDarkMode
-                ? "border-white text-white hover:bg-white hover:text-black"
-                : "border-black text-black hover:bg-black hover:text-white"
-                }`}
-            >
-              <span>LIHAT CURRICULUM VITAE</span>
-              {/* Arrow */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5 19.5 4.5m0 0H8.25m11.25 0v11.25" />
-              </svg>
-            </button>
+            {/* Interests */}
+            <motion.div custom={2.5} variants={fadeUp} className="flex flex-col gap-3 items-end">
+              <span className={`font-display text-[9px] font-bold tracking-[0.35em] uppercase ${fgMuted}`}>
+                PASSION
+              </span>
+              <div className="flex flex-col gap-1.5 items-end">
+                {[
+                  { label: "UI / UX Design", icon: "✦" },
+                  { label: "Music Production", icon: "✦" },
+                  { label: "Visual Storytelling", icon: "✦" },
+                  { label: "Open Source", icon: "✦" },
+                ].map((item) => (
+                  <div key={item.label} className="flex items-center gap-2 flex-row-reverse">
+                    <span className="text-brand-blue text-[8px] flex-shrink-0">{item.icon}</span>
+                    <span
+                      className={`text-[12px] font-light ${isDarkMode ? "text-white/55" : "text-black/55"}`}
+                      style={{ fontFamily: "'Geist', sans-serif" }}
+                    >
+                      {item.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Open to collab */}
+            <motion.div custom={3.5} variants={fadeUp} className="flex flex-col gap-3 items-end">
+              <span className={`font-display text-[9px] font-bold tracking-[0.35em] uppercase ${fgMuted}`}>
+                OPEN TO
+              </span>
+              <div className="flex flex-col gap-1.5 items-end">
+                {["Freelance", "Collaboration", "Full-time"].map((item) => (
+                  <div key={item} className="flex items-center gap-2 flex-row-reverse">
+                    <span className="w-1 h-1 rounded-full bg-brand-blue flex-shrink-0" />
+                    <span
+                      className={`text-[12px] font-light ${isDarkMode ? "text-white/55" : "text-black/55"}`}
+                      style={{ fontFamily: "'Geist', sans-serif" }}
+                    >
+                      {item}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Index */}
+            <motion.div custom={4.5} variants={fadeUp}>
+              <span className={`font-display text-[9px] font-bold tracking-[0.35em] uppercase ${fgMuted}`}>
+                RMF — 2026
+              </span>
+            </motion.div>
           </motion.div>
         </div>
-      </div>
 
+        {/* ═══ FLOATING BOTTOM BAR ═══ */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="flex-shrink-0 px-8 pb-6 pt-0"
+        >
+          <div
+            className={`flex items-center gap-0 overflow-hidden ${isDarkMode ? "bg-white/5 border border-white/10" : "bg-black/5 border border-black/10"}`}
+            style={{ backdropFilter: "blur(12px)" }}
+          >
+            {/* Left accent */}
+            <div className="w-1 self-stretch bg-brand-blue flex-shrink-0" />
 
+            <div className="flex items-center flex-1">
+              {barActions.map((action, i) => (
+                <button
+                  key={action.id}
+                  onClick={() => handleBarAction(action.id, action.href)}
+                  className={`group flex items-center gap-2.5 px-5 py-3.5 font-display text-[9px] font-bold tracking-[0.22em] uppercase transition-all duration-200 whitespace-nowrap flex-1 justify-center ${
+                    isDarkMode
+                      ? "text-white/50 hover:text-white hover:bg-white/8"
+                      : "text-black/45 hover:text-black hover:bg-black/8"
+                  } ${i === 0 ? "hover:text-brand-blue" : ""}`}
+                  style={{
+                    borderRight: i < barActions.length - 1 ? `1px solid ${border}` : "none",
+                  }}
+                >
+                  <span className={`transition-colors duration-200 ${i === 0 ? "text-brand-blue" : isDarkMode ? "text-white/30 group-hover:text-white/70" : "text-black/25 group-hover:text-black/60"}`}>
+                    {action.icon}
+                  </span>
+                  {action.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </section>
 
-      {/* ── CV DRAWER ── */}
+      {/* ═══ BEYOND TECHNICAL ═══ */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+        className={`w-full ${bgSection}`}
+        style={{ borderTop: `1px solid ${border}` }}
+      >
+        {/* Header row */}
+        <div
+          className="px-8 md:px-10 py-6 flex items-center gap-6"
+          style={{ borderBottom: `1px solid ${border}` }}
+        >
+          <span className={`font-geist text-[9px] font-bold tracking-[0.35em] uppercase ${fg}`}>
+            Beyond Technical
+          </span>
+          <div className="flex-1 h-px" style={{ background: border }} />
+          <span className={`font-geist text-[8px] tracking-[0.2em] uppercase ${isDarkMode ? "text-white/25" : "text-black/25"}`}>
+            soft skills · character
+          </span>
+        </div>
+
+        {/* Two-column content */}
+        <div className="grid grid-cols-1 md:grid-cols-2" style={{ borderBottom: `1px solid ${border}` }}>
+          {/* Left */}
+          <div
+            className="px-8 md:px-10 py-10"
+            style={{ borderBottom: `1px solid ${border}`, borderRight: `0px` }}
+          >
+            <p className={`font-geist text-[13px] leading-[1.85] font-light ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
+              Saya tipe yang lebih banyak diam. Bukan berarti tidak ada yang mau disampaikan — lebih ke saya lebih suka mengamati dulu, baca situasi, pahami polanya, baru bicara kalau memang perlu. Orang yang baru kenal saya mungkin butuh waktu lebih untuk benar-benar tahu saya seperti apa, dan itu tidak masalah. Saya tidak berusaha membuat diri sulit dipahami — memang begitu adanya.
+            </p>
+            <p className={`font-geist text-[13px] leading-[1.85] font-light mt-5 ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
+              Ada satu momen yang cukup berkesan — diminta jadi speaker webinar di salah satu universitas. Buat orang lain mungkin biasa, tapi buat saya yang cenderung diam, itu semacam pembuktian kecil. Ternyata kalau memang situasinya mengharuskan saya hadir penuh, saya bisa melakukannya.
+            </p>
+          </div>
+
+          {/* Right */}
+          <div
+            className="px-8 md:px-10 py-10"
+            style={{ borderLeft: `1px solid ${border}` }}
+          >
+            <p className={`font-geist text-[13px] leading-[1.85] font-light ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
+              Ekspresi saya biasanya keluar lewat visual — desain jadi semacam bahasa lain buat saya. Untuk musik, saya lebih ke pendengar yang serius; cari makna di balik lirik, pergi ke konser, duduk sendiri sambil dengerin album dari awal sampai akhir. Buat saya musik bukan sekadar latar, ada sesuatu yang lebih dalam di sana.
+            </p>
+            <p className={`font-geist text-[13px] leading-[1.85] font-light mt-5 ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
+              Soal skill non-teknis — saya tidak terlalu yakin dengan daftar yang saya buat sendiri, tapi orang-orang di sekitar saya bilang saya bisa menenangkan situasi yang mulai kacau, dan saya tidak panik mudah. Mungkin itu yang dimaksud EQ. Entahlah, saya juga masih belajar mengenal diri sendiri.
+            </p>
+            <div className="flex flex-wrap gap-2 mt-7">
+              {[
+                "Analytical Thinker",
+                "High EQ",
+                "Calm Under Pressure",
+                "Observant",
+                "Low-profile",
+                "Visual & Musical",
+              ].map((trait) => (
+                <span
+                  key={trait}
+                  className={`font-geist text-[7.5px] font-bold tracking-[0.3em] uppercase px-2.5 py-1.5 border ${
+                    isDarkMode
+                      ? "border-white/10 text-white/35"
+                      : "border-black/10 text-black/30"
+                  }`}
+                >
+                  {trait}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* ═══ CV DRAWER ═══ */}
       <AnimatePresence>
         {isCvOpen && (
           <>
@@ -363,22 +492,24 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
               animate={{ x: "0%" }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className={`fixed top-0 right-0 h-screen w-full sm:w-[500px] md:w-[600px] lg:w-[700px] z-[999] border-l-2 shadow-2xl flex flex-col ${isDarkMode
-                ? "bg-[#080808] border-white"
-                : "bg-[#f4f4f0] border-black"
-                }`}
+              className={`fixed top-0 right-0 h-screen w-full sm:w-[500px] md:w-[620px] z-[999] border-l-2 shadow-2xl flex flex-col ${
+                isDarkMode ? "bg-[#080808] border-white" : "bg-[#f4f4f0] border-black"
+              }`}
             >
-              {/* Drawer header */}
-              <div className={`px-5 py-4 border-b-2 flex items-center justify-between ${isDarkMode ? "border-white/20" : "border-black/20"}`}>
+              <div
+                className="px-5 py-4 flex items-center justify-between flex-shrink-0"
+                style={{ borderBottom: `1px solid ${border}` }}
+              >
                 <span className={`font-display text-[9px] font-bold tracking-[0.35em] uppercase ${fgMuted}`}>
                   CURRICULUM VITAE — RAFI MAULANA FIRDAUS
                 </span>
                 <button
                   onClick={() => setIsCvOpen(false)}
-                  className={`font-display text-[9px] font-bold tracking-widest uppercase px-3 py-2 border transition-all duration-150 cursor-pointer ${isDarkMode
-                    ? "border-white/30 text-white hover:bg-white hover:text-black"
-                    : "border-black/30 text-black hover:bg-black hover:text-white"
-                    }`}
+                  className={`font-display text-[9px] font-bold tracking-widest uppercase px-3 py-2 border transition-all duration-150 cursor-pointer ${
+                    isDarkMode
+                      ? "border-white/30 text-white hover:bg-white hover:text-black"
+                      : "border-black/30 text-black hover:bg-black hover:text-white"
+                  }`}
                 >
                   TUTUP ×
                 </button>
@@ -394,7 +525,6 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
           </>
         )}
       </AnimatePresence>
-
-    </section>
+    </>
   );
 }

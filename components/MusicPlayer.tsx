@@ -78,6 +78,21 @@ export default function MusicPlayer({ isDarkMode }: { isDarkMode: boolean }) {
 
   const track = PLAYLIST[currentIdx];
 
+  // Listen to global toggle event
+  useEffect(() => {
+    const handleToggle = () => {
+      setOpen(o => {
+        const nextOpen = !o;
+        if (nextOpen) {
+          setIsPlaying(true);
+        }
+        return nextOpen;
+      });
+    };
+    window.addEventListener("toggle-music-player", handleToggle);
+    return () => window.removeEventListener("toggle-music-player", handleToggle);
+  }, []);
+
   // Update progress bar via RAF
   const tick = useCallback(() => {
     const audio = audioRef.current;
@@ -156,141 +171,117 @@ export default function MusicPlayer({ isDarkMode }: { isDarkMode: boolean }) {
         preload="none"
       />
 
-      {/* Floating FAB button */}
-      <div className="fixed bottom-6 right-6 z-[99]" style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "10px" }}>
-
-        {/* Mini player panel */}
-        {open && (
-          <div
-            className={`border shadow-2xl ${bg} ${txt}`}
-            style={{
-              width: "272px",
-              fontFamily: "inherit",
-              boxShadow: isDarkMode
-                ? "0 8px 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.06)"
-                : "0 8px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.06)"
-            }}
-          >
-            {/* Header */}
-            <div className={`flex items-center justify-between px-4 py-3 border-b ${isDarkMode ? "border-white/10" : "border-black/10"}`}>
-              <span className="font-display text-[9px] tracking-widest uppercase font-bold opacity-50">Now Playing</span>
-              <button
-                onClick={() => setOpen(false)}
-                className={`${sub} hover:opacity-100 transition-opacity`}
-                aria-label="Close player"
-              >
-                <CloseIcon />
-              </button>
-            </div>
-
-            {/* Current track info */}
-            <div className="px-4 pt-4 pb-3">
-              <p className="font-display font-bold text-[13px] leading-tight truncate">{track.title}</p>
-              <p className={`font-display text-[10px] tracking-widest uppercase mt-0.5 ${sub}`}>{track.artist}</p>
-
-              {/* Progress bar */}
-              <div
-                className={`mt-3 h-1 w-full ${trackBg} cursor-pointer relative`}
-                onClick={handleSeek}
-              >
-                <div
-                  className={`absolute left-0 top-0 h-full ${trackFill} transition-none`}
-                  style={{ width: `${progress * 100}%` }}
-                />
-              </div>
-
-              {/* Times */}
-              <div className={`flex justify-between mt-1 font-display text-[9px] ${sub}`}>
-                <span>{formatTime(currentTime)}</span>
-                <span>{duration ? formatTime(duration) : track.duration}</span>
-              </div>
-
-              {/* Controls */}
-              <div className="flex items-center justify-center gap-5 mt-3">
-                <button
-                  onClick={skipPrev}
-                  className={`${sub} hover:${txt} transition-colors`}
-                  aria-label="Previous"
-                >
-                  <SkipPrevIcon />
-                </button>
-
-                <button
-                  onClick={togglePlay}
-                  aria-label={isPlaying ? "Pause" : "Play"}
-                  className="w-9 h-9 flex items-center justify-center bg-brand-blue text-white hover:opacity-90 transition-opacity"
-                >
-                  {isPlaying ? <PauseIcon /> : <PlayIcon />}
-                </button>
-
-                <button
-                  onClick={skipNext}
-                  className={`${sub} hover:${txt} transition-colors`}
-                  aria-label="Next"
-                >
-                  <SkipNextIcon />
-                </button>
-              </div>
-            </div>
-
-            {/* Playlist */}
-            <div className={`border-t ${isDarkMode ? "border-white/10" : "border-black/10"}`}>
-              <p className={`font-display text-[8px] tracking-widest uppercase px-4 py-2 ${sub}`}>Playlist</p>
-              {PLAYLIST.map((t, i) => (
-                <button
-                  key={t.id}
-                  onClick={() => { setCurrentIdx(i); setIsPlaying(true); }}
-                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${i === currentIdx ? activeRow : row}`}
-                >
-                  {/* Playing indicator */}
-                  <div className="w-3 flex-shrink-0 flex items-center justify-center">
-                    {i === currentIdx && isPlaying ? (
-                      <span className="flex gap-[2px] items-end h-3">
-                        <span className="w-[2px] bg-brand-blue animate-bounce" style={{ height: "60%", animationDelay: "0ms" }} />
-                        <span className="w-[2px] bg-brand-blue animate-bounce" style={{ height: "100%", animationDelay: "150ms" }} />
-                        <span className="w-[2px] bg-brand-blue animate-bounce" style={{ height: "40%", animationDelay: "300ms" }} />
-                      </span>
-                    ) : (
-                      <span className={`text-[9px] font-display ${i === currentIdx ? "text-brand-blue" : sub}`}>
-                        {i + 1}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <p className={`font-display text-[11px] font-bold truncate ${i === currentIdx ? "text-brand-blue" : txt}`}>
-                      {t.title}
-                    </p>
-                    <p className={`font-display text-[9px] tracking-wide truncate ${sub}`}>{t.artist}</p>
-                  </div>
-
-                  <span className={`font-display text-[9px] flex-shrink-0 ${sub}`}>{t.duration}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* FAB toggle button */}
-        <button
-          onClick={() => setOpen(o => !o)}
-          aria-label="Music Player"
-          className={`w-12 h-12 flex items-center justify-center border transition-all duration-200 shadow-lg ${
-            open
-              ? "bg-brand-blue text-white border-brand-blue"
-              : isDarkMode
-                ? "bg-black text-white border-white/20 hover:border-brand-blue hover:text-brand-blue"
-                : "bg-[#f4f4f0] text-black border-black/20 hover:border-brand-blue hover:text-brand-blue"
-          }`}
+      {/* Mini player panel */}
+      {open && (
+        <div
+          className={`fixed bottom-6 right-6 z-[99] border shadow-2xl ${bg} ${txt}`}
           style={{
-            boxShadow: open
-              ? "0 4px 20px rgba(0, 51, 255, 0.4)"
-              : "0 4px 20px rgba(0,0,0,0.25)"
+            width: "272px",
+            fontFamily: "inherit",
+            boxShadow: isDarkMode
+              ? "0 8px 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.06)"
+              : "0 8px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.06)"
           }}
         >
-          <NoteIcon />
-        </button>
-      </div>
+          {/* Header */}
+          <div className={`flex items-center justify-between px-4 py-3 border-b ${isDarkMode ? "border-white/10" : "border-black/10"}`}>
+            <span className="font-display text-[9px] tracking-widest uppercase font-bold opacity-50">Now Playing</span>
+            <button
+              onClick={() => setOpen(false)}
+              className={`${sub} hover:opacity-100 transition-opacity`}
+              aria-label="Close player"
+            >
+              <CloseIcon />
+            </button>
+          </div>
+
+          {/* Current track info */}
+          <div className="px-4 pt-4 pb-3">
+            <p className="font-display font-bold text-[13px] leading-tight truncate">{track.title}</p>
+            <p className={`font-display text-[10px] tracking-widest uppercase mt-0.5 ${sub}`}>{track.artist}</p>
+
+            {/* Progress bar */}
+            <div
+              className={`mt-3 h-1 w-full ${trackBg} cursor-pointer relative`}
+              onClick={handleSeek}
+            >
+              <div
+                className={`absolute left-0 top-0 h-full ${trackFill} transition-none`}
+                style={{ width: `${progress * 100}%` }}
+              />
+            </div>
+
+            {/* Times */}
+            <div className={`flex justify-between mt-1 font-display text-[9px] ${sub}`}>
+              <span>{formatTime(currentTime)}</span>
+              <span>{duration ? formatTime(duration) : track.duration}</span>
+            </div>
+
+            {/* Controls */}
+            <div className="flex items-center justify-center gap-5 mt-3">
+              <button
+                onClick={skipPrev}
+                className={`${sub} hover:${txt} transition-colors`}
+                aria-label="Previous"
+              >
+                <SkipPrevIcon />
+              </button>
+
+              <button
+                onClick={togglePlay}
+                aria-label={isPlaying ? "Pause" : "Play"}
+                className="w-9 h-9 flex items-center justify-center bg-brand-blue text-white hover:opacity-90 transition-opacity"
+              >
+                {isPlaying ? <PauseIcon /> : <PlayIcon />}
+              </button>
+
+              <button
+                onClick={skipNext}
+                className={`${sub} hover:${txt} transition-colors`}
+                aria-label="Next"
+              >
+                <SkipNextIcon />
+              </button>
+            </div>
+          </div>
+
+          {/* Playlist */}
+          <div className={`border-t ${isDarkMode ? "border-white/10" : "border-black/10"}`}>
+            <p className={`font-display text-[8px] tracking-widest uppercase px-4 py-2 ${sub}`}>Playlist</p>
+            {PLAYLIST.map((t, i) => (
+              <button
+                key={t.id}
+                onClick={() => { setCurrentIdx(i); setIsPlaying(true); }}
+                className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${i === currentIdx ? activeRow : row}`}
+              >
+                {/* Playing indicator */}
+                <div className="w-3 flex-shrink-0 flex items-center justify-center">
+                  {i === currentIdx && isPlaying ? (
+                    <span className="flex gap-[2px] items-end h-3">
+                      <span className="w-[2px] bg-brand-blue animate-bounce" style={{ height: "60%", animationDelay: "0ms" }} />
+                      <span className="w-[2px] bg-brand-blue animate-bounce" style={{ height: "100%", animationDelay: "150ms" }} />
+                      <span className="w-[2px] bg-brand-blue animate-bounce" style={{ height: "40%", animationDelay: "300ms" }} />
+                    </span>
+                  ) : (
+                    <span className={`text-[9px] font-display ${i === currentIdx ? "text-brand-blue" : sub}`}>
+                      {i + 1}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <p className={`font-display text-[11px] font-bold truncate ${i === currentIdx ? "text-brand-blue" : txt}`}>
+                    {t.title}
+                  </p>
+                  <p className={`font-display text-[9px] tracking-wide truncate ${sub}`}>{t.artist}</p>
+                </div>
+
+                <span className={`font-display text-[9px] flex-shrink-0 ${sub}`}>{t.duration}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </>
   );
 }

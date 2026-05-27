@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import Hero from "../components/Hero";
 import Profile from "../components/Profile";
 import Skills from "../components/Skills";
+import Achievements from "../components/Achievements";
 import Projects from "../components/Projects";
 import AnimatedStatus from "../components/AnimatedStatus";
 import MusicPlayer from "../components/MusicPlayer";
@@ -280,10 +281,25 @@ export default function Home() {
     };
     window.addEventListener("resize", handleResize);
 
+    const handleLockScroll = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail?.lock) {
+        lenis.stop();
+        document.documentElement.classList.add("overflow-hidden");
+        document.body.classList.add("overflow-hidden");
+      } else {
+        lenis.start();
+        document.documentElement.classList.remove("overflow-hidden");
+        document.body.classList.remove("overflow-hidden");
+      }
+    };
+    window.addEventListener("lock-scroll", handleLockScroll);
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("lock-scroll", handleLockScroll);
       if (resizeObserver) {
         resizeObserver.disconnect();
       }
@@ -338,37 +354,13 @@ export default function Home() {
         }`}>
         <nav className="flex items-center gap-1 sm:gap-2 w-full font-display text-[9px] sm:text-[10px] md:text-xs font-bold tracking-widest">
           {[
-            {
-              title: "hEaD",
-              href: "#",
-            },
-            {
-              title: "PROFILE",
-              href: "#profile",
-              sub: [
-                { title: "WHO IS RAFI", href: "#profile" },
-                { title: "DESCRIPTION", href: "#profile" },
-                { title: "CONTACT", href: "#profile" }
-              ]
-            },
-            {
-              title: "SkILLS",
-              href: "#skills",
-              sub: [
-                { title: "CAPABILITIES", href: "#skills" },
-                { title: "CORE STACK", href: "#skills" }
-              ]
-            },
-            {
-              title: "PRoJECTS",
-              href: "#projects",
-              sub: [
-                { title: "SHOWCASE", href: "#projects" },
-                { title: "CATALOG", href: "#projects" }
-              ]
-            }
+            { title: "HEAD", href: "#" },
+            { title: "PROFILE", href: "#profile" },
+            { title: "SKILLS", href: "#skills" },
+            { title: "EXPERIENCE", href: "#experience" },
+            { title: "PROJECTS", href: "#projects" }
           ].map((item) => (
-            <div key={item.title} className="relative group">
+            <div key={item.title} className="relative">
               <a
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.href)}
@@ -376,25 +368,6 @@ export default function Home() {
               >
                 {item.title}
               </a>
-              {/* Dropdown Hover Sub Section */}
-              {item.sub && (
-                <div
-                  className={`absolute top-full left-0 flex flex-col border opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50 shadow-xl ${isDarkMode ? "bg-black border-white/20" : "bg-white border-black/20"
-                    }`}
-                >
-                  {item.sub.map((subItem) => (
-                    <a
-                      key={subItem.title}
-                      href={subItem.href}
-                      onClick={(e) => handleNavClick(e, subItem.href)}
-                      className={`block px-4 py-2.5 text-[8px] sm:text-[9px] hover:bg-brand-blue hover:text-white whitespace-nowrap transition-colors border-b last:border-b-0 ${isDarkMode ? "border-white/10" : "border-black/10"
-                        }`}
-                    >
-                      {subItem.title}
-                    </a>
-                  ))}
-                </div>
-              )}
             </div>
           ))}
 
@@ -467,35 +440,28 @@ export default function Home() {
 
       <Hero isDarkMode={isDarkMode} />
 
-      {/* DOUBLE DIVIDER === */}
-      <div className="w-full flex flex-col gap-[3px] px-4 md:px-8 lg:px-10">
-        <div className={`h-px w-full transition-colors duration-300 ${isDarkMode ? 'bg-white opacity-40' : 'bg-black opacity-40'}`}></div>
-        <div className={`h-px w-full transition-colors duration-300 ${isDarkMode ? 'bg-white opacity-40' : 'bg-black opacity-40'}`}></div>
-      </div>
+      {/* GAP/SPACING KOSONG BETWEEN HERO AND PROFILE === */}
+      <div className="w-full h-16 md:h-24" />
 
       <Profile isDarkMode={isDarkMode} />
 
-      {/* DOUBLE DIVIDER === */}
-      <div className="w-full flex flex-col gap-[3px] px-4 md:px-8 lg:px-10">
-        <div className={`h-px w-full transition-colors duration-300 ${isDarkMode ? 'bg-white opacity-40' : 'bg-black opacity-40'}`}></div>
-        <div className={`h-px w-full transition-colors duration-300 ${isDarkMode ? 'bg-white opacity-40' : 'bg-black opacity-40'}`}></div>
-      </div>
+      {/* GAP/SPACING KOSONG BETWEEN PROFILE AND SKILLS === */}
+      <div className="w-full h-16 md:h-24" />
 
       <Skills isDarkMode={isDarkMode} />
 
-      {/* DOUBLE DIVIDER === */}
-      <div className="w-full flex flex-col gap-[3px] px-4 md:px-8 lg:px-10">
-        <div className={`h-px w-full transition-colors duration-300 ${isDarkMode ? 'bg-white opacity-40' : 'bg-black opacity-40'}`}></div>
-        <div className={`h-px w-full transition-colors duration-300 ${isDarkMode ? 'bg-white opacity-40' : 'bg-black opacity-40'}`}></div>
-      </div>
+      {/* GAP/SPACING KOSONG BETWEEN SKILLS AND ACHIEVEMENTS === */}
+      <div className="w-full h-16 md:h-24" />
+
+      <Achievements isDarkMode={isDarkMode} />
+
+      {/* GAP/SPACING KOSONG BETWEEN ACHIEVEMENTS AND PROJECTS === */}
+      <div className="w-full h-16 md:h-24" />
 
       <Projects isDarkMode={isDarkMode} />
 
-      {/* DOUBLE DIVIDER === */}
-      <div className="w-full flex flex-col gap-[3px] px-4 md:px-8 lg:px-10">
-        <div className={`h-px w-full transition-colors duration-300 ${isDarkMode ? 'bg-white opacity-40' : 'bg-black opacity-40'}`}></div>
-        <div className={`h-px w-full transition-colors duration-300 ${isDarkMode ? 'bg-white opacity-40' : 'bg-black opacity-40'}`}></div>
-      </div>
+      {/* GAP/SPACING KOSONG BETWEEN PROJECTS AND FOOTER === */}
+      <div className="w-full h-16 md:h-24" />
 
       {/* FOOTER (DARK OVERHAUL) */}
       <footer className="w-full bg-[#050505] text-white pt-16 md:pt-24 pb-8 select-none border-t border-neutral-900 mt-20">

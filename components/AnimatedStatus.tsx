@@ -5,11 +5,11 @@ import { motion, AnimatePresence } from "motion/react";
 
 const TEXTS = [
   "PORTOFOLIO",
-  "RAFI MAULANA FIRDAUS",
+  ": 0",
   "CREATIVE DEV",
   "HELLO, WELCOME",
   "APA KABAR?",
-  "KEREN YAK???",
+  "KEREN GAKK???",
   "; )"
 ];
 

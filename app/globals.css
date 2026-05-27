@@ -169,4 +169,10 @@ html.lenis body {
 @keyframes flare-streak-anim {
   0%   { transform: translate(-50%, -50%) scaleX(0.1); opacity: 1; }
   100% { transform: translate(-50%, -50%) scaleX(1.4); opacity: 0; }
+}
+
+/* ─── Gold Shimmer Border Animation ─── */
+@keyframes gold-shimmer {
+  0%   { background-position: 100% 100%, 200% 0%; }
+  100% { background-position: 100% 100%, -200% 0%; }
 }

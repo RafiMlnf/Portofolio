@@ -1,244 +1,551 @@
 "use client";
 
 import React from "react";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 
-const coreStack = [
+/* ─── Skill Areas (Top Row) ─── */
+const skillAreas = [
   {
-    name: "PHOTOSHOP",
-    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/photoshop/photoshop-original.svg",
-    year: "Mulai 2020",
-    description: "Manipulasi gambar, desain aset grafis, dan mockup visual."
+    number: "01",
+    title: "Frontend Development",
+    description:
+      "Membangun antarmuka web modern yang responsif dan performan menggunakan React, Next.js, dan Tailwind CSS. Fokus pada pengalaman pengguna yang mulus dan kode yang bersih.",
+    tags: ["React", "Next.js", "TypeScript", "Tailwind CSS"],
   },
   {
-    name: "PREMIERE PRO",
-    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/premierepro/premierepro-original.svg",
-    year: "Mulai 2021",
-    description: "Editing video, perakitan footage, dan visual storytelling."
+    number: "02",
+    title: "UI & Visual Design",
+    description:
+      "Merancang tampilan yang estetis dan fungsional mulai dari wireframe hingga high-fidelity mockup. Terbiasa bekerja dengan sistem desain dan tipografi.",
+    tags: ["Figma", "Photoshop", "Branding", "Typography"],
   },
   {
-    name: "JAVASCRIPT",
-    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
-    year: "Mulai 2021",
-    description: "Pemrograman logika interaktif dan manipulasi DOM dinamis."
+    number: "03",
+    title: "Backend & Database",
+    description:
+      "Membangun REST API, mengelola database, dan mengintegrasikan sistem backend dengan frontend. Pengalaman dengan PHP, Node.js, MySQL, dan Redis.",
+    tags: ["PHP", "Node.js", "MySQL", "Redis"],
   },
   {
-    name: "TYPESCRIPT",
-    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg",
-    year: "Mulai 2023",
-    description: "Penulisan kode aman dengan static typing pada skala aplikasi besar."
-  },
-  {
-    name: "DART",
-    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg",
-    year: "Mulai 2022",
-    description: "Bahasa pemrograman utama untuk framework Flutter."
-  },
-  {
-    name: "REDIS",
-    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg",
-    year: "Mulai 2023",
-    description: "Penyimpanan caching cepat dan manajemen sesi database."
-  },
-  {
-    name: "PHP",
-    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg",
-    year: "Mulai 2021",
-    description: "Pengembangan sisi server, REST API, dan integrasi database."
-  },
-  {
-    name: "NEXT.JS",
-    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg",
-    year: "Mulai 2023",
-    description: "Framework React modern dengan SSR dan optimasi performa tinggi."
-  },
-  {
-    name: "REACT",
-    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
-    year: "Mulai 2022",
-    description: "Pembuatan antarmuka web reaktif berbasis komponen modular."
-  },
-  {
-    name: "FLUTTER",
-    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg",
-    year: "Mulai 2022",
-    description: "Pengembangan aplikasi mobile native multiplatform (Android/iOS)."
+    number: "04",
+    title: "Mobile Development",
+    description:
+      "Mengembangkan aplikasi mobile multiplatform dengan Flutter dan Dart, dari proses desain UI hingga deployment ke Android.",
+    tags: ["Flutter", "Dart", "Android", "Cross-platform"],
   },
 ];
 
-// Y2K & Brutalist SVG Icons
-const SparkleIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
-    <path d="M12 0L14.6 9.4L24 12L14.6 14.6L12 24L9.4 14.6L0 12L9.4 9.4Z" />
-  </svg>
-);
+/* ─── Tool Categories (Bottom Row) ─── */
+interface Tool {
+  name: string;
+  iconUrl: string;
+  description: string;
+  invertDark: boolean;
+  isFeatured?: boolean;
+  since?: string;
+}
 
-const GlobeWireframeIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-    <circle cx="12" cy="12" r="10" />
-    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-    <path d="M2 12h20M3 6h18M3 18h18" />
-  </svg>
-);
+interface ToolGroup {
+  category: string;
+  tools: Tool[];
+}
 
-const OSWindowIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
-    <rect x="2" y="3" width="20" height="18" rx="1" />
-    <path d="M2 8h20M6 5.5h.01M9 5.5h.01M12 5.5h.01" strokeLinecap="round" />
-  </svg>
-);
-
-const SmileyIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
-    <circle cx="12" cy="12" r="10" />
-    <path d="M8 9h.01M16 9h.01M7 15h10" strokeLinecap="round" strokeWidth="2" />
-  </svg>
-);
-
-const ButterflyIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-    <path d="M12 22C12 22 7.5 13 3 13C1 13 1 10 4 10C7 10 9.5 12 12 15C14.5 12 17 10 20 10C23 10 23 13 21 13C16.5 13 12 22 12 22Z" />
-    <path d="M12 2C12 2 8 8 4 8C2.5 8 2 6 4.5 5C7 4 9.5 5.5 12 7.5C14.5 5.5 17 4 19.5 5C22 6 21.5 8 20 8C16 8 12 2 12 2Z" />
-    <circle cx="12" cy="11" r="1" fill="currentColor" />
-  </svg>
-);
-
-const CrosshairIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
-    <circle cx="12" cy="12" r="8" />
-    <path d="M12 2v20M2 12h20" />
-  </svg>
-);
-
-const skills = [
-  { name: "TYPOGRAPHY DESIGN", icon: <CrosshairIcon className="w-4 h-4 group-hover:scale-110 transition-transform duration-300" /> },
-  { name: "NEXT.JS & REACT 19", icon: <GlobeWireframeIcon className="w-4 h-4 animate-[spin_8s_linear_infinite]" /> },
-  { name: "WEB APPLICATION DEV", icon: <OSWindowIcon className="w-4 h-4 group-hover:translate-y-[-2px] transition-transform duration-300" /> },
-  { name: "UX/UI BRUTALISM", icon: <SmileyIcon className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" /> },
-  { name: "TAILWIND STYLING", icon: <SparkleIcon className="w-4 h-4 group-hover:scale-125 transition-transform duration-300" /> },
-  { name: "MOTION & ANIMATION", icon: <ButterflyIcon className="w-4 h-4 group-hover:translate-x-[2px] transition-transform duration-300" /> },
+const toolGroups: ToolGroup[] = [
+  {
+    category: "Frontend",
+    tools: [
+      {
+        name: "Next.js",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg",
+        description: "Framework React modern untuk produksi dengan Server-Side Rendering (SSR), routing otomatis, API routes, dan optimasi performa tinggi bawaan.",
+        invertDark: true,
+        isFeatured: true,
+        since: "2024"
+      },
+      {
+        name: "React",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
+        description: "Library JavaScript terpopuler untuk membangun antarmuka pengguna interaktif secara deklaratif menggunakan komponen modular yang reusable.",
+        invertDark: false,
+        since: "2024"
+      },
+      {
+        name: "TypeScript",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg",
+        description: "Superset dari JavaScript yang menambahkan static typing, membantu mendeteksi error lebih awal dan menyediakan sistem autocomplete yang andal saat menulis kode.",
+        invertDark: false,
+        isFeatured: true,
+        since: "2024"
+      },
+      {
+        name: "JavaScript",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
+        description: "Bahasa pemrograman utama web yang digunakan untuk memberikan logika interaktif, mengelola state, dan menangani fungsionalitas di sisi klien.",
+        invertDark: false,
+        since: "2023"
+      },
+      {
+        name: "Flutter",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg",
+        description: "Software Development Kit (SDK) dari Google untuk membangun aplikasi yang dikompilasi secara native untuk mobile (Android & iOS) dari satu codebase.",
+        invertDark: false,
+        since: "2024"
+      },
+      {
+        name: "Dart",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg",
+        description: "Bahasa pemrograman yang dioptimalkan untuk pengembangan klien, menjadi fondasi utama bagi Flutter untuk rendering antarmuka berkecepatan tinggi.",
+        invertDark: false,
+        since: "2024"
+      },
+    ],
+  },
+  {
+    category: "Backend",
+    tools: [
+      {
+        name: "PHP",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg",
+        description: "Bahasa scripting sisi server yang andal dan luas digunakan untuk membangun web dinamis, memproses data form, serta menghubungkan database.",
+        invertDark: false,
+        since: "2023"
+      },
+      {
+        name: "Node.js",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg",
+        description: "Runtime environment JavaScript di luar browser berbasis mesin V8, ideal untuk membangun layanan backend berskala besar, real-time, dan berorientasi event.",
+        invertDark: false,
+        since: "2024"
+      },
+      {
+        name: "MySQL",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg",
+        description: "Relational Database Management System (RDBMS) berbasis SQL yang tangguh untuk menyimpan dan mengorganisir data proyek secara terstruktur.",
+        invertDark: false,
+        isFeatured: true,
+        since: "2023"
+      },
+      {
+        name: "Redis",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg",
+        description: "Penyimpanan struktur data di dalam memori (in-memory) berkecepatan sangat tinggi, sering dimanfaatkan sebagai cache, broker pesan, dan pengelola sesi.",
+        invertDark: false,
+        isFeatured: true,
+        since: "2025"
+      },
+      {
+        name: "Cloudinary",
+        iconUrl: "https://appexchange.salesforce.com/image_host/114124ea-20a8-4993-89dc-12613a17281e.png",
+        description: "Layanan manajemen media berbasis cloud (SaaS) untuk optimasi otomatis, transformasi aset gambar/video, dan pengiriman CDN berkinerja tinggi.",
+        invertDark: false,
+        since: "2025"
+      },
+      {
+        name: "PostgreSQL",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg",
+        description: "Sistem database relasional open-source tingkat enterprise yang sangat andal, mendukung query kompleks dan skalabilitas tinggi.",
+        invertDark: false,
+        since: "2025"
+      },
+      {
+        name: "Prisma ORM",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/prisma/prisma-original.svg",
+        description: "Object-Relational Mapping (ORM) modern untuk Node.js dan TypeScript, memudahkan pengelolaan skema data, migrasi, dan query database tipe aman.",
+        invertDark: true,
+        since: "2025"
+      },
+    ],
+  },
+  {
+    category: "Design",
+    tools: [
+      {
+        name: "Photoshop",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/photoshop/photoshop-original.svg",
+        description: "Pertama kali menyentuh Photoshop ketika penasaran dengan tools ini yang memang 'to the next level' dalam cara saya menuangkan ekspresi. Sebelum mengenal tools digital ini, wadah ekspresi saya adalah menggambar secara manual.",
+        invertDark: false,
+        isFeatured: true,
+        since: "2017"
+      },
+      {
+        name: "Premiere Pro",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/premierepro/premierepro-original.svg",
+        description: "Perangkat lunak penyuntingan video non-linear profesional untuk merakit rekaman, menambahkan efek audio-visual, dan kebutuhan storytelling.",
+        invertDark: false,
+        isFeatured: true,
+        since: "2022"
+      },
+      {
+        name: "After Effects",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/aftereffects/aftereffects-original.svg",
+        description: "Perangkat lunak standar industri untuk pembuatan motion graphics, efek visual sinematik, serta animasi UI/UX interaktif yang dinamis.",
+        invertDark: false,
+        since: "2023"
+      },
+    ],
+  },
+  {
+    category: "Additional / Project Stack",
+    tools: [
+      {
+        name: "Figma",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg",
+        description: "Platform kolaboratif berbasis cloud untuk perancangan UI/UX, pembuatan mockup resolusi tinggi, sistem desain, dan prototipe interaktif.",
+        invertDark: false,
+        since: "2023"
+      },
+      {
+        name: "Adobe Illustrator",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/illustrator/illustrator-plain.svg",
+        description: "Perangkat lunak standar industri desain grafis vektor untuk merancang aset digital, ilustrasi presisi tinggi, ikon antarmuka, serta logo branding.",
+        invertDark: false,
+        since: "2022"
+      },
+      {
+        name: "Canva",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/canva/canva-original.svg",
+        description: "Platform desain grafis online kolaboratif untuk merancang media sosial, presentasi, poster, dan dokumen visual lainnya dengan ribuan template instan.",
+        invertDark: false,
+        since: "2021"
+      },
+      {
+        name: "CapCut",
+        iconUrl: "https://play-lh.googleusercontent.com/M78HyakHaxKrjoeqYx41E9DXfVYYtx67nvc7Ks4G4zFQeaAJdGCi8gzzGSrHIwlrmnJS6zD9S4fAXqdEwfuHQAQ",
+        description: "Perangkat lunak penyuntingan video yang intuitif dan serbaguna, ideal untuk pembuatan konten kreatif media sosial secara cepat dengan template dinamis.",
+        invertDark: false,
+        since: "2022"
+      },
+      {
+        name: "C Language",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg",
+        description: "Bahasa pemrograman tingkat rendah berkinerja tinggi, digunakan dalam benchmark komputasi berat langsung di dalam browser menggunakan kompilator Emscripten.",
+        invertDark: false,
+        since: "2025"
+      },
+      {
+        name: "Java",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
+        description: "Bahasa pemrograman berbasis kelas (OOP) yang tangguh, digunakan sebagai basis utama pengembangan aplikasi mobile native Android pada Android SDK.",
+        invertDark: false,
+        since: "2024"
+      },
+      {
+        name: "Android SDK",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg",
+        description: "Kumpulan tools dan software development kit resmi untuk merancang, membangun, mengintegrasikan sensor, serta merilis aplikasi di ekosistem Android.",
+        invertDark: false,
+        since: "2024"
+      },
+      {
+        name: "Leaflet.js",
+        iconUrl: "https://leafletjs.com/docs/images/logo.png",
+        description: "Library JavaScript open-source yang sangat ringan untuk merender peta interaktif ramah mobile, serta melakukan tracking geolokasi GPS secara real-time.",
+        invertDark: false,
+        since: "2025"
+      },
+      {
+        name: "HTML5",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",
+        description: "Bahasa markup standar untuk menstrukturkan halaman web, merender elemen semantik, serta menyediakan kerangka dasar aplikasi web.",
+        invertDark: false,
+        since: "2023"
+      },
+      {
+        name: "CSS3",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg",
+        description: "Bahasa stylesheet untuk merancang tata letak web yang estetik dan responsif, mengelola tipografi, warna, transisi, dan visual web modern.",
+        invertDark: false,
+        since: "2023"
+      }
+    ],
+  },
 ];
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] as const },
+  }),
+};
+
+// Gold shimmer keyframe name injected globally via globals.css
+const goldBorderStyle: React.CSSProperties = {
+  borderColor: "transparent",
+  backgroundImage: "linear-gradient(#0a0a0a, #0a0a0a), linear-gradient(90deg, rgba(184,134,11,0.4) 0%, rgba(255,215,0,0.4) 30%, rgba(255,250,205,0.4) 50%, rgba(255,215,0,0.4) 70%, rgba(184,134,11,0.4) 100%)",
+  backgroundOrigin: "border-box",
+  backgroundClip: "padding-box, border-box",
+  backgroundSize: "100% 100%, 200% 100%",
+  animation: "gold-shimmer 2.4s linear infinite",
+};
+
+const goldBorderStyleLight: React.CSSProperties = {
+  ...goldBorderStyle,
+  backgroundImage: "linear-gradient(#f4f4f0, #f4f4f0), linear-gradient(90deg, rgba(184,134,11,0.4) 0%, rgba(255,215,0,0.4) 30%, rgba(255,250,205,0.4) 50%, rgba(255,215,0,0.4) 70%, rgba(184,134,11,0.4) 100%)",
+};
 
 export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
-  const [activeTech, setActiveTech] = React.useState<string | null>(null);
+  const [activeTool, setActiveTool] = React.useState<Tool | null>(null);
+
+  const border = isDarkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
+  const fg = isDarkMode ? "text-white" : "text-black";
+  const fgMuted = isDarkMode ? "text-white/40" : "text-black/35";
+  const totalTools = toolGroups.reduce((acc, g) => acc + g.tools.length, 0);
+
+  // Split tool groups for layout
+  const mainGroups = toolGroups.slice(0, 3);
+  const additionalGroup = toolGroups[3];
 
   return (
-    <section id="skills" className="relative w-full px-4 md:px-8 lg:px-10 py-16 md:py-28 select-none overflow-hidden">
-
-      {/* Background Y2K Diagonal Striped Pattern */}
-      <div className={`absolute inset-0 opacity-[0.02] pointer-events-none ${isDarkMode ? "text-white" : "text-black"
-        }`}>
-        <svg width="100%" height="100%">
-          <pattern id="skills-stripes" width="20" height="20" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
-            <line x1="0" y1="0" x2="0" y2="20" stroke="currentColor" strokeWidth="2" />
-          </pattern>
-          <rect width="100%" height="100%" fill="url(#skills-stripes)" />
-        </svg>
+    <section
+      id="skills"
+      className={`relative w-full select-none font-geist ${isDarkMode ? "bg-black" : "bg-[#f4f4f0]"}`}
+    >
+      {/* ═══ SECTION HEADER ═══ */}
+      <div
+        className="px-8 md:px-10 py-8 flex items-center gap-6"
+        style={{ borderBottom: `1px solid ${border}` }}
+      >
+        <span className={`font-geist text-[22px] font-extrabold tracking-[0.25em] uppercase ${fg}`}>SKILLS</span>
+        <div className={`flex-1 h-px ${isDarkMode ? "bg-white/8" : "bg-black/8"}`} />
       </div>
 
-      {/* Section Header */}
-      <div className="mb-10 md:mb-16 relative z-10">
-        <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tighter text-brand-blue">
-          03 / SkILLs
-        </h2>
-        <div className="text-[10px] sm:text-xs font-display font-light opacity-50 tracking-widest mt-2 uppercase">
-          // EXPERTISE_STACK_V3
-        </div>
-      </div>
+      {/* ═══ TOP ROW — Skill Areas ═══ */}
+      <div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+        style={{ borderBottom: `1px solid ${border}` }}
+      >
+        {skillAreas.map((area, i) => (
+          <motion.div
+            key={area.number}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            custom={i}
+            variants={fadeUp}
+            className={`flex flex-col gap-5 p-8 transition-colors duration-300 ${
+              isDarkMode ? "hover:bg-white/[0.03]" : "hover:bg-black/[0.02]"
+            }`}
+            style={{
+              borderRight: i < skillAreas.length - 1 ? `1px solid ${border}` : "none",
+            }}
+          >
+            <div className="flex flex-col gap-2">
+              <h3 className={`font-geist text-[15px] font-extrabold tracking-tight leading-tight ${fg}`}>
+                {area.title}
+              </h3>
+            </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
-        {/* Left: Skills grid */}
-        <div className={`flex flex-col gap-6 pb-10 lg:pb-0 lg:pr-12 border-b lg:border-b-0 lg:border-r transition-colors duration-300 ${isDarkMode ? "border-white/10" : "border-black/10"
-          }`}>
-          <span className={`font-display text-[9px] font-bold tracking-widest ${isDarkMode ? "text-white/40" : "text-black/40"}`}>
-            // CAPABILITIES
-          </span>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {skills.map((skill, index) => (
-              <div
-                key={index}
-                className={`p-4 border transition-all duration-300 flex items-center justify-between font-display text-[10px] sm:text-xs font-bold tracking-widest hover:bg-brand-blue hover:text-white group ${isDarkMode ? "border-white/20 hover:border-white" : "border-black/20 hover:border-black"
+            <div className="w-8 h-[2px] bg-brand-blue" />
+
+            <p
+              className={`text-[12px] leading-[1.75] font-light ${isDarkMode ? "text-white/50" : "text-black/50"}`}
+            >
+              {area.description}
+            </p>
+
+            <div className="flex flex-wrap gap-1.5 mt-auto">
+              {area.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className={`font-geist text-[8px] font-bold tracking-[0.2em] uppercase px-2 py-1 border ${
+                    isDarkMode ? "border-white/10 text-white/40" : "border-black/10 text-black/35"
                   }`}
-              >
-                <span>{skill.name}</span>
-                <span className={`transition-colors duration-300 ${isDarkMode ? "text-white/60" : "text-black/60"} group-hover:text-white`}>
-                  {skill.icon}
+                >
+                  {tag}
                 </span>
-              </div>
-            ))}
-          </div>
-        </div>
+              ))}
+            </div>
+          </motion.div>
+        ))}
+      </div>
 
-        {/* Right: Core Stack */}
-        <div className="flex flex-col gap-6 pt-10 lg:pt-0 lg:pl-12">
-          <span className={`font-display text-[9px] font-bold tracking-widest ${isDarkMode ? "text-white/40" : "text-black/40"}`}>
-            // CORE_STACK
-          </span>
+      {/* ═══ BOTTOM — Categorized Tool Grids ═══ */}
+      <div
+        className="grid grid-cols-1 lg:grid-cols-3 mt-8"
+        style={{ borderBottom: `1px solid ${border}`, borderTop: `1px solid ${border}` }}
+      >
+        {mainGroups.map((group, gi) => (
+          <div
+            key={group.category}
+            className="border-b lg:border-b-0 lg:border-r last:border-b-0 lg:last:border-r-0"
+            style={{
+              borderColor: border,
+            }}
+          >
+            {/* Category Header */}
+            <div
+              className="px-8 py-4 flex items-center gap-3"
+              style={{ borderBottom: `1px solid ${border}` }}
+            >
+              <span className={`font-geist text-[9px] font-bold tracking-[0.35em] uppercase ${fg}`}>
+                {group.category}
+              </span>
+            </div>
 
-          <motion.div layout transition={{ layout: { type: "spring", stiffness: 400, damping: 35 } }} className="flex flex-wrap gap-3">
-            {coreStack.map((tech, index) => {
-              const isActive = activeTech === tech.name;
-              return (
+            {/* Tools List — rendered as badges with gap */}
+            <div className="p-6 flex flex-wrap gap-3">
+              {group.tools.map((tool, ti) => (
                 <motion.div
-                  layout
-                  layoutId={`badge-${tech.name}`}
-                  key={tech.name}
-                  onClick={() => setActiveTech(isActive ? null : tech.name)}
-                  transition={{ layout: { type: "spring", stiffness: 400, damping: 35 } }}
-                  className={`group relative flex items-center gap-2.5 px-3 py-2.5 border cursor-pointer select-none ${
-                    isDarkMode
-                      ? isActive
-                        ? "border-brand-blue bg-[#161616] shadow-[3px_3px_0px_#0033ff]"
-                        : "border-white/10 hover:border-white bg-[#0e0e0e] hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#0033ff]"
-                      : isActive
-                        ? "border-brand-blue bg-blue-50/50 shadow-[3px_3px_0px_#0033ff]"
-                        : "border-black/10 hover:border-black bg-white hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#0033ff]"
-                  } transition-[border-color,background-color,box-shadow,transform] duration-200`}
+                  key={tool.name}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.3 }}
+                  custom={gi * 2 + ti * 0.4}
+                  variants={fadeUp}
+                  onClick={() => setActiveTool(tool)}
+                  className={`flex items-center gap-3 px-4 py-1.5 border transition-colors duration-200 group cursor-pointer ${
+                    tool.isFeatured
+                      ? "hover:bg-white/[0.06] hover:shadow-[3px_3px_0px_#ffd700]"
+                      : isDarkMode
+                      ? "bg-white/[0.02] border-white/10 hover:border-brand-blue hover:bg-white/[0.06] hover:shadow-[3px_3px_0px_#0033ff]"
+                      : "bg-black/[0.02] border-black/10 hover:border-brand-blue hover:bg-black/[0.04] hover:shadow-[3px_3px_0px_#0033ff]"
+                  }`}
+                  style={tool.isFeatured ? (isDarkMode ? goldBorderStyle : goldBorderStyleLight) : undefined}
                 >
                   <img
-                    src={tech.iconUrl}
-                    alt={tech.name}
-                    className="w-4 h-4 object-contain flex-shrink-0"
+                    src={tool.iconUrl}
+                    alt={tool.name}
+                    className={`w-6 h-6 object-contain transition-transform duration-200 group-hover:scale-110 ${
+                      isDarkMode && tool.invertDark ? "invert" : ""
+                    }`}
                   />
-                  <span className="font-display text-[8px] sm:text-[9px] font-bold tracking-widest flex-shrink-0">
-                    {tech.name}
-                  </span>
-
-                  {/* Expanding detail panel */}
-                  <motion.div
-                    initial={false}
-                    animate={{
-                      maxWidth: isActive ? 500 : 0,
-                      opacity: isActive ? 1 : 0,
-                      marginLeft: isActive ? 0 : -6,
-                    }}
-                    transition={{
-                      maxWidth: { type: "spring", stiffness: 320, damping: 32 },
-                      opacity: { duration: isActive ? 0.2 : 0.1, delay: isActive ? 0.1 : 0 },
-                      marginLeft: { type: "spring", stiffness: 320, damping: 32 },
-                    }}
-                    className="flex items-center gap-2 text-[8px] sm:text-[9px] overflow-hidden"
-                    style={{ willChange: "max-width, opacity" }}
-                  >
-                    {/* Divider */}
-                    <div className={`w-px h-3 flex-shrink-0 ${isDarkMode ? "bg-white/20" : "bg-black/20"}`} />
-                    {/* Year */}
-                    <span className="font-mono text-brand-blue font-black tracking-widest whitespace-nowrap flex-shrink-0">
-                      [{tech.year}]
+                  <div className="flex flex-col">
+                    <span className={`font-geist text-[9px] font-bold tracking-[0.15em] leading-tight ${fg}`}>
+                      {tool.name}
                     </span>
-                    {/* Divider */}
-                    <div className={`w-px h-3 flex-shrink-0 ${isDarkMode ? "bg-white/20" : "bg-black/20"}`} />
-                    {/* Description */}
-                    <span className="font-sans font-light normal-case tracking-normal leading-relaxed whitespace-nowrap flex-shrink-0" style={{ opacity: 0.7 }}>
-                      {tech.description}
-                    </span>
-                  </motion.div>
+                  </div>
                 </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
+
+      {/* ═══ ADDITIONAL / PROJECT STACK (Horizontal Navbar-style Dock with Spacing) ═══ */}
+      {additionalGroup && (
+        <div className="px-8 md:px-10 py-8">
+          <div
+            className="flex flex-col md:flex-row md:items-center border"
+            style={{ borderColor: border }}
+          >
+            {/* Header Tag */}
+            <div
+              className="px-8 py-4 flex items-center gap-3 shrink-0 border-b md:border-b-0 md:border-r"
+              style={{ borderColor: border }}
+            >
+              <span className={`font-geist text-[9px] font-bold tracking-[0.35em] uppercase ${fg}`}>
+                {additionalGroup.category}
+              </span>
+            </div>
+
+            {/* Icons Row */}
+            <div className="flex-1 px-8 py-3.5 flex flex-wrap items-center gap-4 md:gap-5 overflow-x-auto select-none">
+              {additionalGroup.tools.map((tool, ti) => (
+                <motion.div
+                  key={tool.name}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.3 }}
+                  custom={ti * 0.08}
+                  variants={fadeUp}
+                  title={tool.name}
+                  className={`flex items-center justify-center p-2 border transition-all duration-200 group cursor-default ${
+                    isDarkMode
+                      ? "bg-white/[0.02] border-white/10 hover:border-brand-blue hover:bg-white/[0.06] hover:shadow-[2px_2px_0px_#0033ff]"
+                      : "bg-black/[0.02] border-black/10 hover:border-brand-blue hover:bg-black/[0.04] hover:shadow-[2px_2px_0px_#0033ff]"
+                  }`}
+                >
+                  <img
+                    src={tool.iconUrl}
+                    alt={tool.name}
+                    className={`w-5 h-5 object-contain transition-transform duration-200 group-hover:scale-110 ${
+                      isDarkMode && tool.invertDark ? "invert" : ""
+                    }`}
+                  />
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ DESCRIPTION POPUP ═══ */}
+      <AnimatePresence>
+        {activeTool && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setActiveTool(null)}
+              className="fixed inset-0 bg-black/75 backdrop-blur-sm z-[1000] cursor-pointer"
+            />
+
+            {/* Popup Box */}
+            <div className="fixed inset-0 flex items-center justify-center z-[1001] pointer-events-none p-4">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                className={`w-full max-w-[380px] p-6 border-2 shadow-[6px_6px_0px_#0033ff] pointer-events-auto flex flex-col gap-4 ${
+                  isDarkMode ? "bg-[#0b0b0b] border-white text-white" : "bg-[#f4f4f0] border-black text-black"
+                }`}
+              >
+                {/* Header */}
+                <div className="flex items-center gap-3">
+                  <img
+                    src={activeTool.iconUrl}
+                    alt={activeTool.name}
+                    className={`w-7 h-7 object-contain ${isDarkMode && activeTool.invertDark ? "invert" : ""}`}
+                  />
+                  <h4 className="font-geist text-sm font-extrabold tracking-[0.15em] uppercase">
+                    {activeTool.name}
+                  </h4>
+                  <button
+                    onClick={() => setActiveTool(null)}
+                    className={`ml-auto font-geist text-[10px] font-bold px-2.5 py-1 border transition-all duration-150 cursor-pointer ${
+                      isDarkMode
+                        ? "border-white/20 hover:border-white hover:bg-white hover:text-black"
+                        : "border-black/20 hover:border-black hover:bg-black hover:text-white"
+                    }`}
+                  >
+                    ×
+                  </button>
+                </div>
+
+                {/* Divider */}
+                <div className={`h-px w-full ${isDarkMode ? "bg-white/10" : "bg-black/10"}`} />
+
+                {/* Year + Description */}
+                <div className="flex flex-col gap-3">
+                  {activeTool.since && (
+                    <div className="flex items-center gap-2">
+                      <span className={`font-geist text-[8px] font-bold tracking-[0.3em] uppercase ${isDarkMode ? "text-white/30" : "text-black/30"}`}>
+                        Since
+                      </span>
+                      <span className={`font-geist text-[10px] font-extrabold tracking-[0.2em] ${
+                        isDarkMode ? "text-white/60" : "text-black/60"
+                      }`}>
+                        {activeTool.since}
+                      </span>
+                    </div>
+                  )}
+                  <p
+                    className={`text-[12.5px] leading-[1.65] font-light ${isDarkMode ? "text-white/70" : "text-black/70"}`}
+                  >
+                    {activeTool.description}
+                  </p>
+                </div>
+              </motion.div>
+            </div>
+          </>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
