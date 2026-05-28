@@ -134,24 +134,10 @@ const toolGroups: ToolGroup[] = [
         since: "2025"
       },
       {
-        name: "Cloudinary",
-        iconUrl: "https://appexchange.salesforce.com/image_host/114124ea-20a8-4993-89dc-12613a17281e.png",
-        description: "Layanan manajemen media berbasis cloud (SaaS) untuk optimasi otomatis, transformasi aset gambar/video, dan pengiriman CDN berkinerja tinggi.",
-        invertDark: false,
-        since: "2025"
-      },
-      {
         name: "PostgreSQL",
         iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg",
         description: "Sistem database relasional open-source tingkat enterprise yang sangat andal, mendukung query kompleks dan skalabilitas tinggi.",
         invertDark: false,
-        since: "2025"
-      },
-      {
-        name: "Prisma ORM",
-        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/prisma/prisma-original.svg",
-        description: "Object-Relational Mapping (ORM) modern untuk Node.js dan TypeScript, memudahkan pengelolaan skema data, migrasi, dan query database tipe aman.",
-        invertDark: true,
         since: "2025"
       },
     ],
@@ -216,32 +202,11 @@ const toolGroups: ToolGroup[] = [
         since: "2022"
       },
       {
-        name: "C Language",
-        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg",
-        description: "Bahasa pemrograman tingkat rendah berkinerja tinggi, digunakan dalam benchmark komputasi berat langsung di dalam browser menggunakan kompilator Emscripten.",
-        invertDark: false,
-        since: "2025"
-      },
-      {
-        name: "Java",
-        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
-        description: "Bahasa pemrograman berbasis kelas (OOP) yang tangguh, digunakan sebagai basis utama pengembangan aplikasi mobile native Android pada Android SDK.",
+        name: "Godot",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/godot/godot-original.svg",
+        description: "Engine game open-source 2D dan 3D berkinerja tinggi yang fleksibel menggunakan sistem node yang intuitif. Membantu dalam pembuatan prototype game interaktif dengan cepat.",
         invertDark: false,
         since: "2024"
-      },
-      {
-        name: "Android SDK",
-        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg",
-        description: "Kumpulan tools dan software development kit resmi untuk merancang, membangun, mengintegrasikan sensor, serta merilis aplikasi di ekosistem Android.",
-        invertDark: false,
-        since: "2024"
-      },
-      {
-        name: "Leaflet.js",
-        iconUrl: "https://leafletjs.com/docs/images/logo.png",
-        description: "Library JavaScript open-source yang sangat ringan untuk merender peta interaktif ramah mobile, serta melakukan tracking geolokasi GPS secara real-time.",
-        invertDark: false,
-        since: "2025"
       },
       {
         name: "HTML5",
@@ -256,9 +221,47 @@ const toolGroups: ToolGroup[] = [
         description: "Bahasa stylesheet untuk merancang tata letak web yang estetik dan responsif, mengelola tipografi, warna, transisi, dan visual web modern.",
         invertDark: false,
         since: "2023"
+      },
+      {
+        name: "Cloudinary",
+        iconUrl: "https://appexchange.salesforce.com/image_host/114124ea-20a8-4993-89dc-12613a17281e.png",
+        description: "Layanan manajemen media berbasis cloud (SaaS) untuk optimasi otomatis, transformasi aset gambar/video, dan pengiriman CDN berkinerja tinggi.",
+        invertDark: false,
+        since: "2025"
+      },
+      {
+        name: "Prisma ORM",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/prisma/prisma-original.svg",
+        description: "Object-Relational Mapping (ORM) modern untuk Node.js dan TypeScript, memudahkan pengelolaan skema data, migrasi, dan query database tipe aman.",
+        invertDark: true,
+        since: "2025"
       }
     ],
   },
+];
+
+const nonTechSkills: Tool[] = [
+  {
+    name: "EQ",
+    description: "Kemampuan untuk mengenali, memahami, dan mengelola emosi diri sendiri serta orang lain secara efektif. Membantu dalam menjaga ketenangan di situasi kritis dan menjalin hubungan interpersonal yang baik.",
+    iconUrl: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230033ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z'/></svg>",
+    invertDark: false,
+    since: "Continuous"
+  },
+  {
+    name: "Teamwork",
+    description: "Kolaborasi aktif dalam tim untuk mencapai visi bersama. Berfokus pada komunikasi terbuka, saling mendukung, koordinasi yang efisien, dan menghargai kontribusi setiap anggota.",
+    iconUrl: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230033ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'/><circle cx='9' cy='7' r='4'/><path d='M22 21v-2a4 4 0 0 0-3-3.87'/><path d='M16 3.13a4 4 0 0 1 0 7.75'/></svg>",
+    invertDark: false,
+    since: "Continuous"
+  },
+  {
+    name: "Event Planner",
+    description: "Kemampuan merancang, mengorganisir, dan mengeksekusi berbagai kegiatan atau acara secara sistematis. Berpengalaman dalam manajemen waktu, koordinasi tim, dan pemecahan masalah di lapangan.",
+    iconUrl: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230033ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M8 2v4'/><path d='M16 2v4'/><rect width='18' height='18' x='3' y='4' rx='2'/><path d='M3 10h18'/></svg>",
+    invertDark: false,
+    since: "Continuous"
+  }
 ];
 
 const fadeUp = {
@@ -287,6 +290,11 @@ const goldBorderStyleLight: React.CSSProperties = {
 
 export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
   const [activeTool, setActiveTool] = React.useState<Tool | null>(null);
+  const [expandedSkill, setExpandedSkill] = React.useState<string | null>(null);
+
+  const toggleSkill = (skillName: string) => {
+    setExpandedSkill(prev => (prev === skillName ? null : skillName));
+  };
 
   const border = isDarkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
   const fg = isDarkMode ? "text-white" : "text-black";
@@ -423,25 +431,29 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
         ))}
       </div>
 
-      {/* ═══ ADDITIONAL / PROJECT STACK (Horizontal Navbar-style Dock with Spacing) ═══ */}
-      {additionalGroup && (
-        <div className="px-8 md:px-10 py-8">
+      {/* ═══ COMBINED FLAT SECTION (Additional Stack & Non-Technical Skills) ═══ */}
+      <div
+        className="grid grid-cols-1 lg:grid-cols-2 mt-8"
+        style={{ borderTop: `1px solid ${border}`, borderBottom: `1px solid ${border}` }}
+      >
+        {/* Left Column: Additional / Project Stack */}
+        {additionalGroup && (
           <div
-            className="flex flex-col md:flex-row md:items-center border"
+            className="border-b lg:border-b-0 lg:border-r"
             style={{ borderColor: border }}
           >
-            {/* Header Tag */}
+            {/* Category Header */}
             <div
-              className="px-8 py-4 flex items-center gap-3 shrink-0 border-b md:border-b-0 md:border-r"
-              style={{ borderColor: border }}
+              className="px-8 py-4 flex items-center gap-3"
+              style={{ borderBottom: `1px solid ${border}` }}
             >
               <span className={`font-geist text-[9px] font-bold tracking-[0.35em] uppercase ${fg}`}>
                 {additionalGroup.category}
               </span>
             </div>
 
-            {/* Icons Row */}
-            <div className="flex-1 px-8 py-3.5 flex flex-wrap items-center gap-4 md:gap-5 overflow-x-auto select-none">
+            {/* Tools List — rendered as badges with name + icon */}
+            <div className="p-6 flex flex-wrap gap-3">
               {additionalGroup.tools.map((tool, ti) => (
                 <motion.div
                   key={tool.name}
@@ -450,8 +462,8 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
                   viewport={{ once: true, amount: 0.3 }}
                   custom={ti * 0.08}
                   variants={fadeUp}
-                  title={tool.name}
-                  className={`flex items-center justify-center p-2 border transition-all duration-200 group cursor-default ${
+                  onClick={() => setActiveTool(tool)}
+                  className={`flex items-center gap-3 px-4 py-1.5 border transition-all duration-200 group cursor-pointer ${
                     isDarkMode
                       ? "bg-white/[0.02] border-white/10 hover:border-brand-blue hover:bg-white/[0.06] hover:shadow-[2px_2px_0px_#0033ff]"
                       : "bg-black/[0.02] border-black/10 hover:border-brand-blue hover:bg-black/[0.04] hover:shadow-[2px_2px_0px_#0033ff]"
@@ -464,12 +476,81 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
                       isDarkMode && tool.invertDark ? "invert" : ""
                     }`}
                   />
+                  <span className={`font-geist text-[9px] font-bold tracking-[0.15em] leading-tight ${fg}`}>
+                    {tool.name}
+                  </span>
                 </motion.div>
               ))}
             </div>
           </div>
+        )}
+
+        {/* Right Column: Non-Technical Skills */}
+        <div className="border-b lg:border-b-0 last:border-b-0" style={{ borderColor: border }}>
+          {/* Category Header */}
+          <div
+            className="px-8 py-4 flex items-center gap-3"
+            style={{ borderBottom: `1px solid ${border}` }}
+          >
+            <span className={`font-geist text-[9px] font-bold tracking-[0.35em] uppercase ${fg}`}>
+              Non-Technical Skills
+            </span>
+          </div>
+
+          {/* Flat Text Accordion with Arrow Toggle Descriptions */}
+          <div className="p-6 flex flex-col gap-4">
+            {nonTechSkills.map((skill, ti) => {
+              const isOpen = expandedSkill === skill.name;
+              return (
+                <motion.div
+                  key={skill.name}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.3 }}
+                  custom={ti * 0.08}
+                  variants={fadeUp}
+                  className="flex flex-col gap-2 text-[11.5px] leading-[1.7] border-b last:border-b-0 pb-4 last:pb-0"
+                  style={{ borderColor: border }}
+                >
+                  {/* Skill Header (Clickable Toggle) */}
+                  <div
+                    onClick={() => toggleSkill(skill.name)}
+                    className="flex items-center gap-2 cursor-pointer select-none group w-fit"
+                  >
+                    <span className={`font-extrabold tracking-[0.15em] uppercase transition-colors duration-200 group-hover:text-brand-blue ${fg}`}>
+                      {skill.name}
+                    </span>
+                    <span
+                      className={`text-brand-blue font-bold transform transition-transform duration-300 ${
+                        isOpen ? "rotate-90" : "rotate-0"
+                      }`}
+                    >
+                      &gt;
+                    </span>
+                  </div>
+
+                  {/* Expandable Description */}
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.25, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                      >
+                        <p className={`font-light pb-2 ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
+                          {skill.description}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
-      )}
+      </div>
 
       {/* ═══ DESCRIPTION POPUP ═══ */}
       <AnimatePresence>

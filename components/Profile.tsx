@@ -24,11 +24,7 @@ const fadeIn = {
 /* ─── Data ─── */
 const tags = ["DESIGNER", "DEVELOPER", "CREATIVE"];
 
-const quickStats = [
-  { val: "3+", label: "YRS EXP" },
-  { val: "15+", label: "PROJECTS" },
-  { val: "∞", label: "CURIOSITY" },
-];
+
 
 
 /* ─── Bottom Bar Buttons ─── */
@@ -132,20 +128,15 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
             }}
           >
             {/* Section tag */}
-            <motion.div custom={0} variants={fadeUp} className="flex items-center gap-2.5">
-              <span className={`font-display text-[14px] font-extrabold tracking-[0.3em] uppercase ${fg}`}>PROFILE</span>
+            <motion.div custom={0} variants={fadeUp} className="flex items-center gap-6 w-full pb-6 mb-5" style={{ borderBottom: `1px solid ${border}` }}>
+              <span className={`font-geist text-[22px] font-extrabold tracking-[0.25em] uppercase ${fg}`}>PROFILE</span>
+              <div className={`flex-1 h-px ${isDarkMode ? "bg-white/8" : "bg-black/8"}`} />
             </motion.div>
 
             {/* Name */}
             <div className="flex flex-col gap-1">
-              <motion.div custom={1} variants={fadeUp}>
-                <span className={`font-display block text-[11px] font-bold tracking-[0.4em] uppercase mb-4 ${fgMuted}`}>
-                  BANDUNG, INDONESIA
-                </span>
-              </motion.div>
-
               <motion.h2
-                custom={2}
+                custom={1}
                 variants={fadeUp}
                 className={`font-geist font-extrabold tracking-tighter leading-none ${fg}`}
                 style={{ fontFamily: "'Geist', sans-serif" }}
@@ -160,6 +151,12 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
                   Maulana Firdaus
                 </span>
               </motion.h2>
+
+              <motion.div custom={2} variants={fadeUp} className="mt-4">
+                <span className={`font-display block text-[11px] font-bold tracking-[0.4em] uppercase ${fgMuted}`}>
+                  CIKARANG, INDONESIA
+                </span>
+              </motion.div>
             </div>
 
             {/* Bio */}
@@ -178,30 +175,17 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
               {tags.map((tag) => (
                 <span
                   key={tag}
-                  className={`font-display text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1.5 border ${
-                    isDarkMode
-                      ? "border-white/15 text-white/50"
-                      : "border-black/15 text-black/45"
-                  }`}
+                  className={`font-display text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1.5 border ${isDarkMode
+                    ? "border-white/15 text-white/50"
+                    : "border-black/15 text-black/45"
+                    }`}
                 >
                   {tag}
                 </span>
               ))}
             </motion.div>
 
-            {/* Quick stats */}
-            <motion.div custom={5} variants={fadeUp} className="flex gap-6">
-              {quickStats.map((s) => (
-                <div key={s.val} className="flex flex-col gap-0.5">
-                  <span className="font-display text-[28px] font-extrabold tracking-tighter text-brand-blue leading-none">
-                    {s.val}
-                  </span>
-                  <span className={`font-display text-[8px] font-bold tracking-[0.22em] uppercase ${fgMuted}`}>
-                    {s.label}
-                  </span>
-                </div>
-              ))}
-            </motion.div>
+
           </motion.div>
 
           {/* ── CENTER COLUMN — Photo ── */}
@@ -308,6 +292,14 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
               </div>
             </motion.div>
 
+            {/* Thin grid separator above PASSION */}
+            <div
+              className="w-full"
+              style={{
+                borderTop: `1px solid ${border}`,
+              }}
+            />
+
             {/* Interests */}
             <motion.div custom={2.5} variants={fadeUp} className="flex flex-col gap-3 items-end">
               <span className={`font-display text-[9px] font-bold tracking-[0.35em] uppercase ${fgMuted}`}>
@@ -316,7 +308,7 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
               <div className="flex flex-col gap-1.5 items-end">
                 {[
                   { label: "UI / UX Design", icon: "✦" },
-                  { label: "Music Production", icon: "✦" },
+                  { label: "Music Enthusiast", icon: "✦" },
                   { label: "Visual Storytelling", icon: "✦" },
                   { label: "Open Source", icon: "✦" },
                 ].map((item) => (
@@ -381,11 +373,10 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
                 <button
                   key={action.id}
                   onClick={() => handleBarAction(action.id, action.href)}
-                  className={`group flex items-center gap-2.5 px-5 py-3.5 font-display text-[9px] font-bold tracking-[0.22em] uppercase transition-all duration-200 whitespace-nowrap flex-1 justify-center ${
-                    isDarkMode
-                      ? "text-white/50 hover:text-white hover:bg-white/8"
-                      : "text-black/45 hover:text-black hover:bg-black/8"
-                  } ${i === 0 ? "hover:text-brand-blue" : ""}`}
+                  className={`group flex items-center gap-2.5 px-5 py-3.5 font-display text-[9px] font-bold tracking-[0.22em] uppercase transition-all duration-200 whitespace-nowrap flex-1 justify-center ${isDarkMode
+                    ? "text-white/50 hover:text-white hover:bg-white/8"
+                    : "text-black/45 hover:text-black hover:bg-black/8"
+                    } ${i === 0 ? "hover:text-brand-blue" : ""}`}
                   style={{
                     borderRight: i < barActions.length - 1 ? `1px solid ${border}` : "none",
                   }}
@@ -461,11 +452,10 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
               ].map((trait) => (
                 <span
                   key={trait}
-                  className={`font-geist text-[7.5px] font-bold tracking-[0.3em] uppercase px-2.5 py-1.5 border ${
-                    isDarkMode
-                      ? "border-white/10 text-white/35"
-                      : "border-black/10 text-black/30"
-                  }`}
+                  className={`font-geist text-[7.5px] font-bold tracking-[0.3em] uppercase px-2.5 py-1.5 border ${isDarkMode
+                    ? "border-white/10 text-white/35"
+                    : "border-black/10 text-black/30"
+                    }`}
                 >
                   {trait}
                 </span>
@@ -492,9 +482,8 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
               animate={{ x: "0%" }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className={`fixed top-0 right-0 h-screen w-full sm:w-[500px] md:w-[620px] z-[999] border-l-2 shadow-2xl flex flex-col ${
-                isDarkMode ? "bg-[#080808] border-white" : "bg-[#f4f4f0] border-black"
-              }`}
+              className={`fixed top-0 right-0 h-screen w-full sm:w-[500px] md:w-[620px] z-[999] border-l-2 shadow-2xl flex flex-col ${isDarkMode ? "bg-[#080808] border-white" : "bg-[#f4f4f0] border-black"
+                }`}
             >
               <div
                 className="px-5 py-4 flex items-center justify-between flex-shrink-0"
@@ -505,11 +494,10 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
                 </span>
                 <button
                   onClick={() => setIsCvOpen(false)}
-                  className={`font-display text-[9px] font-bold tracking-widest uppercase px-3 py-2 border transition-all duration-150 cursor-pointer ${
-                    isDarkMode
-                      ? "border-white/30 text-white hover:bg-white hover:text-black"
-                      : "border-black/30 text-black hover:bg-black hover:text-white"
-                  }`}
+                  className={`font-display text-[9px] font-bold tracking-widest uppercase px-3 py-2 border transition-all duration-150 cursor-pointer ${isDarkMode
+                    ? "border-white/30 text-white hover:bg-white hover:text-black"
+                    : "border-black/30 text-black hover:bg-black hover:text-white"
+                    }`}
                 >
                   TUTUP ×
                 </button>

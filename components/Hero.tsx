@@ -135,7 +135,8 @@ export default function Hero({ isDarkMode }: { isDarkMode: boolean }) {
       width = rect.width;
       height = rect.height;
 
-      const dpr = window.devicePixelRatio || 1;
+      // Scale resolution down (half DPR) to avoid lag on high-DPI/Retina/Full HD screens
+      const dpr = Math.max(1, (window.devicePixelRatio || 1) * 0.5);
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
       canvas.style.width = `${rect.width}px`;
@@ -355,6 +356,7 @@ export default function Hero({ isDarkMode }: { isDarkMode: boolean }) {
     };
   }, [isDarkMode]);
 
+
   // Click handler on Hero zone to create shockwave & apply explosion push forces
   const handleHeroClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const canvas = canvasRef.current;
@@ -449,7 +451,7 @@ export default function Hero({ isDarkMode }: { isDarkMode: boolean }) {
       onDoubleClick={handleHeroDoubleClick}
       className="w-full h-[60vh] md:h-[75vh] relative flex flex-col justify-center items-center px-4 md:px-8 lg:px-10 overflow-hidden select-none cursor-crosshair"
     >
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" style={{ zIndex: 1 }} />
 
       {/* Iridescent Flare Bursts (DOM overlay, fixed to viewport) */}
       {flares.map(flare => {
@@ -533,7 +535,7 @@ export default function Hero({ isDarkMode }: { isDarkMode: boolean }) {
       })}
 
       {/* Interactive hints */}
-      <div className={`absolute bottom-6 left-1/2 -translate-x-1/2 text-[8px] sm:text-[9px] font-display tracking-widest pointer-events-none opacity-40 uppercase transition-opacity duration-300 text-center`}>
+      <div className={`absolute bottom-6 left-1/2 -translate-x-1/2 z-10 text-[8px] sm:text-[9px] font-display tracking-widest pointer-events-none opacity-40 uppercase transition-opacity duration-300 text-center`}>
         click to push letters <span className="text-brand-blue mx-1">//</span> double click to align
       </div>
     </section>

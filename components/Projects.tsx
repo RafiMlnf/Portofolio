@@ -603,23 +603,35 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
       <div className="flex flex-col w-full px-8 md:px-10 py-10 md:py-16 relative z-10">
         {/* Filter buttons */}
         <div className="flex flex-wrap gap-2 mb-8">
-          {["DEVELOPMENT", "DESIGN"].map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-2 border font-geist text-[9px] sm:text-[10px] md:text-xs font-bold tracking-widest transition-all duration-300 flex items-center gap-2 cursor-pointer ${
-                selectedCategory === cat
-                  ? "bg-brand-blue text-white border-brand-blue"
-                  : isDarkMode
-                  ? "border-white/20 hover:border-white text-white hover:bg-white/5"
-                  : "border-black/20 hover:border-black text-black hover:bg-black/5"
-              }`}
-            >
-              {cat === "DEVELOPMENT" && <OSWindowIcon className="w-3 h-3" />}
-              {cat === "DESIGN" && <SparkleIcon className="w-3 h-3" />}
-              {cat}
-            </button>
-          ))}
+          {["DEVELOPMENT", "DESIGN"].map((cat) => {
+            const count = PROJECTS_DATA.filter((p) => p.category === cat).length;
+            return (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-4 py-2 border font-geist text-[9px] sm:text-[10px] md:text-xs font-bold tracking-widest transition-all duration-300 flex items-center gap-2.5 cursor-pointer ${
+                  selectedCategory === cat
+                    ? "bg-brand-blue text-white border-brand-blue"
+                    : isDarkMode
+                    ? "border-white/20 hover:border-white text-white hover:bg-white/5"
+                    : "border-black/20 hover:border-black text-black hover:bg-black/5"
+                }`}
+              >
+                {cat === "DEVELOPMENT" && <OSWindowIcon className="w-3 h-3" />}
+                {cat === "DESIGN" && <SparkleIcon className="w-3 h-3" />}
+                <span>{cat}</span>
+                <span className={`text-[8px] sm:text-[9px] font-mono px-1.5 py-0.5 border ${
+                  selectedCategory === cat
+                    ? "bg-white/20 border-white/30 text-white"
+                    : isDarkMode
+                    ? "bg-white/5 border-white/10 text-white/60"
+                    : "bg-black/5 border-black/10 text-black/60"
+                }`}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Project Cards Grid - responsive 4 columns */}
