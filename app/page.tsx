@@ -11,6 +11,7 @@ import Projects from "../components/Projects";
 import AnimatedStatus from "../components/AnimatedStatus";
 import MusicPlayer from "../components/MusicPlayer";
 import CustomCursor from "../components/CustomCursor";
+import CRTOverlay from "../components/CRTOverlay";
 
 const contacts = [
   {
@@ -159,6 +160,7 @@ const ScrambleText = ({ text }: { text: string }) => {
 
 export default function Home() {
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isCrtOn, setIsCrtOn] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
   const [edgeShake, setEdgeShake] = useState<"left" | "right" | "top" | "bottom" | null>(null);
   const edgeShakeTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -172,12 +174,12 @@ export default function Home() {
     edgeShakeTimer.current = setTimeout(() => setEdgeShake(null), 400);
   }, []);
 
-  // Sync theme with local storage and set up scroll animations
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "light") {
-      setIsDarkMode(false);
-    }
+    // Sync theme with local storage and set up scroll animations
+    useEffect(() => {
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "light") {
+        setIsDarkMode(false);
+      }
 
     // Initialize Lenis Smooth Scroll
     const lenis = new Lenis({
@@ -316,6 +318,14 @@ export default function Home() {
     });
   };
 
+  const toggleCrt = () => {
+    setIsCrtOn((prev) => {
+      const next = !prev;
+      localStorage.setItem("crt-effect", next ? "true" : "false");
+      return next;
+    });
+  };
+
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     if (href === "#") {
@@ -323,7 +333,8 @@ export default function Home() {
     } else {
       const target = document.querySelector(href);
       if (target instanceof HTMLElement) {
-        lenisRef.current?.scrollTo(target);
+        // Berikan offset negatif agar scroll berhenti sebelum tertutup navbar yang sticky
+        lenisRef.current?.scrollTo(target, { offset: -80 });
       }
     }
   };
@@ -346,7 +357,9 @@ export default function Home() {
           : { x: 0, y: 0 }
       }
       transition={{ duration: 0.35, ease: "easeInOut" }}
-      className={`w-full min-h-screen flex flex-col font-sans transition-colors duration-300 ${isDarkMode ? "bg-black text-white" : "bg-[#f4f4f0] text-black"}`}
+      className={`w-full min-h-screen flex flex-col font-sans transition-all duration-300 ${
+        isDarkMode ? "bg-black text-white" : "bg-[#f4f4f0] text-black"
+      } ${isCrtOn ? "crt-active-warp" : ""}`}
     >
 
       {/* FIXED NAVBAR */}
@@ -539,14 +552,6 @@ export default function Home() {
           <div className="opacity-50">
             © {new Date().getFullYear()} rAFI MAuLANA fIRDAUs.
           </div>
-
-
-          <div>
-            <a href="#" onClick={(e) => handleNavClick(e, '#')} className="flex items-center gap-2 group hover:text-brand-blue transition-colors">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-blue group-hover:animate-ping" />
-              BACK TO TOP
-            </a>
-          </div>
         </div>
       </footer>
 
@@ -557,6 +562,7 @@ export default function Home() {
 
     {/* Custom Star Cursor — rendered outside main motion.div so it overlays everything */}
     <CustomCursor isDarkMode={isDarkMode} onEdgeHit={triggerEdgeShake} />
+    <CRTOverlay enabled={isCrtOn} />
     </>
   );
 }

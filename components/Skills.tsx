@@ -115,6 +115,7 @@ const toolGroups: ToolGroup[] = [
         iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg",
         description: "Runtime environment JavaScript di luar browser berbasis mesin V8, ideal untuk membangun layanan backend berskala besar, real-time, dan berorientasi event.",
         invertDark: false,
+        isFeatured: true,
         since: "2024"
       },
       {
@@ -130,7 +131,6 @@ const toolGroups: ToolGroup[] = [
         iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg",
         description: "Penyimpanan struktur data di dalam memori (in-memory) berkecepatan sangat tinggi, sering dimanfaatkan sebagai cache, broker pesan, dan pengelola sesi.",
         invertDark: false,
-        isFeatured: true,
         since: "2025"
       },
       {
@@ -168,74 +168,6 @@ const toolGroups: ToolGroup[] = [
         invertDark: false,
         since: "2023"
       },
-    ],
-  },
-  {
-    category: "Additional / Project Stack",
-    tools: [
-      {
-        name: "Figma",
-        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg",
-        description: "Platform kolaboratif berbasis cloud untuk perancangan UI/UX, pembuatan mockup resolusi tinggi, sistem desain, dan prototipe interaktif.",
-        invertDark: false,
-        since: "2023"
-      },
-      {
-        name: "Adobe Illustrator",
-        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/illustrator/illustrator-plain.svg",
-        description: "Perangkat lunak standar industri desain grafis vektor untuk merancang aset digital, ilustrasi presisi tinggi, ikon antarmuka, serta logo branding.",
-        invertDark: false,
-        since: "2022"
-      },
-      {
-        name: "Canva",
-        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/canva/canva-original.svg",
-        description: "Platform desain grafis online kolaboratif untuk merancang media sosial, presentasi, poster, dan dokumen visual lainnya dengan ribuan template instan.",
-        invertDark: false,
-        since: "2021"
-      },
-      {
-        name: "CapCut",
-        iconUrl: "https://play-lh.googleusercontent.com/M78HyakHaxKrjoeqYx41E9DXfVYYtx67nvc7Ks4G4zFQeaAJdGCi8gzzGSrHIwlrmnJS6zD9S4fAXqdEwfuHQAQ",
-        description: "Perangkat lunak penyuntingan video yang intuitif dan serbaguna, ideal untuk pembuatan konten kreatif media sosial secara cepat dengan template dinamis.",
-        invertDark: false,
-        since: "2022"
-      },
-      {
-        name: "Godot",
-        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/godot/godot-original.svg",
-        description: "Engine game open-source 2D dan 3D berkinerja tinggi yang fleksibel menggunakan sistem node yang intuitif. Membantu dalam pembuatan prototype game interaktif dengan cepat.",
-        invertDark: false,
-        since: "2024"
-      },
-      {
-        name: "HTML5",
-        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",
-        description: "Bahasa markup standar untuk menstrukturkan halaman web, merender elemen semantik, serta menyediakan kerangka dasar aplikasi web.",
-        invertDark: false,
-        since: "2023"
-      },
-      {
-        name: "CSS3",
-        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg",
-        description: "Bahasa stylesheet untuk merancang tata letak web yang estetik dan responsif, mengelola tipografi, warna, transisi, dan visual web modern.",
-        invertDark: false,
-        since: "2023"
-      },
-      {
-        name: "Cloudinary",
-        iconUrl: "https://appexchange.salesforce.com/image_host/114124ea-20a8-4993-89dc-12613a17281e.png",
-        description: "Layanan manajemen media berbasis cloud (SaaS) untuk optimasi otomatis, transformasi aset gambar/video, dan pengiriman CDN berkinerja tinggi.",
-        invertDark: false,
-        since: "2025"
-      },
-      {
-        name: "Prisma ORM",
-        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/prisma/prisma-original.svg",
-        description: "Object-Relational Mapping (ORM) modern untuk Node.js dan TypeScript, memudahkan pengelolaan skema data, migrasi, dan query database tipe aman.",
-        invertDark: true,
-        since: "2025"
-      }
     ],
   },
 ];
@@ -296,14 +228,13 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
     setExpandedSkill(prev => (prev === skillName ? null : skillName));
   };
 
-  const border = isDarkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
+  const border = isDarkMode ? "border-white/[0.08]" : "border-black/[0.08]";
   const fg = isDarkMode ? "text-white" : "text-black";
   const fgMuted = isDarkMode ? "text-white/40" : "text-black/35";
   const totalTools = toolGroups.reduce((acc, g) => acc + g.tools.length, 0);
 
   // Split tool groups for layout
   const mainGroups = toolGroups.slice(0, 3);
-  const additionalGroup = toolGroups[3];
 
   return (
     <section
@@ -311,19 +242,13 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
       className={`relative w-full select-none font-geist ${isDarkMode ? "bg-black" : "bg-[#f4f4f0]"}`}
     >
       {/* ═══ SECTION HEADER ═══ */}
-      <div
-        className="px-8 md:px-10 py-8 flex items-center gap-6"
-        style={{ borderBottom: `1px solid ${border}` }}
-      >
+      <div className={`px-8 md:px-10 py-8 flex items-center gap-6 border-b ${border}`}>
         <span className={`font-geist text-[22px] font-extrabold tracking-[0.25em] uppercase ${fg}`}>SKILLS</span>
         <div className={`flex-1 h-px ${isDarkMode ? "bg-white/8" : "bg-black/8"}`} />
       </div>
 
       {/* ═══ TOP ROW — Skill Areas ═══ */}
-      <div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-        style={{ borderBottom: `1px solid ${border}` }}
-      >
+      <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-b ${border}`}>
         {skillAreas.map((area, i) => (
           <motion.div
             key={area.number}
@@ -334,10 +259,7 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
             variants={fadeUp}
             className={`flex flex-col gap-5 p-8 transition-colors duration-300 ${
               isDarkMode ? "hover:bg-white/[0.03]" : "hover:bg-black/[0.02]"
-            }`}
-            style={{
-              borderRight: i < skillAreas.length - 1 ? `1px solid ${border}` : "none",
-            }}
+            } ${i < skillAreas.length - 1 ? `border-r ${border}` : ""}`}
           >
             <div className="flex flex-col gap-2">
               <h3 className={`font-geist text-[15px] font-extrabold tracking-tight leading-tight ${fg}`}>
@@ -370,23 +292,14 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
       </div>
 
       {/* ═══ BOTTOM — Categorized Tool Grids ═══ */}
-      <div
-        className="grid grid-cols-1 lg:grid-cols-3 mt-8"
-        style={{ borderBottom: `1px solid ${border}`, borderTop: `1px solid ${border}` }}
-      >
+      <div className={`grid grid-cols-1 lg:grid-cols-3 mt-8 border-t border-b ${border}`}>
         {mainGroups.map((group, gi) => (
           <div
             key={group.category}
-            className="border-b lg:border-b-0 lg:border-r last:border-b-0 lg:last:border-r-0"
-            style={{
-              borderColor: border,
-            }}
+            className={`border-b lg:border-b-0 lg:border-r last:border-b-0 lg:last:border-r-0 ${border}`}
           >
             {/* Category Header */}
-            <div
-              className="px-8 py-4 flex items-center gap-3"
-              style={{ borderBottom: `1px solid ${border}` }}
-            >
+            <div className={`px-8 py-4 flex items-center gap-3 border-b ${border}`}>
               <span className={`font-geist text-[9px] font-bold tracking-[0.35em] uppercase ${fg}`}>
                 {group.category}
               </span>
@@ -433,67 +346,12 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
         ))}
       </div>
 
-      {/* ═══ COMBINED FLAT SECTION (Additional Stack & Non-Technical Skills) ═══ */}
-      <div
-        className="grid grid-cols-1 lg:grid-cols-2 mt-8"
-        style={{ borderTop: `1px solid ${border}`, borderBottom: `1px solid ${border}` }}
-      >
-        {/* Left Column: Additional / Project Stack */}
-        {additionalGroup && (
-          <div
-            className="border-b lg:border-b-0 lg:border-r"
-            style={{ borderColor: border }}
-          >
-            {/* Category Header */}
-            <div
-              className="px-8 py-4 flex items-center gap-3"
-              style={{ borderBottom: `1px solid ${border}` }}
-            >
-              <span className={`font-geist text-[9px] font-bold tracking-[0.35em] uppercase ${fg}`}>
-                {additionalGroup.category}
-              </span>
-            </div>
-
-            {/* Tools List — rendered as badges with name + icon */}
-            <div className="p-6 flex flex-wrap gap-3">
-              {additionalGroup.tools.map((tool, ti) => (
-                <motion.div
-                  key={tool.name}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 0.3 }}
-                  custom={ti * 0.08}
-                  variants={fadeUp}
-                  onClick={() => setActiveTool(tool)}
-                  className={`flex items-center gap-3 px-4 py-1.5 border transition-all duration-200 group cursor-pointer ${
-                    isDarkMode
-                      ? "bg-white/[0.02] border-white/10 hover:border-brand-blue hover:bg-white/[0.06] hover:shadow-[2px_2px_0px_#0033ff]"
-                      : "bg-black/[0.02] border-black/10 hover:border-brand-blue hover:bg-black/[0.04] hover:shadow-[2px_2px_0px_#0033ff]"
-                  }`}
-                >
-                  <img
-                    src={tool.iconUrl}
-                    alt={tool.name}
-                    className={`w-5 h-5 object-contain transition-transform duration-200 group-hover:scale-110 ${
-                      isDarkMode && tool.invertDark ? "invert" : ""
-                    }`}
-                  />
-                  <span className={`font-geist text-[9px] font-bold tracking-[0.15em] leading-tight ${fg}`}>
-                    {tool.name}
-                  </span>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Right Column: Non-Technical Skills */}
-        <div className="border-b lg:border-b-0 last:border-b-0" style={{ borderColor: border }}>
+      {/* ═══ COMBINED FLAT SECTION (Non-Technical Skills) ═══ */}
+      <div className={`mt-8 border-t border-b ${border}`}>
+        {/* Non-Technical Skills */}
+        <div className={`border-b last:border-b-0 ${border}`}>
           {/* Category Header */}
-          <div
-            className="px-8 py-4 flex items-center gap-3"
-            style={{ borderBottom: `1px solid ${border}` }}
-          >
+          <div className={`px-8 py-4 flex items-center gap-3 border-b ${border}`}>
             <span className={`font-geist text-[9px] font-bold tracking-[0.35em] uppercase ${fg}`}>
               Non-Technical Skills
             </span>
@@ -511,8 +369,7 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
                   viewport={{ once: true, amount: 0.3 }}
                   custom={ti * 0.08}
                   variants={fadeUp}
-                  className="flex flex-col gap-2 text-[11.5px] leading-[1.7] border-b last:border-b-0 pb-4 last:pb-0"
-                  style={{ borderColor: border }}
+                  className={`flex flex-col gap-2 text-[11.5px] leading-[1.7] border-b last:border-b-0 pb-4 last:pb-0 ${border}`}
                 >
                   {/* Skill Header (Clickable Toggle) */}
                   <div

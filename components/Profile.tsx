@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
 
 /* ─── Animation Variants ─── */
 const fadeUp = {
@@ -81,11 +81,16 @@ const barActions = [
 /* ─── Component ─── */
 export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
   const [isCvOpen, setIsCvOpen] = React.useState(false);
+  const containerRef = React.useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [0, 100]);
 
-  const border = isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)";
   const fg = isDarkMode ? "text-white" : "text-black";
   const fgMuted = isDarkMode ? "text-white/40" : "text-black/35";
-  const bgSection = isDarkMode ? "bg-black" : "bg-[#f4f4f0]";
+  const border = isDarkMode ? "border-white/10" : "border-black/10";
 
   const handleBarAction = (id: string, href?: string) => {
     if (id === "cv") { setIsCvOpen(true); return; }
@@ -103,32 +108,22 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
   return (
     <>
       <section
+        ref={containerRef}
         id="profile"
-        className={`relative w-full select-none overflow-hidden ${bgSection}`}
-        style={{
-          height: "calc(100vh - 57px)", // exact viewport minus navbar
-          display: "flex",
-          flexDirection: "column",
-        }}
+        className={`relative w-full select-none overflow-visible flex flex-col ${isDarkMode ? "bg-black" : "bg-[#f4f4f0]"}`}
+        style={{ height: "calc(100vh - 57px)" }}
       >
         {/* ═══ MAIN 3-COLUMN GRID ═══ */}
-        <div
-          className="flex flex-1 overflow-hidden"
-          style={{ minHeight: 0 }}
-        >
+        <div className="flex flex-1 overflow-hidden min-h-0">
 
           {/* ── LEFT COLUMN ── */}
           <motion.div
             initial="hidden"
             animate="visible"
-            className="flex flex-col justify-between px-8 py-10 flex-shrink-0"
-            style={{
-              width: "360px",
-              borderRight: `1px solid ${border}`,
-            }}
+            className={`flex flex-col justify-between px-8 py-10 flex-shrink-0 w-[360px] border-r ${border}`}
           >
             {/* Section tag */}
-            <motion.div custom={0} variants={fadeUp} className="flex items-center gap-6 w-full pb-6 mb-5" style={{ borderBottom: `1px solid ${border}` }}>
+            <motion.div custom={0} variants={fadeUp} className={`flex items-center gap-6 w-full pb-6 mb-5 border-b ${border}`}>
               <span className={`font-geist text-[22px] font-extrabold tracking-[0.25em] uppercase ${fg}`}>PROFILE</span>
               <div className={`flex-1 h-px ${isDarkMode ? "bg-white/8" : "bg-black/8"}`} />
             </motion.div>
@@ -170,29 +165,11 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
               </p>
             </motion.div>
 
-            {/* Role tags */}
-            <motion.div custom={4} variants={fadeUp} className="flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <span
-                  key={tag}
-                  className={`font-display text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1.5 border ${isDarkMode
-                    ? "border-white/15 text-white/50"
-                    : "border-black/15 text-black/45"
-                    }`}
-                >
-                  {tag}
-                </span>
-              ))}
-            </motion.div>
-
 
           </motion.div>
 
           {/* ── CENTER COLUMN — Photo ── */}
-          <div
-            className="flex-1 relative flex items-end justify-center overflow-hidden"
-            style={{ minWidth: 0 }}
-          >
+          <div className="flex-1 relative flex items-end justify-center overflow-hidden min-w-0">
             {/* Subtle grid overlay */}
             <div
               className="absolute inset-0 pointer-events-none"
@@ -234,18 +211,13 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
             </motion.div>
           </div>
 
-          {/* ── RIGHT COLUMN ── */}
           <motion.div
             initial="hidden"
             animate="visible"
-            className="flex flex-col justify-between px-8 py-10 flex-shrink-0 items-end text-right"
-            style={{
-              width: "300px",
-              borderLeft: `1px solid ${border}`,
-            }}
+            className={`flex flex-col justify-end gap-6 px-8 py-10 flex-shrink-0 items-end text-right w-[300px] border-l ${border}`}
           >
             {/* Availability badge */}
-            <motion.div custom={0.5} variants={fadeUp} className="flex items-center gap-2 flex-row-reverse">
+            <motion.div custom={0.5} variants={fadeUp} className="flex items-center gap-2 flex-row-reverse mb-auto">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
@@ -293,12 +265,7 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
             </motion.div>
 
             {/* Thin grid separator above PASSION */}
-            <div
-              className="w-full"
-              style={{
-                borderTop: `1px solid ${border}`,
-              }}
-            />
+            <div className={`w-full border-t ${border}`} />
 
             {/* Interests */}
             <motion.div custom={2.5} variants={fadeUp} className="flex flex-col gap-3 items-end">
@@ -307,10 +274,10 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
               </span>
               <div className="flex flex-col gap-1.5 items-end">
                 {[
-                  { label: "UI / UX Design", icon: "✦" },
+                  { label: "Design Graphic", icon: "✦" },
+                  { label: "Visual", icon: "✦" },
+                  { label: "UI/UX Design", icon: "✦" },
                   { label: "Music Enthusiast", icon: "✦" },
-                  { label: "Visual Storytelling", icon: "✦" },
-                  { label: "Open Source", icon: "✦" },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-2 flex-row-reverse">
                     <span className="text-brand-blue text-[8px] flex-shrink-0">{item.icon}</span>
@@ -325,72 +292,50 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
               </div>
             </motion.div>
 
-            {/* Open to collab */}
-            <motion.div custom={3.5} variants={fadeUp} className="flex flex-col gap-3 items-end">
-              <span className={`font-display text-[9px] font-bold tracking-[0.35em] uppercase ${fgMuted}`}>
-                OPEN TO
-              </span>
-              <div className="flex flex-col gap-1.5 items-end">
-                {["Freelance", "Collaboration", "Full-time"].map((item) => (
-                  <div key={item} className="flex items-center gap-2 flex-row-reverse">
-                    <span className="w-1 h-1 rounded-full bg-brand-blue flex-shrink-0" />
-                    <span
-                      className={`text-[12px] font-light ${isDarkMode ? "text-white/55" : "text-black/55"}`}
-                      style={{ fontFamily: "'Geist', sans-serif" }}
-                    >
-                      {item}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
 
-            {/* Index */}
-            <motion.div custom={4.5} variants={fadeUp}>
-              <span className={`font-display text-[9px] font-bold tracking-[0.35em] uppercase ${fgMuted}`}>
-                RMF — 2026
-              </span>
-            </motion.div>
           </motion.div>
         </div>
 
         {/* ═══ FLOATING BOTTOM BAR ═══ */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          style={{ y: parallaxY }}
           className="flex-shrink-0 px-8 pb-6 pt-0"
         >
-          <div
-            className={`flex items-center gap-0 overflow-hidden ${isDarkMode ? "bg-white/5 border border-white/10" : "bg-black/5 border border-black/10"}`}
-            style={{ backdropFilter: "blur(12px)" }}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
-            {/* Left accent */}
-            <div className="w-1 self-stretch bg-brand-blue flex-shrink-0" />
+            <div
+              className={`flex items-center gap-0 overflow-hidden backdrop-blur-md ${isDarkMode ? "bg-white/5 border border-white/10" : "bg-black/5 border border-black/10"}`}
+            >
+              {/* Left accent */}
+              <div className="w-1 self-stretch bg-brand-blue flex-shrink-0" />
 
-            <div className="flex items-center flex-1">
-              {barActions.map((action, i) => (
-                <button
-                  key={action.id}
-                  onClick={() => handleBarAction(action.id, action.href)}
-                  className={`group flex items-center gap-2.5 px-5 py-3.5 font-display text-[9px] font-bold tracking-[0.22em] uppercase transition-all duration-200 whitespace-nowrap flex-1 justify-center ${isDarkMode
-                    ? "text-white/50 hover:text-white hover:bg-white/8"
-                    : "text-black/45 hover:text-black hover:bg-black/8"
-                    } ${i === 0 ? "hover:text-brand-blue" : ""}`}
-                  style={{
-                    borderRight: i < barActions.length - 1 ? `1px solid ${border}` : "none",
-                  }}
-                >
-                  <span className={`transition-colors duration-200 ${i === 0 ? "text-brand-blue" : isDarkMode ? "text-white/30 group-hover:text-white/70" : "text-black/25 group-hover:text-black/60"}`}>
-                    {action.icon}
-                  </span>
-                  {action.label}
-                </button>
-              ))}
+              <div className="flex items-center flex-1">
+                {barActions.map((action, i) => (
+                  <button
+                    key={action.id}
+                    onClick={() => handleBarAction(action.id, action.href)}
+                    className={`group flex items-center gap-2.5 px-5 py-3.5 font-display text-[9px] font-bold tracking-[0.22em] uppercase transition-all duration-200 whitespace-nowrap flex-1 justify-center ${isDarkMode
+                      ? "text-white/50 hover:text-white hover:bg-white/8"
+                      : "text-black/45 hover:text-black hover:bg-black/8"
+                      } ${i === 0 ? "hover:text-brand-blue" : ""} ${i < barActions.length - 1 ? `border-r ${border}` : ""}`}
+                  >
+                    <span className={`transition-colors duration-200 ${i === 0 ? "text-brand-blue" : isDarkMode ? "text-white/30 group-hover:text-white/70" : "text-black/25 group-hover:text-black/60"}`}>
+                      {action.icon}
+                    </span>
+                    {action.label}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          </motion.div>
         </motion.div>
       </section>
+
+      {/* GAP/SPACING KOSONG BETWEEN PROFILE AND BEYOND TECHNICAL === */}
+      <div className="w-full h-16 md:h-24" />
 
       {/* ═══ BEYOND TECHNICAL ═══ */}
       <motion.section
@@ -398,30 +343,20 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.15 }}
         transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-        className={`w-full ${bgSection}`}
-        style={{ borderTop: `1px solid ${border}` }}
+        className={`w-full border-t ${border} ${isDarkMode ? "bg-black" : "bg-[#f4f4f0]"}`}
       >
         {/* Header row */}
-        <div
-          className="px-8 md:px-10 py-6 flex items-center gap-6"
-          style={{ borderBottom: `1px solid ${border}` }}
-        >
-          <span className={`font-geist text-[9px] font-bold tracking-[0.35em] uppercase ${fg}`}>
+        <div className={`px-8 md:px-10 py-6 flex items-center gap-6 border-b ${border}`}>
+          <span className={`font-geist text-[12px] font-bold tracking-[0.35em] uppercase ${fg}`}>
             Beyond Technical
           </span>
-          <div className="flex-1 h-px" style={{ background: border }} />
-          <span className={`font-geist text-[8px] tracking-[0.2em] uppercase ${isDarkMode ? "text-white/25" : "text-black/25"}`}>
-            soft skills · character
-          </span>
+          <div className={`flex-1 h-px ${isDarkMode ? "bg-white/10" : "bg-black/10"}`} />
         </div>
 
         {/* Two-column content */}
-        <div className="grid grid-cols-1 md:grid-cols-2" style={{ borderBottom: `1px solid ${border}` }}>
+        <div className={`grid grid-cols-1 md:grid-cols-2 border-b ${border}`}>
           {/* Left */}
-          <div
-            className="px-8 md:px-10 py-10"
-            style={{ borderBottom: `1px solid ${border}`, borderRight: `0px` }}
-          >
+          <div className={`px-8 md:px-10 py-10 border-b md:border-b-0 ${border}`}>
             <p className={`font-geist text-[13px] leading-[1.85] font-light ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
               Saya tipe yang lebih banyak diam. Bukan berarti tidak ada yang mau disampaikan — lebih ke saya lebih suka mengamati dulu, baca situasi, pahami polanya, baru bicara kalau memang perlu. Orang yang baru kenal saya mungkin butuh waktu lebih untuk benar-benar tahu saya seperti apa, dan itu tidak masalah. Saya tidak berusaha membuat diri sulit dipahami — memang begitu adanya.
             </p>
@@ -431,10 +366,7 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
           </div>
 
           {/* Right */}
-          <div
-            className="px-8 md:px-10 py-10"
-            style={{ borderLeft: `1px solid ${border}` }}
-          >
+          <div className={`px-8 md:px-10 py-10 md:border-l ${border}`}>
             <p className={`font-geist text-[13px] leading-[1.85] font-light ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
               Ekspresi saya biasanya keluar lewat visual — desain jadi semacam bahasa lain buat saya. Untuk musik, saya lebih ke pendengar yang serius; cari makna di balik lirik, pergi ke konser, duduk sendiri sambil dengerin album dari awal sampai akhir. Buat saya musik bukan sekadar latar, ada sesuatu yang lebih dalam di sana.
             </p>
@@ -466,8 +398,7 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
                 }`}
             >
               <div
-                className="px-5 py-4 flex items-center justify-between flex-shrink-0"
-                style={{ borderBottom: `1px solid ${border}` }}
+                className={`px-5 py-4 flex items-center justify-between flex-shrink-0 border-b ${border}`}
               >
                 <span className={`font-display text-[9px] font-bold tracking-[0.35em] uppercase ${fgMuted}`}>
                   CURRICULUM VITAE — RAFI MAULANA FIRDAUS

@@ -568,7 +568,7 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
     }
   };
 
-  const border = isDarkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
+  const border = isDarkMode ? "border-white/[0.08]" : "border-black/[0.08]";
   const fg = isDarkMode ? "text-white" : "text-black";
   const fgMuted = isDarkMode ? "text-white/40" : "text-black/35";
 
@@ -588,10 +588,7 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
       </div>
 
       {/* ═══ SECTION HEADER ═══ */}
-      <div
-        className="px-8 md:px-10 py-8 flex items-center gap-6"
-        style={{ borderBottom: `1px solid ${border}` }}
-      >
+      <div className={`px-8 md:px-10 py-8 flex items-center gap-6 border-b ${border}`}>
         <span className={`font-geist text-[22px] font-extrabold tracking-[0.25em] uppercase ${fg}`}>PROJECTS</span>
         <div className={`flex-1 h-px ${isDarkMode ? "bg-white/8" : "bg-black/8"}`} />
         <span className={`font-geist text-[9px] font-bold tracking-[0.3em] uppercase ${fgMuted}`}>
@@ -636,9 +633,10 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
 
         {/* Project Cards Grid - responsive 4 columns */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
-          {PROJECTS_DATA.filter(
-            (p) => p.category === selectedCategory
-          ).map((p) => {
+          {[...PROJECTS_DATA]
+            .filter((p) => p.category === selectedCategory)
+            .sort((a, b) => parseInt(b.year) - parseInt(a.year))
+            .map((p) => {
             if (p.category === "DESIGN") {
               return (
                 <div

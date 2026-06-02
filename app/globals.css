@@ -9,59 +9,93 @@
   --color-brand-blue: #0033ff;
 
   --animate-shake-top: shake-top 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  --animate-marquee: marquee 20s linear infinite;
 
   @keyframes shake-top {
-    0% {
-      transform: translateY(0);
-    }
+    0% { transform: translateY(0); }
+    25% { transform: translateY(12px); }
+    50% { transform: translateY(-6px); }
+    75% { transform: translateY(3px); }
+    100% { transform: translateY(0); }
+  }
 
-    25% {
-      transform: translateY(12px);
-    }
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
 
-    50% {
-      transform: translateY(-6px);
-    }
+  @keyframes flare-fast-anim {
+    0%   { transform: translate(-50%, -50%) scale(0.1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
+  }
 
-    75% {
-      transform: translateY(3px);
-    }
+  @keyframes flare-halo-anim {
+    0%   { transform: translate(-50%, -50%) scale(0.1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(2.6); opacity: 0; }
+  }
 
-    100% {
-      transform: translateY(0);
-    }
+  @keyframes flare-streak-anim {
+    0%   { transform: translate(-50%, -50%) scaleX(0.1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scaleX(1.4); opacity: 0; }
+  }
+
+  @keyframes gold-shimmer {
+    0%   { background-position: 100% 100%, 200% 0%; }
+    100% { background-position: 100% 100%, -200% 0%; }
+  }
+
+  /* ── CRT / VHS Overlay Keyframes ── */
+  @keyframes crt-flicker {
+    0%, 100% { opacity: 1; }
+    91%       { opacity: 1; }
+    92%       { opacity: 0.93; }
+    93%       { opacity: 1; }
+    96%       { opacity: 0.97; }
+    97%       { opacity: 1; }
+  }
+
+  @keyframes crt-roll {
+    0%   { transform: translateY(-30vh); }
+    100% { transform: translateY(130vh); }
+  }
+
+  @keyframes crt-noise {
+    0%   { transform: translate(0,    0   ); }
+    11%  { transform: translate(-2%,  -4% ); }
+    22%  { transform: translate( 3%,   2% ); }
+    33%  { transform: translate(-1%,   5% ); }
+    44%  { transform: translate( 4%,  -3% ); }
+    55%  { transform: translate(-3%,   1% ); }
+    66%  { transform: translate( 2%,  -2% ); }
+    77%  { transform: translate( 3%,   4% ); }
+    88%  { transform: translate(-2%,   2% ); }
+    100% { transform: translate( 0,    0  ); }
+  }
+
+  @keyframes crt-glow-pulse {
+    from { opacity: 0.7; }
+    to   { opacity: 1;   }
   }
 }
 
-body {
-  background-color: #000;
-  color: #fff;
-  font-family: 'SS Broad', sans-serif;
-  cursor: none;
-}
-
-* {
-  cursor: none !important;
-}
-
-/* Seamless Infinite Marquee */
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
-
-  100% {
-    transform: translateX(-50%);
+@layer base {
+  body {
+    background-color: #000;
+    color: #fff;
+    font-family: 'SS Broad', sans-serif;
   }
 }
 
-.animate-marquee {
-  display: inline-flex;
-  width: max-content;
-  animation: marquee 20s linear infinite;
+.crt-active-warp {
+  border-radius: 22px;
+  overflow: hidden;
+  transform: scale(1.02);
+  transform-origin: center center;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              border-radius 0.5s ease;
 }
 
-/* Lenis Smooth Scroll styles */
+/* Lenis Smooth Scroll */
 html.lenis,
 html.lenis body {
   height: auto;
@@ -83,36 +117,31 @@ html.lenis body {
   pointer-events: none;
 }
 
-/* =============================================
-   IRIDESCENT FLARE BURST — Hero click effect
-   ============================================= */
+/* ─── Marquee ─── */
+.animate-marquee {
+  display: inline-flex;
+  width: max-content;
+  animation: marquee 20s linear infinite;
+}
 
+/* ─── Flare Burst ─── */
 .flare-burst {
   width: 0;
   height: 0;
 }
 
-/* --- Concentric Additive Layers for Overexposed Blending (Geometry Dash style) --- */
-
-/* 1. Core White: Smallest, extremely bright white center with intense bloom */
 .flare-core-white {
   position: absolute;
   width: 60px;
   height: 60px;
   transform: translate(-50%, -50%) scale(0.2);
   border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 1) 0%,
-    rgba(255, 255, 255, 1) 50%,
-    transparent 100%
-  );
-  filter: blur(2px) brightness(3.5) drop-shadow(0 0 10px rgba(255, 255, 255, 1));
+  background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, transparent 100%);
+  filter: blur(2px) brightness(3.5) drop-shadow(0 0 10px rgba(255,255,255,1));
   mix-blend-mode: plus-lighter;
-  animation: flare-fast-anim 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: flare-fast-anim 0.4s cubic-bezier(0.16,1,0.3,1) forwards;
 }
 
-/* 2. Core Cyan: Medium, intense primary color glow with saturation boost */
 .flare-core-cyan {
   position: absolute;
   width: 110px;
@@ -120,10 +149,9 @@ html.lenis body {
   transform: translate(-50%, -50%) scale(0.2);
   border-radius: 50%;
   mix-blend-mode: plus-lighter;
-  animation: flare-fast-anim 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: flare-fast-anim 0.45s cubic-bezier(0.16,1,0.3,1) forwards;
 }
 
-/* 3. Core Magenta: Largest, highly saturated secondary color aura */
 .flare-core-magenta {
   position: absolute;
   width: 160px;
@@ -131,16 +159,9 @@ html.lenis body {
   transform: translate(-50%, -50%) scale(0.2);
   border-radius: 50%;
   mix-blend-mode: plus-lighter;
-  animation: flare-fast-anim 0.48s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: flare-fast-anim 0.48s cubic-bezier(0.16,1,0.3,1) forwards;
 }
 
-/* Shared extremely snappy scale up & fade animation */
-@keyframes flare-fast-anim {
-  0%   { transform: translate(-50%, -50%) scale(0.1); opacity: 1; }
-  100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
-}
-
-/* --- Outer halo ring: thin iridescent ring expanding outward --- */
 .flare-halo {
   position: absolute;
   width: 120px;
@@ -148,33 +169,14 @@ html.lenis body {
   transform: translate(-50%, -50%) scale(0.2);
   border-radius: 50%;
   mix-blend-mode: plus-lighter;
-  animation: flare-halo-anim 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: flare-halo-anim 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
 }
 
-@keyframes flare-halo-anim {
-  0%   { transform: translate(-50%, -50%) scale(0.1); opacity: 1; }
-  100% { transform: translate(-50%, -50%) scale(2.6); opacity: 0; }
-}
-
-/* --- Chromatic streak: horizontal lens anamorphic flare line --- */
 .flare-streak {
   position: absolute;
   width: 240px;
   height: 4px;
   transform: translate(-50%, -50%) scaleX(0.1);
   mix-blend-mode: plus-lighter;
-  animation: flare-streak-anim 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: flare-streak-anim 0.4s cubic-bezier(0.16,1,0.3,1) forwards;
 }
-
-@keyframes flare-streak-anim {
-  0%   { transform: translate(-50%, -50%) scaleX(0.1); opacity: 1; }
-  100% { transform: translate(-50%, -50%) scaleX(1.4); opacity: 0; }
-}
-
-/* ─── Gold Shimmer Border Animation ─── */
-@keyframes gold-shimmer {
-  0%   { background-position: 100% 100%, 200% 0%; }
-  100% { background-position: 100% 100%, -200% 0%; }
-}
-
-
