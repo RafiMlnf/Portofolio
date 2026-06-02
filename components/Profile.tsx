@@ -441,26 +441,6 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
             <p className={`font-geist text-[13px] leading-[1.85] font-light mt-5 ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
               Soal skill non-teknis — saya tidak terlalu yakin dengan daftar yang saya buat sendiri, tapi orang-orang di sekitar saya bilang saya bisa menenangkan situasi yang mulai kacau, dan saya tidak panik mudah. Mungkin itu yang dimaksud EQ. Entahlah, saya juga masih belajar mengenal diri sendiri.
             </p>
-            <div className="flex flex-wrap gap-2 mt-7">
-              {[
-                "Analytical Thinker",
-                "High EQ",
-                "Calm Under Pressure",
-                "Observant",
-                "Low-profile",
-                "Visual & Musical",
-              ].map((trait) => (
-                <span
-                  key={trait}
-                  className={`font-geist text-[7.5px] font-bold tracking-[0.3em] uppercase px-2.5 py-1.5 border ${isDarkMode
-                    ? "border-white/10 text-white/35"
-                    : "border-black/10 text-black/30"
-                    }`}
-                >
-                  {trait}
-                </span>
-              ))}
-            </div>
           </div>
         </div>
       </motion.section>

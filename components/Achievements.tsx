@@ -43,6 +43,7 @@ type ExperienceEntry = {
   location?: string;
   description: string;
   stack?: string[];
+  images?: string[];
 };
 
 
@@ -58,6 +59,7 @@ const EXPERIENCE: ExperienceEntry[] = [
     description:
       "Bergabung dalam Tim Digitalisasi internal PT Menara Terus Makmur (member of Astra Otoparts), perusahaan manufaktur komponen otomotif terkemuka. Bertanggung jawab penuh merancang dan membangun sistem digitalisasi operasional pabrik, dengan fokus utama mengembangkan aplikasi web jembatan timbang (Weighting Truck) untuk otomasi pencatatan logistik secara real-time.",
     stack: ["Next.js", "PostgreSQL", "Prisma ORM", "Tailwind CSS", "TypeScript"],
+    images: ["", "", ""],
   },
   {
     id: "exp-02",
@@ -69,6 +71,7 @@ const EXPERIENCE: ExperienceEntry[] = [
     description:
       "Melaksanakan pengabdian masyarakat dengan merancang dan merakit perangkat keras IoT penyiram tanaman otomatis berbasis mikrokontroler ESP32, yang dikoneksikan ke internet secara nirkabel dan terintegrasi dengan dasbor kontrol Blynk untuk pemantauan dan pengelolaan jarak jauh.",
     stack: ["ESP32", "Blynk", "IoT", "C++", "Embedded Systems"],
+    images: ["", "", ""],
   },
   {
     id: "exp-03",
@@ -80,6 +83,7 @@ const EXPERIENCE: ExperienceEntry[] = [
     description:
       "Diundang sebagai narasumber webinar dalam kurikulum OBE (Outcome-Based Education) Universitas Pelita Bangsa. Membawakan materi tentang tren terkini, best practices, serta standar UI/UX dalam pengembangan aplikasi mobile — mencakup desain adaptif, aksesibilitas, dan alur kerja modern berbasis Figma.",
     stack: ["UI/UX Design", "Figma", "Mobile Design", "OBE Curriculum"],
+    images: ["", "", ""],
   },
 ];
 
@@ -194,10 +198,15 @@ export default function Achievements({ isDarkMode }: { isDarkMode: boolean }) {
                       <motion.div
                         className="absolute z-0 rounded-full"
                         animate={{
-                          boxShadow: [
-                            "0 0 0 0px rgba(255,255,255,0.5)",
-                            "0 0 0 6px rgba(255,255,255,0)",
-                          ],
+                          boxShadow: isDarkMode
+                            ? [
+                                "0 0 0 0px rgba(255,255,255,0.5)",
+                                "0 0 0 6px rgba(255,255,255,0)",
+                              ]
+                            : [
+                                "0 0 0 0px rgba(0,51,255,0.85)",
+                                "0 0 0 6px rgba(0,51,255,0)",
+                              ],
                         }}
                         transition={{ repeat: Infinity, duration: 1.8, ease: "easeOut" }}
                         style={{ width: 56, height: 56 }}
@@ -215,10 +224,10 @@ export default function Achievements({ isDarkMode }: { isDarkMode: boolean }) {
                         height: 56,
                         background: isDarkMode ? "#171717" : "#ffffff",
                         border: item.id === "exp-01"
-                          ? "2px solid rgba(255,255,255,0.75)"
+                          ? (isDarkMode ? "2px solid rgba(255,255,255,0.75)" : "1px solid #0033ff")
                           : `1px solid ${border}`,
                         boxShadow: item.id === "exp-01"
-                          ? "0 0 8px rgba(255,255,255,0.3)"
+                          ? (isDarkMode ? "0 0 8px rgba(255,255,255,0.3)" : "none")
                           : `0 0 0 3px ${isDarkMode ? "#000000" : "#f4f4f0"}`,
                       }}
                     >
@@ -334,7 +343,7 @@ export default function Achievements({ isDarkMode }: { isDarkMode: boolean }) {
                             >
                               {item.description}
                             </p>
-                            {item.stack && item.stack.length > 0 && (
+                             {item.stack && item.stack.length > 0 && (
                               <div className="flex flex-wrap gap-1.5">
                                 {item.stack.map((tech) => (
                                   <span
@@ -347,6 +356,38 @@ export default function Achievements({ isDarkMode }: { isDarkMode: boolean }) {
                                 ))}
                               </div>
                             )}
+
+                            {/* Gallery of 3 photos */}
+                            <div className="grid grid-cols-3 gap-3 mt-5">
+                              {[0, 1, 2].map((idx) => {
+                                const imageUrl = item.images?.[idx];
+                                return (
+                                  <div
+                                    key={idx}
+                                    className={`relative aspect-video overflow-hidden border flex items-center justify-center group transition-all duration-300 ${isDarkMode ? "bg-white/[0.02] border-white/10 hover:border-white/20 hover:bg-white/[0.04]" : "bg-black/[0.02] border-black/10 hover:border-black/20 hover:bg-black/[0.04]"}`}
+                                  >
+                                    {imageUrl ? (
+                                      <Image
+                                        src={imageUrl}
+                                        alt={`${item.role} gallery image ${idx + 1}`}
+                                        fill
+                                        sizes="(max-width: 768px) 33vw, 240px"
+                                        className="object-cover transition-transform duration-350 group-hover:scale-105"
+                                      />
+                                    ) : (
+                                      <div className="flex flex-col items-center gap-1.5 pointer-events-none">
+                                        <svg className={`w-4 h-4 transition-colors duration-200 ${isDarkMode ? "text-white/20 group-hover:text-white/40" : "text-black/20 group-hover:text-black/40"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375 0 11-.75 0 .375 0 01.75 0z" />
+                                        </svg>
+                                        <span className={`font-geist text-[8px] font-bold tracking-widest uppercase ${isDarkMode ? "text-white/25 group-hover:text-white/45" : "text-black/25 group-hover:text-black/45"}`}>
+                                          IMAGE {idx + 1}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
                           </div>
                         </motion.div>
                       )}

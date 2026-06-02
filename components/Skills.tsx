@@ -283,9 +283,9 @@ const goldBorderStyle: React.CSSProperties = {
   animation: "gold-shimmer 2.4s linear infinite",
 };
 
-const goldBorderStyleLight: React.CSSProperties = {
+const blueBorderStyleLight: React.CSSProperties = {
   ...goldBorderStyle,
-  backgroundImage: "linear-gradient(#f4f4f0, #f4f4f0), linear-gradient(90deg, rgba(184,134,11,0.4) 0%, rgba(255,215,0,0.4) 30%, rgba(255,250,205,0.4) 50%, rgba(255,215,0,0.4) 70%, rgba(184,134,11,0.4) 100%)",
+  backgroundImage: "linear-gradient(#f4f4f0, #f4f4f0), linear-gradient(90deg, rgba(0,51,255,0.3) 0%, rgba(0,153,255,0.4) 30%, rgba(204,229,255,0.5) 50%, rgba(0,153,255,0.4) 70%, rgba(0,51,255,0.3) 100%)",
 };
 
 export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
@@ -405,12 +405,14 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
                   onClick={() => setActiveTool(tool)}
                   className={`flex items-center gap-3 px-4 py-1.5 border transition-colors duration-200 group cursor-pointer ${
                     tool.isFeatured
-                      ? "hover:bg-white/[0.06] hover:shadow-[3px_3px_0px_#ffd700]"
+                      ? (isDarkMode
+                          ? "hover:bg-white/[0.06] hover:shadow-[3px_3px_0px_#ffd700]"
+                          : "hover:bg-black/[0.04] hover:shadow-[3px_3px_0px_#0033ff]")
                       : isDarkMode
                       ? "bg-white/[0.02] border-white/10 hover:border-brand-blue hover:bg-white/[0.06] hover:shadow-[3px_3px_0px_#0033ff]"
                       : "bg-black/[0.02] border-black/10 hover:border-brand-blue hover:bg-black/[0.04] hover:shadow-[3px_3px_0px_#0033ff]"
                   }`}
-                  style={tool.isFeatured ? (isDarkMode ? goldBorderStyle : goldBorderStyleLight) : undefined}
+                  style={tool.isFeatured ? (isDarkMode ? goldBorderStyle : blueBorderStyleLight) : undefined}
                 >
                   <img
                     src={tool.iconUrl}
