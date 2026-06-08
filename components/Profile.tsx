@@ -21,6 +21,31 @@ const fadeIn = {
   }),
 };
 
+const floatingBarVariants = {
+  hidden: {
+    scaleX: 0.02,
+    scaleY: 0,
+    opacity: 0,
+    transformOrigin: "center",
+    transition: {
+      scaleX: { duration: 0.2, ease: "easeIn" as const },
+      scaleY: { delay: 0.1, duration: 0.15, ease: "easeIn" as const },
+      opacity: { delay: 0.25, duration: 0.1, ease: "linear" as const }
+    }
+  },
+  visible: {
+    scaleX: 1,
+    scaleY: 1,
+    opacity: 1,
+    transformOrigin: "center",
+    transition: {
+      opacity: { duration: 0.2, ease: "easeOut" as const },
+      scaleY: { duration: 0.35, ease: [0.175, 0.885, 0.32, 1.275] as const },
+      scaleX: { delay: 0.25, duration: 0.65, ease: [0.16, 1, 0.3, 1] as const },
+    }
+  }
+};
+
 /* ─── Data ─── */
 const tags = ["DESIGNER", "DEVELOPER", "CREATIVE"];
 
@@ -48,31 +73,11 @@ const barActions = [
     ),
   },
   {
-    id: "github",
-    label: "GITHUB",
-    href: "https://github.com/RafiMlnf",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
-        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-      </svg>
-    ),
-  },
-  {
-    id: "instagram",
-    label: "INSTAGRAM",
-    href: "https://instagram.com/rafimlnf",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
-        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-      </svg>
-    ),
-  },
-  {
-    id: "scroll-down",
-    label: "NEXT SECTION",
+    id: "contact",
+    label: "CONTACT ME",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-3.5 h-3.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
       </svg>
     ),
   },
@@ -81,6 +86,68 @@ const barActions = [
 /* ─── Component ─── */
 export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
   const [isCvOpen, setIsCvOpen] = React.useState(false);
+  const [isShimmering, setIsShimmering] = React.useState(false);
+  const shimmerTimeoutRef = React.useRef<any>(null);
+
+  React.useEffect(() => {
+    return () => {
+      if (shimmerTimeoutRef.current) clearTimeout(shimmerTimeoutRef.current);
+    };
+  }, []);
+
+  /* ── Typing Animation & Font Cycle ── */
+  const fonts = React.useMemo(() => [
+    "var(--font-reverie, 'REVERIE', sans-serif)",
+    "var(--font-gloock, 'Gloock', serif)",
+    "var(--font-pixelify, 'Pixelify Sans', sans-serif)",
+    "var(--font-tanamera, 'TANAMERA', sans-serif)",
+    "var(--font-wendy, 'Wendy Neue', sans-serif)",
+    "var(--font-glasfur, 'GLASFUR Trial', sans-serif)",
+    "var(--font-sans, 'SS Broad', sans-serif)",
+    "var(--font-geist, 'Geist', sans-serif)"
+  ], []);
+
+  const [displayText, setDisplayText] = React.useState("Rafi");
+  const [fontIndex, setFontIndex] = React.useState(7); // default starting with Geist
+  const [isDeleting, setIsDeleting] = React.useState(false);
+  const [typingSpeed, setTypingSpeed] = React.useState(1200); // initial pause
+
+  React.useEffect(() => {
+    let timer: NodeJS.Timeout;
+    const fullText = "Rafi";
+
+    const handleTyping = () => {
+      if (!isDeleting) {
+        if (displayText === fullText) {
+          setIsDeleting(true);
+          setTypingSpeed(1200); // pause 1.2s when full
+          return;
+        }
+        const nextText = fullText.slice(0, displayText.length + 1);
+        setDisplayText(nextText);
+        setTypingSpeed(60); // fast snappy typing
+      } else {
+        if (displayText === "") {
+          setIsDeleting(false);
+          let nextFontIndex;
+          do {
+            nextFontIndex = Math.floor(Math.random() * fonts.length);
+          } while (nextFontIndex === fontIndex && fonts.length > 1);
+
+          setFontIndex(nextFontIndex);
+          setTypingSpeed(250); // fast transition pause
+          return;
+        }
+        const nextText = fullText.slice(0, displayText.length - 1);
+        setDisplayText(nextText);
+        setTypingSpeed(30); // super fast deleting
+      }
+    };
+
+    timer = setTimeout(handleTyping, typingSpeed);
+    return () => clearTimeout(timer);
+  }, [displayText, isDeleting, typingSpeed, fontIndex, fonts]);
+
   const containerRef = React.useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -98,8 +165,8 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
       window.dispatchEvent(new CustomEvent("toggle-music-player"));
       return;
     }
-    if (id === "scroll-down") {
-      document.querySelector("#skills")?.scrollIntoView({ behavior: "smooth" });
+    if (id === "contact") {
+      document.querySelector("footer")?.scrollIntoView({ behavior: "smooth" });
       return;
     }
     if (href) window.open(href, "_blank", "noopener,noreferrer");
@@ -136,11 +203,29 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
                 className={`font-geist font-extrabold tracking-tighter leading-none ${fg}`}
                 style={{ fontFamily: "'Geist', sans-serif" }}
               >
-                <span className="block" style={{ fontSize: "clamp(48px, 4.8vw, 76px)", lineHeight: 0.9 }}>
-                  Rafi
-                </span>
+                <div 
+                  className="relative block" 
+                  style={{ 
+                    fontSize: "clamp(48px, 4.8vw, 76px)", 
+                    height: "0.9em"
+                  }}
+                >
+                  <span 
+                    className="absolute left-0 bottom-0 block font-normal whitespace-nowrap" 
+                    style={{ 
+                      fontSize: "1em", 
+                      lineHeight: 0.9,
+                      fontFamily: fonts[fontIndex],
+                      textTransform: "none",
+                      fontWeight: "normal"
+                    }}
+                  >
+                    {displayText}
+                    <span className="inline-block w-[3px] h-[0.85em] ml-1 bg-brand-blue animate-caret-blink" style={{ verticalAlign: "middle" }} />
+                  </span>
+                </div>
                 <span
-                  className={`block font-medium tracking-normal mt-2 ${fgMuted}`}
+                  className={`block font-medium tracking-normal ${fgMuted}`}
                   style={{ fontSize: "clamp(15px, 1.5vw, 21px)", lineHeight: 1.25 }}
                 >
                   Maulana Firdaus
@@ -302,13 +387,43 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
           className="flex-shrink-0 px-8 pb-6 pt-0"
         >
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            variants={floatingBarVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.3 }}
+            onAnimationStart={(definition) => {
+              if (definition === "visible") {
+                setIsShimmering(true);
+                if (shimmerTimeoutRef.current) clearTimeout(shimmerTimeoutRef.current);
+                shimmerTimeoutRef.current = setTimeout(() => {
+                  setIsShimmering(false);
+                }, 1000);
+              } else if (definition === "hidden") {
+                setIsShimmering(false);
+              }
+            }}
           >
             <div
-              className={`flex items-center gap-0 overflow-hidden backdrop-blur-md ${isDarkMode ? "bg-white/5 border border-white/10" : "bg-black/5 border border-black/10"}`}
+              className={`relative flex items-center gap-0 overflow-hidden backdrop-blur-md ${isDarkMode ? "bg-white/5 border border-white/10" : "bg-black/5 border border-black/10"}`}
             >
+              {isShimmering && (
+                <motion.div 
+                  className="absolute inset-0 pointer-events-none"
+                  initial={{ opacity: 1 }}
+                  animate={{ opacity: [1, 1, 0] }}
+                  transition={{ duration: 1, times: [0, 0.6, 1], ease: "easeOut" }}
+                  style={{
+                    border: '1px solid transparent',
+                    background: 'linear-gradient(90deg, rgba(184,134,11,0.6) 0%, rgba(255,215,0,0.8) 35%, rgba(255,250,205,0.9) 50%, rgba(255,215,0,0.8) 65%, rgba(184,134,11,0.6) 100%) border-box',
+                    WebkitMask: 'linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)',
+                    WebkitMaskComposite: 'xor',
+                    maskComposite: 'exclude',
+                    animation: 'gold-shimmer 1s linear infinite',
+                    backgroundSize: '200% 100%',
+                    zIndex: 10
+                  }}
+                />
+              )}
               {/* Left accent */}
               <div className="w-1 self-stretch bg-brand-blue flex-shrink-0" />
 
@@ -316,7 +431,7 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
                 {barActions.map((action, i) => (
                   <button
                     key={action.id}
-                    onClick={() => handleBarAction(action.id, action.href)}
+                    onClick={() => handleBarAction(action.id)}
                     className={`group flex items-center gap-2.5 px-5 py-3.5 font-display text-[9px] font-bold tracking-[0.22em] uppercase transition-all duration-200 whitespace-nowrap flex-1 justify-center ${isDarkMode
                       ? "text-white/50 hover:text-white hover:bg-white/8"
                       : "text-black/45 hover:text-black hover:bg-black/8"

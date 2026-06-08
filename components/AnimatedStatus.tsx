@@ -8,7 +8,7 @@ const TEXTS = [
   ": 0",
   "CREATIVE DEV",
   "HELLO, WELCOME",
-  "APA KABAR?",
+  "SUP?",
   "KEREN GAKK???",
   "; )"
 ];

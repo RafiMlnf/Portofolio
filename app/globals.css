@@ -1,15 +1,33 @@
 @import url('https://fonts.cdnfonts.com/css/ss-broad');
 @import url('https://fonts.cdnfonts.com/css/geist');
+@import url('https://fonts.cdnfonts.com/css/reverie');
+@import url('https://fonts.cdnfonts.com/css/gloock-2');
+@import url('https://fonts.cdnfonts.com/css/pixelify-sans');
+@import url('https://fonts.cdnfonts.com/css/tanamera');
+@import url('https://fonts.cdnfonts.com/css/wendy-neue');
+@import url('https://fonts.cdnfonts.com/css/glasfur-trial');
 @import "tailwindcss";
 
 @theme inline {
   --font-sans: 'SS Broad', sans-serif;
   --font-display: 'SS Broad', sans-serif;
   --font-geist: 'Geist', sans-serif;
+  --font-reverie: 'REVERIE', sans-serif;
+  --font-gloock: 'Gloock', serif;
+  --font-pixelify: 'Pixelify Sans', sans-serif;
+  --font-tanamera: 'TANAMERA', sans-serif;
+  --font-wendy: 'Wendy Neue', sans-serif;
+  --font-glasfur: 'GLASFUR Trial', sans-serif;
   --color-brand-blue: #0033ff;
 
   --animate-shake-top: shake-top 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
   --animate-marquee: marquee 20s linear infinite;
+  --animate-caret-blink: caret-blink 0.7s step-start infinite;
+
+  @keyframes caret-blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
 
   @keyframes shake-top {
     0% { transform: translateY(0); }
@@ -180,3 +198,65 @@ html.lenis body {
   mix-blend-mode: plus-lighter;
   animation: flare-streak-anim 0.4s cubic-bezier(0.16,1,0.3,1) forwards;
 }
+
+/* ─── Crystal Prism Dispersion (dark mode) ─── */
+@keyframes crystal-core-anim {
+  0%   { transform: translate(-50%, -50%) scale(0.1); opacity: 1; }
+  60%  { opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
+}
+
+@keyframes crystal-blob-anim {
+  0%   { opacity: 1; }
+  100% { opacity: 0; transform: var(--blob-init-transform) translateX(60px); }
+}
+
+@keyframes crystal-streak-anim {
+  0%   { opacity: 1;   transform: var(--streak-transform-start); }
+  100% { opacity: 0;   transform: var(--streak-transform-end); }
+}
+
+@keyframes crystal-halo-anim {
+  0%   { transform: translate(-50%, -50%) scale(0.1); opacity: 0.9; }
+  100% { transform: translate(-50%, -50%) scale(3);   opacity: 0; }
+}
+
+.crystal-core {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  transform: translate(-50%, -50%) scale(0.1);
+  border-radius: 50%;
+  animation: crystal-core-anim 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.crystal-blob {
+  position: absolute;
+  width: 180px;
+  height: 110px;
+  border-radius: 50%;
+  animation: crystal-blob-anim 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.crystal-streak-main {
+  position: absolute;
+  width: 420px;
+  height: 28px;
+  animation: crystal-streak-anim 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.crystal-streak-thin {
+  position: absolute;
+  width: 340px;
+  height: 14px;
+  animation: crystal-streak-anim 0.52s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.crystal-halo {
+  position: absolute;
+  width: 300px;
+  height: 180px;
+  transform: translate(-50%, -50%) scale(0.1);
+  border-radius: 50%;
+  animation: crystal-halo-anim 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

@@ -9,29 +9,29 @@ const skillAreas = [
     number: "01",
     title: "Frontend Development",
     description:
-      "Membangun antarmuka web modern yang responsif dan performan menggunakan React, Next.js, dan Tailwind CSS. Fokus pada pengalaman pengguna yang mulus dan kode yang bersih.",
-    tags: ["React", "Next.js", "TypeScript", "Tailwind CSS"],
+      "Merancang dan mendevelop antarmuka web modern yang responsif, teroptimasi, dan performan tinggi menggunakan Next.js, TypeScript, dan Tailwind CSS. Berfokus pada integrasi data dinamis serta efisiensi render.",
+    tags: ["Next.js", "TypeScript", "Tailwind CSS", "HTML5 & CSS3"],
   },
   {
     number: "02",
     title: "UI & Visual Design",
     description:
-      "Merancang tampilan yang estetis dan fungsional mulai dari wireframe hingga high-fidelity mockup. Terbiasa bekerja dengan sistem desain dan tipografi.",
-    tags: ["Figma", "Photoshop", "Branding", "Typography"],
+      "Menciptakan desain antarmuka pengguna yang estetik, intuitif, dan fungsional berbasis tata letak brutalist & minimalis. Berpengalaman menyusun design system, aset visual promosi, hingga tipografi kontras tinggi.",
+    tags: ["Figma", "Photoshop", "Design System", "Brutalist Layout"],
   },
   {
     number: "03",
     title: "Backend & Database",
     description:
-      "Membangun REST API, mengelola database, dan mengintegrasikan sistem backend dengan frontend. Pengalaman dengan PHP, Node.js, MySQL, dan Redis.",
-    tags: ["PHP", "Node.js", "MySQL", "Redis"],
+      "Merancang arsitektur database relasional, membangun sistem RESTful API, dan mengelola alur integrasi data backend. Memiliki keahlian kuat dalam pengembangan sistem berbasis PHP, MySQL, PostgreSQL, dan Redis.",
+    tags: ["PHP", "PostgreSQL", "MySQL", "Redis"],
   },
   {
     number: "04",
     title: "Mobile Development",
     description:
-      "Mengembangkan aplikasi mobile multiplatform dengan Flutter dan Dart, dari proses desain UI hingga deployment ke Android.",
-    tags: ["Flutter", "Dart", "Android", "Cross-platform"],
+      "Mengembangkan aplikasi mobile lintas platform dengan Flutter dan Dart secara end-to-end. Berfokus pada performa animasi yang mulus, arsitektur manajemen state yang terstruktur, hingga deployment Android.",
+    tags: ["Flutter", "Dart", "Android SDK", "Cross-platform"],
   },
 ];
 
@@ -60,13 +60,6 @@ const toolGroups: ToolGroup[] = [
         description: "Framework React modern untuk produksi dengan Server-Side Rendering (SSR), routing otomatis, API routes, dan optimasi performa tinggi bawaan.",
         invertDark: true,
         isFeatured: true,
-        since: "2024"
-      },
-      {
-        name: "React",
-        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
-        description: "Library JavaScript terpopuler untuk membangun antarmuka pengguna interaktif secara deklaratif menggunakan komponen modular yang reusable.",
-        invertDark: false,
         since: "2024"
       },
       {
@@ -108,15 +101,8 @@ const toolGroups: ToolGroup[] = [
         iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg",
         description: "Bahasa scripting sisi server yang andal dan luas digunakan untuk membangun web dinamis, memproses data form, serta menghubungkan database.",
         invertDark: false,
-        since: "2023"
-      },
-      {
-        name: "Node.js",
-        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg",
-        description: "Runtime environment JavaScript di luar browser berbasis mesin V8, ideal untuk membangun layanan backend berskala besar, real-time, dan berorientasi event.",
-        invertDark: false,
         isFeatured: true,
-        since: "2024"
+        since: "2023"
       },
       {
         name: "MySQL",

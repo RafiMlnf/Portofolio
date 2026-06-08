@@ -21,6 +21,7 @@ interface Project {
   tags: string[];
   liveUrl?: string;
   imageUrl?: string;
+  status?: string;
 }
 
 const PROJECTS_DATA: Project[] = [
@@ -33,6 +34,29 @@ const PROJECTS_DATA: Project[] = [
     desc: "Mesin analisis musik bertenaga AI yang genre-aware. Menganalisis audio dengan client-side DSP, Groq LLM, dan pencarian lirik hybrid tanpa perlu upload.",
     tags: ["Next.js", "TypeScript", "Web Audio API", "Groq AI", "Vercel"],
     liveUrl: "https://solfeggio-analyzer.vercel.app/",
+    status: "AI AUDIO LAB",
+  },
+  {
+    id: 12,
+    title: "DELIVERY ORDER VENDOR",
+    category: "DEVELOPMENT",
+    year: "2026",
+    desc: "Sistem monitoring performa logistik vendor (KPI & DO Generator) PT Menara Terus Makmur (Astra Otoparts Group) dengan custom SVG charting engine dan pemrosesan data spreadsheet Excel SAP.",
+    tags: ["Next.js", "React 19", "TypeScript", "Tailwind CSS", "Custom SVG Chart", "Excel Parser"],
+    liveUrl: "https://github.com/RafiMlnf/DOV",
+    imageUrl: "/assets/img/ssproject/dov-flow.jpeg",
+    status: "ENTERPRISE SYSTEM",
+  },
+  // ── HEAVY: Fullstack Weighbridge System ──
+  {
+    id: 13,
+    title: "WEIGHTING TRUCK",
+    category: "DEVELOPMENT",
+    year: "2026",
+    desc: "Sistem jembatan timbang (weighbridge) truk logistik PT Menara Terus Makmur (Astra Otoparts Group) untuk pencatatan otomatis berat gross, tare, dan net terintegrasi database PostgreSQL.",
+    tags: ["Next.js", "PostgreSQL", "Prisma ORM", "TypeScript", "Tailwind CSS", "NextAuth.js"],
+    liveUrl: "https://github.com/RafiMlnf/Truck-Weighting",
+    status: "ENTERPRISE SYSTEM",
   },
   // ── HEAVY: Fullstack Backend + Real DB + GPS ──
   {
@@ -44,6 +68,7 @@ const PROJECTS_DATA: Project[] = [
     tags: ["Native PHP", "MySQL", "Leaflet.js", "Geolocation", "Tailwind CSS"],
     liveUrl: "https://github.com/RafiMlnf/ELINA",
     imageUrl: "/assets/img/ssproject/elina.png",
+    status: "MONITORING SYSTEM",
   },
   // ── HEAVY: Fullstack + Cloud CDN ──
   {
@@ -54,6 +79,7 @@ const PROJECTS_DATA: Project[] = [
     desc: "Platform arsip digital privat untuk sirkel pertemanan — menyimpan foto, cerita hangout, dan trip timeline dengan Cloudinary CDN.",
     tags: ["Next.js", "TypeScript", "Tailwind", "Cloudinary"],
     liveUrl: "https://github.com/RafiMlnf/Tadika",
+    status: "PERSONAL ARCHIVE",
   },
   // ── MEDIUM-HIGH: Low-level Cross-compilation (C → Wasm) ──
   {
@@ -64,6 +90,7 @@ const PROJECTS_DATA: Project[] = [
     desc: "Eksperimen perbandingan kecepatan eksekusi JavaScript vs WebAssembly langsung di browser menggunakan Emscripten & C source.",
     tags: ["WebAssembly", "C", "Emscripten", "JavaScript", "Vercel"],
     liveUrl: "https://jsvswasm.vercel.app/",
+    status: "PERFORMANCE LAB",
   },
   // ── MEDIUM: Native Mobile (Java + Android SDK) ──
   {
@@ -74,6 +101,7 @@ const PROJECTS_DATA: Project[] = [
     desc: "Repositori tugas akademik Pemrograman Mobile 1 — kumpulan modul Android Studio dari Hello World hingga Fragment & Maps integration.",
     tags: ["Java", "Android SDK", "Android Studio", "XML"],
     liveUrl: "https://github.com/RafiMlnf/AndroidStudio-1",
+    status: "MOBILE DEV LAB",
   },
   // ── MEDIUM: Fullstack Booking Simulation (Vanilla HTML/CSS/JS + Bootstrap) ──
   {
@@ -84,6 +112,7 @@ const PROJECTS_DATA: Project[] = [
     desc: "Sistem informasi pemesanan tiket konser berbasis web dengan simulasi otorisasi multi-role, katalog dinamis, dan kalkulator kuota real-time.",
     tags: ["HTML5", "CSS3", "Bootstrap", "Vanilla JS", "Vercel"],
     liveUrl: "https://rpl-konser-ku.vercel.app",
+    status: "SYSTEM SIMULATION",
   },
   // ── LIGHT: Frontend only ──
   {
@@ -94,6 +123,7 @@ const PROJECTS_DATA: Project[] = [
     desc: "Toolkit riset UX komprehensif dengan Persona Template, Journey Map, dan Usability Checklist — dikembangkan sebagai tugas Metodologi Penelitian.",
     tags: ["HTML5", "CSS", "JavaScript", "Vercel"],
     liveUrl: "https://ux-research-tool.vercel.app/",
+    status: "UTILITY TOOLKIT",
   },
   // ── DESIGN: Complete 34 Local Assets Gallery ──
   {
@@ -632,13 +662,199 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
         </div>
 
         {/* Project Cards Grid - responsive 4 columns */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
-          {[...PROJECTS_DATA]
-            .filter((p) => p.category === selectedCategory)
-            .sort((a, b) => parseInt(b.year) - parseInt(a.year))
-            .map((p) => {
-            if (p.category === "DESIGN") {
-              return (
+        {selectedCategory === "DEVELOPMENT" ? (
+          <div className="space-y-16 w-full animate-fadeIn">
+            {/* Grid 1: Enterprise & Information Systems */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <h3 className={`font-geist text-xs sm:text-sm font-extrabold tracking-[0.2em] ${fg}`}>
+                  ENTERPRISE & INFORMATION SYSTEMS
+                </h3>
+                <div className={`flex-1 h-px ${isDarkMode ? "bg-white/10" : "bg-black/10"}`} />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
+                {[...PROJECTS_DATA]
+                  .filter((p) => p.category === "DEVELOPMENT" && [12, 9, 11, 7, 13].includes(p.id))
+                  .sort((a, b) => parseInt(b.year) - parseInt(a.year))
+                  .map((p) => (
+                    <div
+                      key={p.id}
+                      onClick={() => handleProjectClick(p)}
+                      className={`border p-4 flex flex-col justify-between transition-all duration-300 group relative hover:-translate-y-1 hover:shadow-[4px_4px_0px_#0033ff] cursor-pointer ${
+                        isDarkMode
+                          ? "border-white/10 hover:border-white bg-[#0e0e0e]"
+                          : "border-black/10 hover:border-black bg-white"
+                      }`}
+                    >
+                      {/* Status & Year */}
+                      <div className="flex justify-between items-center mb-3 text-[8px] font-geist font-bold tracking-widest">
+                        <span className="flex items-center text-brand-blue uppercase">
+                          {p.status || p.category}
+                        </span>
+                        <span className="opacity-60">{p.year}</span>
+                      </div>
+
+                      {/* Preview Container: Image Preview or Live Site Iframe or Github Link */}
+                      {p.imageUrl ? (
+                        <div className={`w-full aspect-video mb-4 border relative overflow-hidden bg-[#121212] group/iframe ${
+                          isDarkMode ? "border-white/10" : "border-black/10"
+                        }`}>
+                          <Image
+                            src={p.imageUrl}
+                            alt={p.title}
+                            fill
+                            sizes="(max-width: 640px) 100vw, 300px"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            priority={p.id === 9}
+                            quality={50}
+                          />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 text-[9px] font-geist font-bold tracking-widest text-white backdrop-blur-[1px]">
+                            OPEN PROJECT DETAILS ↗
+                          </div>
+                        </div>
+                      ) : p.liveUrl && (
+                        p.liveUrl.includes("github.com") ? (
+                          <GithubPreview src={p.liveUrl} isDarkMode={isDarkMode} />
+                        ) : (
+                          <IframePreview src={p.liveUrl} title={p.title} isDarkMode={isDarkMode} />
+                        )
+                      )}
+
+                      {/* Title & Description */}
+                      <div className="mb-4">
+                        <h3 className="font-geist text-xs sm:text-sm font-bold tracking-wider mb-1.5 group-hover:text-brand-blue transition-colors">
+                          {p.title}
+                        </h3>
+                        <p className="font-geist text-[10px] sm:text-[11px] font-light leading-relaxed opacity-85">
+                          {p.desc}
+                        </p>
+                      </div>
+
+                      {/* Footer tags and Arrow */}
+                      <div className="flex justify-between items-end mt-auto pt-3 border-t border-neutral-800">
+                        <div className="flex flex-wrap gap-1.5">
+                          {p.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className={`text-[7px] font-geist tracking-widest px-1.5 py-0.5 border ${
+                                isDarkMode
+                                  ? "border-white/10 text-white/60 bg-[#161616]"
+                                  : "border-black/10 text-black/60 bg-neutral-100"
+                              }`}
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                        {/* Arrow */}
+                        <div className="text-brand-blue font-bold text-sm sm:text-base group-hover:translate-x-1.5 transition-transform duration-300">
+                          →
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+
+            {/* Grid 2: Experimental Labs & R&D */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <h3 className={`font-geist text-xs sm:text-sm font-extrabold tracking-[0.2em] ${fg}`}>
+                  EXPERIMENTAL LABS & PERSONAL R&D
+                </h3>
+                <div className={`flex-1 h-px ${isDarkMode ? "bg-white/10" : "bg-black/10"}`} />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
+                {[...PROJECTS_DATA]
+                  .filter((p) => p.category === "DEVELOPMENT" && [1, 8, 4, 10].includes(p.id))
+                  .sort((a, b) => parseInt(b.year) - parseInt(a.year))
+                  .map((p) => (
+                    <div
+                      key={p.id}
+                      onClick={() => handleProjectClick(p)}
+                      className={`border p-4 flex flex-col justify-between transition-all duration-300 group relative hover:-translate-y-1 hover:shadow-[4px_4px_0px_#0033ff] cursor-pointer ${
+                        isDarkMode
+                          ? "border-white/10 hover:border-white bg-[#0e0e0e]"
+                          : "border-black/10 hover:border-black bg-white"
+                      }`}
+                    >
+                      {/* Status & Year */}
+                      <div className="flex justify-between items-center mb-3 text-[8px] font-geist font-bold tracking-widest">
+                        <span className="flex items-center text-brand-blue uppercase">
+                          {p.status || p.category}
+                        </span>
+                        <span className="opacity-60">{p.year}</span>
+                      </div>
+
+                      {/* Preview Container: Image Preview or Live Site Iframe or Github Link */}
+                      {p.imageUrl ? (
+                        <div className={`w-full aspect-video mb-4 border relative overflow-hidden bg-[#121212] group/iframe ${
+                          isDarkMode ? "border-white/10" : "border-black/10"
+                        }`}>
+                          <Image
+                            src={p.imageUrl}
+                            alt={p.title}
+                            fill
+                            sizes="(max-width: 640px) 100vw, 300px"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            priority={p.id === 9}
+                            quality={50}
+                          />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 text-[9px] font-geist font-bold tracking-widest text-white backdrop-blur-[1px]">
+                            OPEN PROJECT DETAILS ↗
+                          </div>
+                        </div>
+                      ) : p.liveUrl && (
+                        p.liveUrl.includes("github.com") ? (
+                          <GithubPreview src={p.liveUrl} isDarkMode={isDarkMode} />
+                        ) : (
+                          <IframePreview src={p.liveUrl} title={p.title} isDarkMode={isDarkMode} />
+                        )
+                      )}
+
+                      {/* Title & Description */}
+                      <div className="mb-4">
+                        <h3 className="font-geist text-xs sm:text-sm font-bold tracking-wider mb-1.5 group-hover:text-brand-blue transition-colors">
+                          {p.title}
+                        </h3>
+                        <p className="font-geist text-[10px] sm:text-[11px] font-light leading-relaxed opacity-85">
+                          {p.desc}
+                        </p>
+                      </div>
+
+                      {/* Footer tags and Arrow */}
+                      <div className="flex justify-between items-end mt-auto pt-3 border-t border-neutral-800">
+                        <div className="flex flex-wrap gap-1.5">
+                          {p.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className={`text-[7px] font-geist tracking-widest px-1.5 py-0.5 border ${
+                                isDarkMode
+                                  ? "border-white/10 text-white/60 bg-[#161616]"
+                                  : "border-black/10 text-black/60 bg-neutral-100"
+                              }`}
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                        {/* Arrow */}
+                        <div className="text-brand-blue font-bold text-sm sm:text-base group-hover:translate-x-1.5 transition-transform duration-300">
+                          →
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* DESIGN category */
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full animate-fadeIn">
+            {[...PROJECTS_DATA]
+              .filter((p) => p.category === "DESIGN")
+              .sort((a, b) => parseInt(b.year) - parseInt(a.year))
+              .map((p) => (
                 <div
                   key={p.id}
                   onClick={() => p.imageUrl && setLightboxImage({ src: p.imageUrl, title: p.title })}
@@ -653,6 +869,7 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                     sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                     priority={p.id === 3 || p.id === 6}
+                    quality={50}
                   />
                   <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200 z-10">
                     <span className="text-[10px] tracking-widest font-bold text-white bg-black/60 px-3 py-1.5 border border-white/20">
@@ -660,88 +877,9 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                     </span>
                   </div>
                 </div>
-              );
-            }
-
-            return (
-              <div
-                key={p.id}
-                onClick={() => handleProjectClick(p)}
-                className={`border p-4 flex flex-col justify-between transition-all duration-300 group relative hover:-translate-y-1 hover:shadow-[4px_4px_0px_#0033ff] cursor-pointer ${
-                  isDarkMode
-                    ? "border-white/10 hover:border-white bg-[#0e0e0e]"
-                    : "border-black/10 hover:border-black bg-white"
-                }`}
-              >
-                {/* Category & Year */}
-                <div className="flex justify-between items-center mb-3 text-[8px] font-geist font-bold tracking-widest opacity-60">
-                  <span className="flex items-center gap-1.5">
-                    <CategoryIcon category={p.category} className="w-2.5 h-2.5 text-brand-blue" />
-                    {p.category}
-                  </span>
-                  <span>{p.year}</span>
-                </div>
-
-                {/* Preview Container: Image Preview or Live Site Iframe or Github Link */}
-                {p.imageUrl ? (
-                  <div className={`w-full aspect-video mb-4 border relative overflow-hidden bg-[#121212] group/iframe ${
-                    isDarkMode ? "border-white/10" : "border-black/10"
-                  }`}>
-                    <Image
-                      src={p.imageUrl}
-                      alt={p.title}
-                      fill
-                      sizes="(max-width: 640px) 100vw, 300px"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      priority={p.id === 9}
-                    />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 text-[9px] font-geist font-bold tracking-widest text-white backdrop-blur-[1px]">
-                      OPEN PROJECT DETAILS ↗
-                    </div>
-                  </div>
-                ) : p.liveUrl && (
-                  p.liveUrl.includes("github.com") ? (
-                    <GithubPreview src={p.liveUrl} isDarkMode={isDarkMode} />
-                  ) : (
-                    <IframePreview src={p.liveUrl} title={p.title} isDarkMode={isDarkMode} />
-                  )
-                )}
-
-                {/* Title & Description */}
-                <div className="mb-4">
-                  <h3 className="font-geist text-xs sm:text-sm font-bold tracking-wider mb-1.5 group-hover:text-brand-blue transition-colors">
-                    {p.title}
-                  </h3>
-                  <p className="font-geist text-[10px] sm:text-[11px] font-light leading-relaxed opacity-85">
-                    {p.desc}
-                  </p>
-                </div>
-
-                {/* Footer tags and Arrow */}
-                <div className="flex justify-between items-end mt-auto pt-3 border-t border-neutral-800">
-                  <div className="flex flex-wrap gap-1.5">
-                    {p.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className={`text-[7px] font-geist tracking-widest px-1.5 py-0.5 border ${
-                          isDarkMode
-                            ? "border-white/10 text-white/60 bg-[#161616]"
-                            : "border-black/10 text-black/60 bg-neutral-100"
-                        }`}
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  {/* Arrow */}
-                  <div className="text-brand-blue font-bold text-sm sm:text-base group-hover:translate-x-1.5 transition-transform duration-300">
-                    →
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              ))}
+          </div>
+        )}
       </div>
 
       {/* ═══ DETAIL MODAL ═══ */}
@@ -874,24 +1012,26 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                         {/* Tech Stack */}
                         {projectDetail.techStack && projectDetail.techStack.length > 0 && (
                           <div>
-                            <p className={`font-geist text-[9px] font-bold tracking-[0.25em] mb-3.5 ${
+                            <p className={`font-geist text-[9px] font-bold tracking-[0.25em] mb-3 ${
                               isDarkMode ? "text-white/40" : "text-black/40"
                             }`}>TECH STACK</p>
-                            <div className="space-y-3.5">
-                              {projectDetail.techStack.map((group) => (
-                                <div key={group.label} className="space-y-1">
-                                  <span className={`font-geist text-[8px] font-bold tracking-widest block uppercase ${
-                                    isDarkMode ? "text-white/40" : "text-black/40"
-                                  }`}>{group.label}</span>
-                                  <div className="flex flex-wrap gap-1">
-                                    {group.items.map((item) => (
-                                      <span key={item} className={`font-geist text-[9px] font-medium px-2 py-0.5 border ${
-                                        isDarkMode ? "border-white/15 text-white/80 bg-white/5" : "border-black/15 text-black/80 bg-black/5"
-                                      }`}>{item}</span>
-                                    ))}
-                                  </div>
-                                </div>
-                              ))}
+                            <div className="flex flex-wrap gap-1.5">
+                              {Array.from(
+                                new Set(projectDetail.techStack.flatMap((group) => group.items))
+                              )
+                                .slice(0, 6)
+                                .map((item) => (
+                                  <span
+                                    key={item}
+                                    className={`font-geist text-[9px] font-medium px-2.5 py-0.5 border ${
+                                      isDarkMode
+                                        ? "border-white/15 text-white/80 bg-white/5"
+                                        : "border-black/15 text-black/80 bg-black/5"
+                                    }`}
+                                  >
+                                    {item}
+                                  </span>
+                                ))}
                             </div>
                           </div>
                         )}

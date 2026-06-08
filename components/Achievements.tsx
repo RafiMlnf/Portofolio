@@ -70,13 +70,13 @@ const EXPERIENCE: ExperienceEntry[] = [
     subProjects: [
       {
         name: "WEIGHTING TRUCK",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-        stack: ["Next.js", "PostgreSQL", "Prisma ORM", "TypeScript"],
+        description: "Sistem jembatan timbang (weighbridge) truk logistik PT Menara Terus Makmur (Astra Otoparts Group) untuk pencatatan otomatis berat gross, tare, dan net terintegrasi database PostgreSQL.",
+        stack: ["Next.js", "PostgreSQL", "Prisma ORM", "TypeScript", "Tailwind CSS", "NextAuth.js"],
       },
       {
         name: "DOV",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.",
-        stack: ["Next.js", "PostgreSQL", "TypeScript"],
+        description: "Sistem monitoring performa logistik vendor (KPI & DO Generator) dengan custom SVG charting engine dan pemrosesan data spreadsheet Excel SAP untuk mengotomatiskan kalkulasi KPI dari data SAP secara real-time.",
+        stack: ["Next.js", "NestJS (v11)", "TypeScript", "PostgreSQL", "Prisma Client", "Tailwind CSS", "Custom SVG Chart", "Excel Parser"],
       },
       {
         name: "MPS",
@@ -355,19 +355,6 @@ export default function Achievements({ isDarkMode }: { isDarkMode: boolean }) {
                             >
                               {item.description}
                             </p>
-                             {item.stack && item.stack.length > 0 && (
-                              <div className="flex flex-wrap gap-1.5">
-                                {item.stack.map((tech) => (
-                                  <span
-                                    key={tech}
-                                    className={`font-geist text-[8px] font-bold tracking-[0.2em] uppercase px-2 py-0.5 border ${border} ${fgMuted}`}
-                                  >
-                                    {tech}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-
                             {/* Gallery of photos */}
                             {item.images && item.images.filter(img => img.trim() !== "").length > 0 && (
                               <div className={`grid gap-3 mt-5 items-start ${

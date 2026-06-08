@@ -20,6 +20,7 @@ interface Letter {
   opacity?: number;
   targetScale?: number;
   targetOpacity?: number;
+  dots?: Array<{ x: number; y: number; maxRadius: number }>;
 }
 
 interface Shockwave {
@@ -50,6 +51,7 @@ const FLARE_SCHEMES = [
 
 export default function Hero({ isDarkMode }: { isDarkMode: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const textCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const [flares, setFlares] = useState<Flare[]>([]);
   const flareIdRef = useRef(0);
 
@@ -58,6 +60,8 @@ export default function Hero({ isDarkMode }: { isDarkMode: boolean }) {
   const shockwavesRef = useRef<Shockwave[]>([]);
   const isLerpingRef = useRef(false);
   const requestRef = useRef<number | null>(null);
+  // Stable anchor assignment: letterIndex → anchorIndex (random, assigned once per movement burst)
+  const trackLineMapRef = useRef<Map<number, number>>(new Map());
 
   // Set up Canvas and Physics Loop
   useEffect(() => {
@@ -94,6 +98,44 @@ export default function Hero({ isDarkMode }: { isDarkMode: boolean }) {
         const letterX = currentX + charWidth / 2;
         currentX += charWidth;
 
+        // Pre-calculate local halftone dots
+        const dotsList: Array<{ x: number; y: number; maxRadius: number }> = [];
+        const pad = 20;
+        const offW = Math.ceil(charWidth + pad * 2);
+        const offH = Math.ceil(fontSize + pad * 2);
+
+        const offscreen = document.createElement("canvas");
+        offscreen.width = offW;
+        offscreen.height = offH;
+        const octx = offscreen.getContext("2d");
+        if (octx) {
+          octx.font = `normal ${fontSize}px 'SS Broad', sans-serif`;
+          octx.textAlign = "center";
+          octx.textBaseline = "middle";
+          octx.fillStyle = "white";
+          octx.fillText(m.char, offW / 2, offH / 2);
+
+          const imgData = octx.getImageData(0, 0, offW, offH);
+          const data = imgData.data;
+
+          const step = 10; // grid step size for dots
+          const maxDotRadius = step * 0.5;
+
+          for (let py = 0; py < offH; py += step) {
+            for (let px = 0; px < offW; px += step) {
+              const idx = (py * offW + px) * 4;
+              const alpha = data[idx + 3];
+              if (alpha > 35) {
+                dotsList.push({
+                  x: px - offW / 2,
+                  y: py - offH / 2,
+                  maxRadius: (alpha / 255) * maxDotRadius
+                });
+              }
+            }
+          }
+        }
+
         return {
           char: m.char,
           x: letterX,
@@ -107,7 +149,8 @@ export default function Hero({ isDarkMode }: { isDarkMode: boolean }) {
           height: fontSize,
           baseX: letterX,
           baseY: centerY,
-          resting: true
+          resting: true,
+          dots: dotsList
         };
       });
     };
@@ -142,6 +185,18 @@ export default function Hero({ isDarkMode }: { isDarkMode: boolean }) {
       canvas.style.width = `${rect.width}px`;
       canvas.style.height = `${rect.height}px`;
       ctx.scale(dpr, dpr);
+
+      // Setup/resize the offscreen text canvas
+      if (!textCanvasRef.current) {
+        textCanvasRef.current = document.createElement("canvas");
+      }
+      textCanvasRef.current.width = canvas.width;
+      textCanvasRef.current.height = canvas.height;
+      const tctx = textCanvasRef.current.getContext("2d");
+      if (tctx) {
+        tctx.setTransform(1, 0, 0, 1, 0, 0);
+        tctx.scale(dpr, dpr);
+      }
 
       initializeLetters(rect.width, rect.height);
     };
@@ -322,22 +377,330 @@ export default function Hero({ isDarkMode }: { isDarkMode: boolean }) {
         ctx.lineWidth = 2.5;
         ctx.stroke();
       });
-
       // 2. Draw Letters
-      const fontSize = Math.min(width * 0.11, 130);
-      ctx.font = `normal ${fontSize}px 'SS Broad', sans-serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillStyle = isDarkMode ? "#ffffff" : "#000000";
+      const textCanvas = textCanvasRef.current;
+      const tctx = textCanvas?.getContext("2d");
 
-      letters.forEach(l => {
+      if (tctx) {
+        // Clear the offscreen buffer canvas first
+        tctx.clearRect(0, 0, width, height);
+
+        const fontSize = Math.min(width * 0.11, 130);
+        tctx.font = `normal ${fontSize}px 'SS Broad', sans-serif`;
+        tctx.textAlign = "center";
+        tctx.textBaseline = "middle";
+
+        const cursorRadius = 140; // proximity radius for dots
+        const cutoutRadius = 110; // solid letter cutout radius (smaller to overlap dots)
+
+        if (mousePos.x !== -1000) {
+          // ── A. DRAW SOLID LETTERS WITH HOLE ON BUFFER ──
+          tctx.save();
+          tctx.fillStyle = isDarkMode ? "#ffffff" : "#000000";
+          letters.forEach(l => {
+            tctx.save();
+            tctx.translate(l.x, l.y);
+            tctx.rotate(l.angle);
+            tctx.scale(l.scale || 1.0, l.scale || 1.0);
+            tctx.fillText(l.char, 0, 0);
+            tctx.restore();
+          });
+
+          // Cut a hole using destination-out with a very narrow gradient around cutoutRadius to ensure smooth vector edge without dark glow
+          tctx.globalCompositeOperation = "destination-out";
+          const grad = tctx.createRadialGradient(
+            mousePos.x, mousePos.y, cutoutRadius - 4,
+            mousePos.x, mousePos.y, cutoutRadius + 4
+          );
+          grad.addColorStop(0, "rgba(0, 0, 0, 1.0)");
+          grad.addColorStop(1, "rgba(0, 0, 0, 0.0)");
+          tctx.fillStyle = grad;
+          tctx.beginPath();
+          tctx.arc(mousePos.x, mousePos.y, cutoutRadius + 4, 0, Math.PI * 2);
+          tctx.fill();
+          tctx.restore();
+
+          // ── B. DRAW HALFTONE DOTS INSIDE THE HOLE ON BUFFER ──
+          tctx.save();
+          tctx.fillStyle = isDarkMode ? "#ffffff" : "#000000";
+          letters.forEach(l => {
+            if (!l.dots) return;
+
+            const cos = Math.cos(l.angle);
+            const sin = Math.sin(l.angle);
+            const s = l.scale || 1.0;
+
+            l.dots.forEach(d => {
+              // Project relative dot coordinate to global canvas coordinates
+              const gx = l.x + (d.x * cos - d.y * sin) * s;
+              const gy = l.y + (d.x * sin + d.y * cos) * s;
+
+              // Distance to mouse position
+              const dx = gx - mousePos.x;
+              const dy = gy - mousePos.y;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+
+              if (dist < cursorRadius) {
+                // Proximity factor: 1 at cursor center, 0 at boundary
+                const proximity = 1.0 - (dist / cursorRadius);
+                // Scale size: 2.2x at center, tapering down to 0 at boundary
+                const r = d.maxRadius * proximity * 2.2;
+
+                tctx.beginPath();
+                tctx.arc(gx, gy, r, 0, Math.PI * 2);
+                tctx.fill();
+              }
+            });
+          });
+          tctx.restore();
+        } else {
+          // Draw normal solid letters without any mouse interaction
+          tctx.fillStyle = isDarkMode ? "#ffffff" : "#000000";
+          letters.forEach(l => {
+            tctx.save();
+            tctx.translate(l.x, l.y);
+            tctx.rotate(l.angle);
+            tctx.scale(l.scale || 1.0, l.scale || 1.0);
+            tctx.fillText(l.char, 0, 0);
+            tctx.restore();
+          });
+        }
+
+        // Draw the composed text from buffer canvas onto main canvas
         ctx.save();
-        ctx.translate(l.x, l.y);
-        ctx.rotate(l.angle);
-        ctx.scale(l.scale || 1.0, l.scale || 1.0);
-        ctx.fillText(l.char, 0, 0);
+        ctx.setTransform(1, 0, 0, 1, 0, 0); // reset transform for exact pixel match
+        ctx.drawImage(textCanvas!, 0, 0);
         ctx.restore();
+      }
+
+      // 3. ── TRACK BOX VFX ──────────────────────────────────────────────────
+      // Active only when letters are GENUINELY moving:
+      //  - Post-explosion: speed must exceed threshold (ignores idle-settled letters)
+      //  - Lerp-back (double-click): check displacement from base instead (vx/vy are 0 during lerp)
+      const movingLetters = letters.filter(l => {
+        if (l.resting) return false;
+        const speed = Math.sqrt(l.vx * l.vx + l.vy * l.vy);
+        const distFromBase = Math.sqrt(
+          (l.x - l.baseX) * (l.x - l.baseX) + (l.y - l.baseY) * (l.y - l.baseY)
+        );
+        return speed > 1.5 || (isLerpingRef.current && distFromBase > 8);
       });
+
+      if (movingLetters.length > 0) {
+        const t = Date.now() / 1000;
+
+        // Organic flicker: layered sines + rare random dropout spikes
+        const slow    = Math.sin(t * 2.1)  * 0.10;
+        const fast    = Math.sin(t * 17.3) * 0.07;
+        const spike   = Math.sin(t * 43.1) * 0.05;
+        const dropout = Math.random() < 0.04 ? -(Math.random() * 0.45) : 0;
+        const flicker = Math.max(0.15, Math.min(1.0, 0.72 + slow + fast + spike + dropout));
+
+        // HUD color: neutral light gray/off-white for dark mode, near-black for light mode
+        const [tr, tg, tb] = isDarkMode ? [220, 220, 220] : [15, 15, 15];
+        const tc = (a: number) => `rgba(${tr},${tg},${tb},${(a * flicker).toFixed(2)})`;
+
+        // Fast fill flicker (evaluates per-frame)
+        const fillOpacity = (0.04 + Math.random() * 0.08) * flicker;
+        const fillStyle = `rgba(${tr}, ${tg}, ${tb}, ${fillOpacity.toFixed(3)})`;
+
+        const fontSize = Math.min(width * 0.11, 130);
+        const halfH = fontSize / 2;
+        const padX  = 10;
+        const padY  = 6;
+        const cLen  = Math.min(width * 0.018, 14); // corner bracket length
+
+        // Helper: draw L-shaped corner brackets from 3 points
+        const drawBracket = (pts: [number, number][]) => {
+          ctx.beginPath();
+          ctx.moveTo(pts[0][0], pts[0][1]);
+          ctx.lineTo(pts[1][0], pts[1][1]);
+          ctx.lineTo(pts[2][0], pts[2][1]);
+          ctx.stroke();
+        };
+
+        // ── Fixed anchor points (canvas-edge proxies for page landmarks) ─────
+        // Top edge = navbar zone, sides = page edges, bottom = footer/status area
+        const anchors: { x: number; y: number }[] = [
+          { x: width * 0.50, y: 0 },             // Navbar center
+          { x: width * 0.88, y: 0 },             // Dark mode icon (top-right)
+          { x: width * 0.12, y: 0 },             // Animated status / logo (top-left)
+          { x: width * 0.28, y: 0 },             // Nav link left cluster
+          { x: width * 0.72, y: 0 },             // Nav link right cluster
+          { x: 0,            y: height * 0.30 }, // Left side upper
+          { x: width,        y: height * 0.30 }, // Right side upper
+          { x: 0,            y: height * 0.65 }, // Left side lower
+          { x: width,        y: height * 0.65 }, // Right side lower
+          { x: 0,            y: 0 },             // Top-left corner
+          { x: width,        y: 0 },             // Top-right corner
+          { x: 0,            y: height },        // Bottom-left (status area)
+          { x: width * 0.50, y: height },        // Bottom center
+          { x: width,        y: height },        // Bottom-right corner
+        ];
+
+        const tlMap = trackLineMapRef.current;
+
+        // Remove anchor entries for letters that stopped moving
+        letters.forEach((l, idx) => {
+          if (!movingLetters.includes(l)) tlMap.delete(idx);
+        });
+
+        // Assign a random anchor to each newly-active letter (stable per burst)
+        movingLetters.forEach(l => {
+          const idx = letters.indexOf(l);
+          if (!tlMap.has(idx)) {
+            tlMap.set(idx, Math.floor(Math.random() * anchors.length));
+          }
+        });
+
+        // ── TRACKING LINES (drawn first, behind brackets) ─────────────────────
+        movingLetters.forEach(l => {
+          const idx = letters.indexOf(l);
+          const anchorIdx = tlMap.get(idx);
+          if (anchorIdx === undefined) return;
+
+          const anchor = anchors[anchorIdx];
+          const sc = l.scale || 1;
+          const bx = l.x - (l.width / 2) * sc - padX;
+          const by = l.y - halfH * sc - padY;
+          const bw = l.width * sc + padX * 2;
+          const bh = halfH * 2 * sc + padY * 2;
+
+          // Find the nearest track-box corner to the anchor
+          const corners: [number, number][] = [
+            [bx,      by],
+            [bx + bw, by],
+            [bx,      by + bh],
+            [bx + bw, by + bh],
+          ];
+          const [nearX, nearY] = corners.reduce<[number, number]>((best, c) =>
+            Math.hypot(c[0] - anchor.x, c[1] - anchor.y) <
+            Math.hypot(best[0] - anchor.x, best[1] - anchor.y) ? c : best,
+            corners[0]
+          );
+
+          ctx.save();
+
+          // Dashed tracking line from box corner to anchor
+          ctx.strokeStyle = tc(0.85);
+          ctx.lineWidth = 0.75;
+          ctx.setLineDash([3, 7]);
+          ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.moveTo(nearX, nearY);
+          ctx.lineTo(anchor.x, anchor.y);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // Small cross-tick at the anchor endpoint
+          const tk = 4;
+          ctx.strokeStyle = tc(0.65);
+          ctx.lineWidth = 1.5;
+          ctx.lineCap = "square";
+          ctx.beginPath();
+          ctx.moveTo(anchor.x - tk, anchor.y);
+          ctx.lineTo(anchor.x + tk, anchor.y);
+          ctx.moveTo(anchor.x, anchor.y - tk);
+          ctx.lineTo(anchor.x, anchor.y + tk);
+          ctx.stroke();
+
+          ctx.restore();
+        });
+
+        // ── Per-letter corner brackets ──
+        movingLetters.forEach(l => {
+          const sc = l.scale || 1;
+          const bx = l.x - (l.width / 2) * sc - padX;
+          const by = l.y - halfH * sc - padY;
+          const bw = l.width * sc + padX * 2;
+          const bh = halfH * 2 * sc + padY * 2;
+
+          ctx.save();
+          
+          // Draw fast flickering fill background
+          ctx.fillStyle = fillStyle;
+          ctx.fillRect(bx, by, bw, bh);
+
+          ctx.strokeStyle = tc(0.85);
+          ctx.lineWidth = 1.5;
+          ctx.lineCap = "square";
+
+          drawBracket([[bx + cLen, by],      [bx,      by],      [bx,      by + cLen]]);
+          drawBracket([[bx+bw-cLen, by],     [bx+bw,   by],      [bx+bw,   by + cLen]]);
+          drawBracket([[bx + cLen, by+bh],   [bx,      by+bh],   [bx,      by+bh-cLen]]);
+          drawBracket([[bx+bw-cLen, by+bh],  [bx+bw,   by+bh],  [bx+bw,   by+bh-cLen]]);
+
+          // Center reticle dot
+          ctx.beginPath();
+          ctx.arc(l.x, l.y, 2, 0, Math.PI * 2);
+          ctx.fillStyle = tc(0.55);
+          ctx.fill();
+
+          ctx.restore();
+        });
+
+        // ── Global bounding box (2+ letters) ──
+        if (movingLetters.length >= 2) {
+          const sc0 = (l: Letter) => l.scale || 1;
+          const minX = Math.min(...movingLetters.map(l => l.x - (l.width / 2) * sc0(l)));
+          const minY = Math.min(...movingLetters.map(l => l.y - halfH * sc0(l)));
+          const maxX = Math.max(...movingLetters.map(l => l.x + (l.width / 2) * sc0(l)));
+          const maxY = Math.max(...movingLetters.map(l => l.y + halfH * sc0(l)));
+
+          const gPad = 24;
+          const gx = minX - gPad;
+          const gy = minY - gPad;
+          const gw = (maxX - minX) + gPad * 2;
+          const gh = (maxY - minY) + gPad * 2;
+          const gcl = Math.min(gw * 0.13, 22);
+
+          ctx.save();
+
+          // Draw global fill background
+          ctx.fillStyle = `rgba(${tr}, ${tg}, ${tb}, ${(fillOpacity * 0.4).toFixed(3)})`;
+          ctx.fillRect(gx, gy, gw, gh);
+
+          // Dashed border (subtle)
+          ctx.strokeStyle = tc(0.85);
+          ctx.lineWidth = 1;
+          ctx.setLineDash([5, 8]);
+          ctx.strokeRect(gx, gy, gw, gh);
+          ctx.setLineDash([]);
+
+          // Bold corner brackets on global box
+          ctx.strokeStyle = tc(1.0);
+          ctx.lineWidth = 2;
+          ctx.lineCap = "square";
+
+          drawBracket([[gx + gcl,    gy],      [gx,       gy],      [gx,       gy + gcl]]);
+          drawBracket([[gx+gw-gcl,   gy],      [gx+gw,    gy],      [gx+gw,    gy + gcl]]);
+          drawBracket([[gx + gcl,    gy+gh],   [gx,       gy+gh],   [gx,       gy+gh-gcl]]);
+          drawBracket([[gx+gw-gcl,   gy+gh],   [gx+gw,    gy+gh],   [gx+gw,    gy+gh-gcl]]);
+
+          // ── HUD label (top-left) ──
+          const avgVel = movingLetters.reduce(
+            (s, l) => s + Math.sqrt(l.vx ** 2 + l.vy ** 2), 0
+          ) / movingLetters.length;
+          const status = isLerpingRef.current ? "ALIGNING" : "TRACKING";
+          const labelPx = Math.max(9, Math.min(width * 0.009, 11));
+
+          ctx.font = `${labelPx}px 'Courier New', monospace`;
+          ctx.fillStyle = tc(0.9);
+          ctx.textAlign = "left";
+          ctx.textBaseline = "bottom";
+          ctx.fillText(`◈ ${status}  ${movingLetters.length}obj  v:${avgVel.toFixed(1)}`, gx + 2, gy - 3);
+
+          // ── Coords label (bottom-right) ──
+          ctx.textAlign = "right";
+          ctx.textBaseline = "top";
+          const cx = Math.round((minX + maxX) / 2);
+          const cy = Math.round((minY + maxY) / 2);
+          ctx.fillText(`[${cx}, ${cy}]`, gx + gw - 2, gy + gh + 3);
+
+          ctx.restore();
+        }
+      }
+      // ── END TRACK BOX ────────────────────────────────────────────────────
     };
 
     const loop = () => {
@@ -366,15 +729,23 @@ export default function Hero({ isDarkMode }: { isDarkMode: boolean }) {
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
 
-    // Generate dynamic colors based on isDarkMode (poster electric blue & white for dark mode)
+    // Generate dynamic colors
     let primaryColor = "";
     let secondaryColor = "";
 
     if (isDarkMode) {
-      // Electric Blue (around 228) and White/Ice-blue
-      const blueHue = 228 + (Math.random() - 0.5) * 8; // 224 to 232 (electric blue)
-      primaryColor = `hsl(${blueHue}, 100%, 50%)`;
-      secondaryColor = Math.random() > 0.5 ? "rgb(255, 255, 255)" : `hsl(${blueHue}, 100%, 82%)`;
+      // Crystal prism dispersion: pick a random spectral hue pair as the "refraction angle"
+      // Colors mimic chromatic aberration: cyan↔orange, blue↔gold, violet↔lime
+      const prismPairs: [string, string][] = [
+        ["rgb(0, 220, 255)",   "rgb(255, 140, 0)"],    // cyan ↔ orange
+        ["rgb(80, 160, 255)",  "rgb(255, 210, 0)"],    // blue ↔ gold
+        ["rgb(180, 0, 255)",   "rgb(100, 255, 80)"],   // violet ↔ lime
+        ["rgb(255, 255, 255)", "rgb(0, 200, 255)"],    // white ↔ cyan
+        ["rgb(255, 80, 200)",  "rgb(0, 255, 200)"],    // pink ↔ mint
+      ];
+      const pair = prismPairs[Math.floor(Math.random() * prismPairs.length)];
+      primaryColor   = pair[0];
+      secondaryColor = pair[1];
     } else {
       // CMYK subtractive colors: vibrant randomized HSL spectrum
       const hue1 = Math.floor(Math.random() * 360);
@@ -455,81 +826,106 @@ export default function Hero({ isDarkMode }: { isDarkMode: boolean }) {
 
       {/* Iridescent Flare Bursts (DOM overlay, fixed to viewport) */}
       {flares.map(flare => {
-        const blendMode = isDarkMode ? "plus-lighter" : "multiply";
-        const brightnessVal = isDarkMode ? "3" : "0.95";
-        const saturateVal = isDarkMode ? "3" : "2";
+        if (!isDarkMode) {
+          // Light mode: subtractive blending
+          return (
+            <div key={flare.id} className="flare-burst" style={{ position: "fixed", left: flare.x, top: flare.y, transform: "translate(-50%, -50%)", zIndex: 9999 }}>
+              <div className="flare-core-white" style={{ mixBlendMode: "multiply", background: "radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 50%, transparent 100%)", filter: "blur(2px) brightness(0.8) drop-shadow(0 0 10px rgba(0,0,0,0.45))" }} />
+              <div className="flare-core-cyan"  style={{ mixBlendMode: "multiply", background: `radial-gradient(circle, ${flare.primary} 0%, ${flare.primary} 35%, transparent 100%)`, filter: "blur(4px) brightness(0.95) saturate(2)" }} />
+              <div className="flare-core-magenta" style={{ mixBlendMode: "multiply", background: `radial-gradient(circle, ${flare.secondary} 0%, ${flare.secondary} 35%, transparent 100%)`, filter: "blur(8px) brightness(0.95) saturate(2)" }} />
+              <div className="flare-halo" style={{ mixBlendMode: "multiply", background: `radial-gradient(circle, ${flare.primary} 0%, ${flare.secondary} 50%, transparent 80%)`, filter: "blur(3px) brightness(0.9) saturate(1.8)" }} />
+              <div className="flare-streak" style={{ mixBlendMode: "multiply", background: `linear-gradient(90deg, transparent 0%, ${flare.primary} 15%, rgba(0,0,0,1) 40%, ${flare.secondary} 50%, rgba(0,0,0,1) 60%, ${flare.primary} 85%, transparent 100%)`, filter: "blur(0.5px) brightness(0.95) saturate(2.2)" }} />
+            </div>
+          );
+        }
+
+        // ── DARK MODE: Crystal Prism Dispersion ──
+        // Random rotation per burst for directional variety
+        const rot = Math.floor(Math.random() * 360);
+        const rot2 = rot + 55 + Math.floor(Math.random() * 70);
+        const rot3 = rot - 40 - Math.floor(Math.random() * 60);
+        const c1 = flare.primary;
+        const c2 = flare.secondary;
+        // Chromatic mid-band: the "white" dispersion center
+        const cWhite = "rgba(255, 255, 255, 0.95)";
 
         return (
-          <div
-            key={flare.id}
-            className="flare-burst pointer-events-none"
-            style={{
-              position: "fixed",
-              left: flare.x,
-              top: flare.y,
-              transform: "translate(-50%, -50%)",
-              zIndex: 9999,
-            }}
-          >
-            {/* Concentric Additive/Subtractive Layers */}
-            <div 
-              className="flare-core-white" 
-              style={{
-                mixBlendMode: blendMode,
-                background: isDarkMode 
-                  ? "radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 50%, transparent 100%)"
-                  : "radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.8) 50%, transparent 100%)",
-                filter: isDarkMode 
-                  ? "blur(2px) brightness(3.5) drop-shadow(0 0 10px rgba(255, 255, 255, 1))"
-                  : "blur(2px) brightness(0.8) drop-shadow(0 0 10px rgba(0, 0, 0, 0.45))"
-              }}
-            />
-            
-            <div 
-              className="flare-core-cyan" 
-              style={{
-                mixBlendMode: blendMode,
-                background: `radial-gradient(circle, ${flare.primary} 0%, ${flare.primary} 35%, transparent 100%)`,
-                filter: isDarkMode
-                  ? `blur(4px) brightness(${brightnessVal}) saturate(${saturateVal}) drop-shadow(0 0 12px ${flare.primary})`
-                  : `blur(4px) brightness(${brightnessVal}) saturate(${saturateVal})`
-              }}
-            />
-            
-            <div 
-              className="flare-core-magenta" 
-              style={{
-                mixBlendMode: blendMode,
-                background: `radial-gradient(circle, ${flare.secondary} 0%, ${flare.secondary} 35%, transparent 100%)`,
-                filter: isDarkMode
-                  ? `blur(8px) brightness(${brightnessVal}) saturate(${saturateVal}) drop-shadow(0 0 18px ${flare.secondary})`
-                  : `blur(8px) brightness(${brightnessVal}) saturate(${saturateVal})`
-              }}
-            />
-            
-            <div 
-              className="flare-halo" 
-              style={{
-                mixBlendMode: blendMode,
-                background: `radial-gradient(circle, ${flare.primary} 0%, ${flare.secondary} 50%, transparent 80%)`,
-                filter: isDarkMode
-                  ? `blur(3px) brightness(2.5) saturate(2)`
-                  : `blur(3px) brightness(0.9) saturate(1.8)`
-              }}
-            />
-            
-            <div 
-              className="flare-streak" 
-              style={{
-                mixBlendMode: blendMode,
-                background: isDarkMode
-                  ? `linear-gradient(90deg, transparent 0%, ${flare.primary} 15%, rgba(255, 255, 255, 1) 40%, ${flare.secondary} 50%, rgba(255, 255, 255, 1) 60%, ${flare.primary} 85%, transparent 100%)`
-                  : `linear-gradient(90deg, transparent 0%, ${flare.primary} 15%, rgba(0, 0, 0, 1) 40%, ${flare.secondary} 50%, rgba(0, 0, 0, 1) 60%, ${flare.primary} 85%, transparent 100%)`,
-                filter: isDarkMode
-                  ? `blur(0.5px) brightness(3) saturate(2.5) drop-shadow(0 0 5px rgba(255, 255, 255, 0.8))`
-                  : `blur(0.5px) brightness(0.95) saturate(2.2)`
-              }}
-            />
+          <div key={flare.id} className="flare-burst" style={{ position: "fixed", left: flare.x, top: flare.y, transform: "translate(-50%, -50%)", zIndex: 9999 }}>
+
+            {/* Core white hotspot */}
+            <div className="crystal-core" style={{
+              background: `radial-gradient(circle, white 0%, ${c1} 50%, transparent 100%)`,
+              filter: `blur(1px) brightness(8) drop-shadow(0 0 3px white)`,
+              mixBlendMode: "plus-lighter"
+            }} />
+
+            {/* Chromatic aberration blobs */}
+            <div className="crystal-blob" style={{
+              background: `radial-gradient(ellipse at 40% 60%, ${c1} 0%, transparent 70%)`,
+              filter: `blur(8px) brightness(5) saturate(4)`,
+              mixBlendMode: "plus-lighter",
+              transform: `translate(-50%, -50%) rotate(${rot}deg) translateX(55px)`,
+            }} />
+            <div className="crystal-blob" style={{
+              background: `radial-gradient(ellipse at 60% 40%, ${c2} 0%, transparent 70%)`,
+              filter: `blur(8px) brightness(5) saturate(4)`,
+              mixBlendMode: "plus-lighter",
+              transform: `translate(-50%, -50%) rotate(${rot + 180}deg) translateX(55px)`,
+            }} />
+
+            {/* Main dispersion streak: cyan→white→orange spread */}
+            <div className="crystal-streak-main" style={{
+              background: `linear-gradient(90deg,
+                transparent 0%,
+                ${c2} 10%,
+                ${cWhite} 28%,
+                white 42%,
+                ${cWhite} 55%,
+                ${c1} 75%,
+                transparent 100%)`,
+              filter: `blur(4px) brightness(5) saturate(3) drop-shadow(0 0 10px ${c1})`,
+              mixBlendMode: "plus-lighter",
+              // @ts-expect-error CSS custom properties
+              "--streak-transform-start": `translate(-50%, -50%) rotate(${rot}deg) scaleX(0.05)`,
+              "--streak-transform-end":   `translate(-50%, -50%) rotate(${rot}deg) scaleX(1.4)`,
+            }} />
+
+            {/* Secondary narrower streak (chromatic split) */}
+            <div className="crystal-streak-thin" style={{
+              background: `linear-gradient(90deg,
+                transparent 0%,
+                ${c1} 15%,
+                ${cWhite} 45%,
+                ${c2} 75%,
+                transparent 100%)`,
+              filter: `blur(3px) brightness(5) saturate(4)`,
+              mixBlendMode: "plus-lighter",
+              // @ts-expect-error CSS custom properties
+              "--streak-transform-start": `translate(-50%, -50%) rotate(${rot2}deg) scaleX(0.05)`,
+              "--streak-transform-end":   `translate(-50%, -50%) rotate(${rot2}deg) scaleX(1.3)`,
+            }} />
+
+            {/* Tertiary streak – opposite dispersion angle */}
+            <div className="crystal-streak-thin" style={{
+              background: `linear-gradient(90deg,
+                transparent 0%,
+                ${c2} 20%,
+                rgba(255,255,255,0.8) 50%,
+                ${c1} 80%,
+                transparent 100%)`,
+              filter: `blur(3px) brightness(4.5) saturate(3.5)`,
+              mixBlendMode: "plus-lighter",
+              // @ts-expect-error CSS custom properties
+              "--streak-transform-start": `translate(-50%, -50%) rotate(${rot3}deg) scaleX(0.05)`,
+              "--streak-transform-end":   `translate(-50%, -50%) rotate(${rot3}deg) scaleX(1.3)`,
+            }} />
+
+            {/* Wide soft halo – the light bleed / frosted glass around shards */}
+            <div className="crystal-halo" style={{
+              background: `radial-gradient(ellipse, ${c1} 0%, ${c2} 35%, transparent 70%)`,
+              filter: `blur(24px) brightness(4) saturate(3)`,
+              mixBlendMode: "plus-lighter"
+            }} />
           </div>
         );
       })}
