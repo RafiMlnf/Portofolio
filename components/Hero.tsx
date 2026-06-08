@@ -406,17 +406,11 @@ export default function Hero({ isDarkMode }: { isDarkMode: boolean }) {
             tctx.restore();
           });
 
-          // Cut a hole using destination-out with a very narrow gradient around cutoutRadius to ensure smooth vector edge without dark glow
+          // Cut a hole using destination-out with a sharp circle (no fade)
           tctx.globalCompositeOperation = "destination-out";
-          const grad = tctx.createRadialGradient(
-            mousePos.x, mousePos.y, cutoutRadius - 4,
-            mousePos.x, mousePos.y, cutoutRadius + 4
-          );
-          grad.addColorStop(0, "rgba(0, 0, 0, 1.0)");
-          grad.addColorStop(1, "rgba(0, 0, 0, 0.0)");
-          tctx.fillStyle = grad;
+          tctx.fillStyle = "#000000";
           tctx.beginPath();
-          tctx.arc(mousePos.x, mousePos.y, cutoutRadius + 4, 0, Math.PI * 2);
+          tctx.arc(mousePos.x, mousePos.y, cutoutRadius, 0, Math.PI * 2);
           tctx.fill();
           tctx.restore();
 
