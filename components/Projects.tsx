@@ -21,7 +21,9 @@ interface Project {
   tags: string[];
   liveUrl?: string;
   imageUrl?: string;
+  images?: string[];   // multi-image autoscroll carousel
   status?: string;
+  deployment?: "intranet";
 }
 
 const PROJECTS_DATA: Project[] = [
@@ -46,6 +48,7 @@ const PROJECTS_DATA: Project[] = [
     liveUrl: "https://github.com/RafiMlnf/DOV",
     imageUrl: "/assets/img/ssproject/dov-flow.jpeg",
     status: "ENTERPRISE SYSTEM",
+    deployment: "intranet",
   },
   // ── HEAVY: Fullstack Weighbridge System ──
   {
@@ -57,6 +60,7 @@ const PROJECTS_DATA: Project[] = [
     tags: ["Next.js", "PostgreSQL", "Prisma ORM", "TypeScript", "Tailwind CSS", "NextAuth.js"],
     liveUrl: "https://github.com/RafiMlnf/Truck-Weighting",
     status: "ENTERPRISE SYSTEM",
+    deployment: "intranet",
   },
   // ── HEAVY: Fullstack Backend + Real DB + GPS ──
   {
@@ -80,6 +84,25 @@ const PROJECTS_DATA: Project[] = [
     tags: ["Next.js", "TypeScript", "Tailwind", "Cloudinary"],
     liveUrl: "https://github.com/RafiMlnf/Tadika",
     status: "PERSONAL ARCHIVE",
+    images: [
+      "/assets/img/tdk/tdk1.png",
+      "/assets/img/tdk/tdk2.png",
+      "/assets/img/tdk/tdk3.png",
+    ],
+  },
+  {
+    id: 14,
+    title: "CHATMD",
+    category: "DEVELOPMENT",
+    year: "2026",
+    desc: "Aplikasi pesan instan privat intranet dengan sistem token discovery tanpa database. Beroperasi sepenuhnya di RAM dengan enkripsi AES untuk keamanan komunikasi lokal.",
+    tags: ["Python", "Node.js", "WebSocket", "Cryptography", "UDP Broadcast"],
+    liveUrl: "https://github.com/RafiMlnf/ChatMD",
+    status: "INTRANET CHAT",
+    images: [
+      "/assets/img/ssproject/CMD1.png",
+      "/assets/img/ssproject/CMD2.png",
+    ],
   },
   // ── MEDIUM-HIGH: Low-level Cross-compilation (C → Wasm) ──
   {
@@ -473,13 +496,93 @@ const GithubIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
   </svg>
 );
 
+// ── Autoscroll Image Carousel (card & modal) ──
+const ImageCarousel = ({
+  images,
+  title,
+  isDarkMode,
+  aspectClass = "aspect-video",
+  objectFit = "object-cover",
+}: {
+  images: string[];
+  title: string;
+  isDarkMode: boolean;
+  aspectClass?: string;
+  objectFit?: string;
+}) => {
+  const [current, setCurrent] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // auto-advance
+  useEffect(() => {
+    timerRef.current = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % images.length);
+    }, 2800);
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [images.length]);
+
+  const goTo = (i: number) => {
+    setCurrent(i);
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % images.length);
+    }, 2800);
+  };
+
+  return (
+    <div className={`w-full ${aspectClass} relative overflow-hidden border ${isDarkMode ? "border-white/10" : "border-black/10"} bg-[#121212] group/carousel`}>
+      {/* Slides */}
+      {images.map((src, i) => (
+        <div
+          key={src}
+          className={`absolute inset-0 transition-opacity duration-700 ${
+            i === current ? "opacity-100 z-10" : "opacity-0 z-0"
+          }`}
+        >
+          <Image
+            src={src}
+            alt={`${title} — ${i + 1}`}
+            fill
+            sizes="(max-width: 640px) 100vw, 600px"
+            className={`${objectFit} transition-transform duration-700 ${i === current ? "scale-100" : "scale-105"}`}
+            priority={i === 0}
+            quality={60}
+          />
+        </div>
+      ))}
+
+      {/* Dot indicators */}
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+        {images.map((_, i) => (
+          <button
+            key={i}
+            onClick={(e) => { e.stopPropagation(); goTo(i); }}
+            className={`w-1.5 h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+              i === current ? "bg-white scale-125" : "bg-white/40 hover:bg-white/70"
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* Slide counter badge */}
+      <div className="absolute top-2 right-2 z-20 font-geist text-[8px] font-bold tracking-widest bg-black/60 text-white px-1.5 py-0.5 backdrop-blur-sm">
+        {current + 1}/{images.length}
+      </div>
+
+      {/* Hover hint overlay */}
+      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/carousel:opacity-100 flex items-center justify-center transition-opacity duration-300 text-[9px] font-geist font-bold tracking-widest text-white backdrop-blur-[1px] z-30">
+        OPEN PROJECT DETAILS ↗
+      </div>
+    </div>
+  );
+};
+
 const GithubPreview = ({ src, isDarkMode }: { src: string; isDarkMode: boolean }) => {
   const repoSlug = src.replace("https://github.com/", "");
   return (
     <div
-      className={`w-full mb-4 border relative overflow-hidden h-32 flex flex-col justify-between p-3 bg-neutral-900/50 group/iframe ${
-        isDarkMode ? "border-white/10" : "border-black/10"
-      }`}
+      className={`w-full mb-4 border relative overflow-hidden h-32 flex flex-col justify-between p-3 bg-neutral-900/50 group/iframe ${isDarkMode ? "border-white/10" : "border-black/10"
+        }`}
     >
       <div className="flex justify-between items-start">
         <GithubIcon className={`w-6 h-6 ${isDarkMode ? "text-white" : "text-black"}`} />
@@ -499,6 +602,40 @@ const GithubPreview = ({ src, isDarkMode }: { src: string; isDarkMode: boolean }
       >
         VIEW ON GITHUB ↗
       </a>
+    </div>
+  );
+};
+
+const IntranetPreview = ({ isDarkMode, title }: { isDarkMode: boolean; title: string }) => {
+  return (
+    <div
+      className={`w-full mb-4 border relative overflow-hidden h-32 flex flex-col justify-between p-3 font-mono ${isDarkMode
+        ? "border-white/10 bg-[#0d0d0d] text-zinc-400"
+        : "border-black/10 bg-neutral-50 text-neutral-600"
+        }`}
+    >
+      <div className="flex justify-between items-center">
+        <span className="text-[7px] sm:text-[7.5px] tracking-widest text-emerald-500 font-bold flex items-center gap-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          ACTIVE DEPLOYMENT
+        </span>
+        <span className="text-[7.5px] font-bold text-amber-500 px-1.5 py-0.5 border border-amber-500/20 bg-amber-500/5">
+          🔒 INTRANET
+        </span>
+      </div>
+      <div className="flex flex-col gap-1.5 my-2">
+        <div className="text-[8.5px] sm:text-[9px] tracking-wider opacity-70 flex justify-between">
+          <span>HOST:</span>
+          <span className="font-semibold uppercase">PT MTM ON-PREMISES</span>
+        </div>
+        <div className="text-[8.5px] sm:text-[9px] tracking-wider opacity-70 flex justify-between">
+          <span>SECURITY:</span>
+          <span className="font-semibold text-emerald-500">PROTECTED DATA</span>
+        </div>
+      </div>
+      <div className={`text-[7.5px] text-center py-1 border-t ${isDarkMode ? "border-white/5" : "border-black/5"} opacity-65 font-geist tracking-wide`}>
+        Source code public (using dummy data)
+      </div>
     </div>
   );
 };
@@ -532,9 +669,8 @@ const IframePreview = ({ src, title, isDarkMode }: { src: string; title: string;
     <div
       ref={wrapperRef}
       style={{ height: `${height}px` }}
-      className={`w-full mb-4 border relative overflow-hidden bg-[#121212] group/iframe ${
-        isDarkMode ? "border-white/10" : "border-black/10"
-      }`}
+      className={`w-full mb-4 border relative overflow-hidden bg-[#121212] group/iframe ${isDarkMode ? "border-white/10" : "border-black/10"
+        }`}
     >
       <iframe
         src={src}
@@ -636,24 +772,22 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 border font-geist text-[9px] sm:text-[10px] md:text-xs font-bold tracking-widest transition-all duration-300 flex items-center gap-2.5 cursor-pointer ${
-                  selectedCategory === cat
-                    ? "bg-brand-blue text-white border-brand-blue"
-                    : isDarkMode
+                className={`px-4 py-2 border font-geist text-[9px] sm:text-[10px] md:text-xs font-bold tracking-widest transition-all duration-300 flex items-center gap-2.5 cursor-pointer ${selectedCategory === cat
+                  ? "bg-brand-blue text-white border-brand-blue"
+                  : isDarkMode
                     ? "border-white/20 hover:border-white text-white hover:bg-white/5"
                     : "border-black/20 hover:border-black text-black hover:bg-black/5"
-                }`}
+                  }`}
               >
                 {cat === "DEVELOPMENT" && <OSWindowIcon className="w-3 h-3" />}
                 {cat === "DESIGN" && <SparkleIcon className="w-3 h-3" />}
                 <span>{cat}</span>
-                <span className={`text-[8px] sm:text-[9px] font-mono px-1.5 py-0.5 border ${
-                  selectedCategory === cat
-                    ? "bg-white/20 border-white/30 text-white"
-                    : isDarkMode
+                <span className={`text-[8px] sm:text-[9px] font-mono px-1.5 py-0.5 border ${selectedCategory === cat
+                  ? "bg-white/20 border-white/30 text-white"
+                  : isDarkMode
                     ? "bg-white/5 border-white/10 text-white/60"
                     : "bg-black/5 border-black/10 text-black/60"
-                }`}>
+                  }`}>
                   {count}
                 </span>
               </button>
@@ -680,11 +814,10 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                     <div
                       key={p.id}
                       onClick={() => handleProjectClick(p)}
-                      className={`border p-4 flex flex-col justify-between transition-all duration-300 group relative hover:-translate-y-1 hover:shadow-[4px_4px_0px_#0033ff] cursor-pointer ${
-                        isDarkMode
-                          ? "border-white/10 hover:border-white bg-[#0e0e0e]"
-                          : "border-black/10 hover:border-black bg-white"
-                      }`}
+                      className={`border p-4 flex flex-col justify-between transition-all duration-300 group relative hover:-translate-y-1 hover:shadow-[4px_4px_0px_#0033ff] cursor-pointer ${isDarkMode
+                        ? "border-white/10 hover:border-white bg-[#0e0e0e]"
+                        : "border-black/10 hover:border-black bg-white"
+                        }`}
                     >
                       {/* Status & Year */}
                       <div className="flex justify-between items-center mb-3 text-[8px] font-geist font-bold tracking-widest">
@@ -694,11 +827,14 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                         <span className="opacity-60">{p.year}</span>
                       </div>
 
-                      {/* Preview Container: Image Preview or Live Site Iframe or Github Link */}
-                      {p.imageUrl ? (
-                        <div className={`w-full aspect-video mb-4 border relative overflow-hidden bg-[#121212] group/iframe ${
-                          isDarkMode ? "border-white/10" : "border-black/10"
-                        }`}>
+                      {/* Preview Container: Carousel / Single Image / Iframe / Github */}
+                      {p.images && p.images.length > 0 ? (
+                        <div className="mb-4">
+                          <ImageCarousel images={p.images} title={p.title} isDarkMode={isDarkMode} aspectClass="aspect-video" />
+                        </div>
+                      ) : p.imageUrl ? (
+                        <div className={`w-full aspect-video mb-4 border relative overflow-hidden bg-[#121212] group/iframe ${isDarkMode ? "border-white/10" : "border-black/10"
+                          }`}>
                           <Image
                             src={p.imageUrl}
                             alt={p.title}
@@ -736,11 +872,10 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                           {p.tags.map((tag) => (
                             <span
                               key={tag}
-                              className={`text-[7px] font-geist tracking-widest px-1.5 py-0.5 border ${
-                                isDarkMode
-                                  ? "border-white/10 text-white/60 bg-[#161616]"
-                                  : "border-black/10 text-black/60 bg-neutral-100"
-                              }`}
+                              className={`text-[7px] font-geist tracking-widest px-1.5 py-0.5 border ${isDarkMode
+                                ? "border-white/10 text-white/60 bg-[#161616]"
+                                : "border-black/10 text-black/60 bg-neutral-100"
+                                }`}
                             >
                               {tag}
                             </span>
@@ -766,17 +901,16 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
                 {[...PROJECTS_DATA]
-                  .filter((p) => p.category === "DEVELOPMENT" && [1, 8, 4, 10].includes(p.id))
+                  .filter((p) => p.category === "DEVELOPMENT" && [1, 8, 4, 10, 14].includes(p.id))
                   .sort((a, b) => parseInt(b.year) - parseInt(a.year))
                   .map((p) => (
                     <div
                       key={p.id}
                       onClick={() => handleProjectClick(p)}
-                      className={`border p-4 flex flex-col justify-between transition-all duration-300 group relative hover:-translate-y-1 hover:shadow-[4px_4px_0px_#0033ff] cursor-pointer ${
-                        isDarkMode
-                          ? "border-white/10 hover:border-white bg-[#0e0e0e]"
-                          : "border-black/10 hover:border-black bg-white"
-                      }`}
+                      className={`border p-4 flex flex-col justify-between transition-all duration-300 group relative hover:-translate-y-1 hover:shadow-[4px_4px_0px_#0033ff] cursor-pointer ${isDarkMode
+                        ? "border-white/10 hover:border-white bg-[#0e0e0e]"
+                        : "border-black/10 hover:border-black bg-white"
+                        }`}
                     >
                       {/* Status & Year */}
                       <div className="flex justify-between items-center mb-3 text-[8px] font-geist font-bold tracking-widest">
@@ -786,11 +920,14 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                         <span className="opacity-60">{p.year}</span>
                       </div>
 
-                      {/* Preview Container: Image Preview or Live Site Iframe or Github Link */}
-                      {p.imageUrl ? (
-                        <div className={`w-full aspect-video mb-4 border relative overflow-hidden bg-[#121212] group/iframe ${
-                          isDarkMode ? "border-white/10" : "border-black/10"
-                        }`}>
+                      {/* Preview Container: Carousel / Single Image / Intranet / Iframe / Github */}
+                      {p.images && p.images.length > 0 ? (
+                        <div className="mb-4">
+                          <ImageCarousel images={p.images} title={p.title} isDarkMode={isDarkMode} aspectClass="aspect-video" />
+                        </div>
+                      ) : p.imageUrl ? (
+                        <div className={`w-full aspect-video mb-4 border relative overflow-hidden bg-[#121212] group/iframe ${isDarkMode ? "border-white/10" : "border-black/10"
+                          }`}>
                           <Image
                             src={p.imageUrl}
                             alt={p.title}
@@ -804,6 +941,8 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                             OPEN PROJECT DETAILS ↗
                           </div>
                         </div>
+                      ) : p.deployment === "intranet" ? (
+                        <IntranetPreview isDarkMode={isDarkMode} title={p.title} />
                       ) : p.liveUrl && (
                         p.liveUrl.includes("github.com") ? (
                           <GithubPreview src={p.liveUrl} isDarkMode={isDarkMode} />
@@ -828,11 +967,10 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                           {p.tags.map((tag) => (
                             <span
                               key={tag}
-                              className={`text-[7px] font-geist tracking-widest px-1.5 py-0.5 border ${
-                                isDarkMode
-                                  ? "border-white/10 text-white/60 bg-[#161616]"
-                                  : "border-black/10 text-black/60 bg-neutral-100"
-                              }`}
+                              className={`text-[7px] font-geist tracking-widest px-1.5 py-0.5 border ${isDarkMode
+                                ? "border-white/10 text-white/60 bg-[#161616]"
+                                : "border-black/10 text-black/60 bg-neutral-100"
+                                }`}
                             >
                               {tag}
                             </span>
@@ -858,9 +996,8 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                 <div
                   key={p.id}
                   onClick={() => p.imageUrl && setLightboxImage({ src: p.imageUrl, title: p.title })}
-                  className={`overflow-hidden aspect-[3/4] bg-neutral-900 group relative border transition-all duration-300 cursor-pointer ${
-                    isDarkMode ? "border-white/10" : "border-black/10"
-                  }`}
+                  className={`overflow-hidden aspect-[3/4] bg-neutral-900 group relative border transition-all duration-300 cursor-pointer ${isDarkMode ? "border-white/10" : "border-black/10"
+                    }`}
                 >
                   <Image
                     src={p.imageUrl || ""}
@@ -896,16 +1033,14 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                 data-lenis-prevent
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
                 transition={{ type: "spring", stiffness: 320, damping: 28 }}
-                className={`w-full max-w-5xl max-h-[92vh] overflow-y-auto border-2 pointer-events-auto ${
-                  isDarkMode
-                    ? "bg-[#0a0a0a] border-zinc-800 shadow-[8px_8px_0px_#000000]"
-                    : "bg-[#f5f5f1] border-black shadow-[8px_8px_0px_#000000]"
-                }`}
+                className={`w-full max-w-5xl max-h-[92vh] overflow-y-auto border-2 pointer-events-auto ${isDarkMode
+                  ? "bg-[#0a0a0a] border-zinc-800 shadow-[8px_8px_0px_#000000]"
+                  : "bg-[#f5f5f1] border-black shadow-[8px_8px_0px_#000000]"
+                  }`}
               >
                 {/* Modal Header */}
-                <div className={`flex items-start justify-between p-5 border-b ${
-                  isDarkMode ? "border-white/10" : "border-black/10"
-                }`}>
+                <div className={`flex items-start justify-between p-5 border-b ${isDarkMode ? "border-white/10" : "border-black/10"
+                  }`}>
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <CategoryIcon category={activeProject.category} className="w-3 h-3 text-brand-blue" />
@@ -917,9 +1052,8 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                   </div>
                   <button
                     onClick={() => setActiveProject(null)}
-                    className={`font-geist text-[10px] font-bold px-3 py-1.5 border ml-4 shrink-0 cursor-pointer transition-all ${
-                      isDarkMode ? "border-white/30 text-white hover:bg-white hover:text-black" : "border-black/30 text-black hover:bg-black hover:text-white"
-                    }`}
+                    className={`font-geist text-[10px] font-bold px-3 py-1.5 border ml-4 shrink-0 cursor-pointer transition-all ${isDarkMode ? "border-white/30 text-white hover:bg-white hover:text-black" : "border-black/30 text-black hover:bg-black hover:text-white"
+                      }`}
                   >CLOSE ×</button>
                 </div>
 
@@ -932,9 +1066,8 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                       <div className="w-2.5 h-6 bg-brand-blue animate-[pulse_0.8s_infinite_300ms]" />
                       <div className="w-2.5 h-6 bg-brand-blue animate-[pulse_0.8s_infinite_450ms]" />
                     </div>
-                    <p className={`font-mono text-[9px] tracking-[0.2em] font-bold ${
-                      isDarkMode ? "text-white/60" : "text-black/60"
-                    }`}>RETRIEVING_DATABASE_RECORD...</p>
+                    <p className={`font-mono text-[9px] tracking-[0.2em] font-bold ${isDarkMode ? "text-white/60" : "text-black/60"
+                      }`}>RETRIEVING_DATABASE_RECORD...</p>
                   </div>
                 )}
 
@@ -949,11 +1082,10 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                     </p>
                     <button
                       onClick={() => handleProjectClick(activeProject)}
-                      className={`font-geist text-[10px] font-bold px-4 py-2 border transition-all cursor-pointer ${
-                        isDarkMode 
-                          ? "border-white/30 text-white hover:bg-white hover:text-black" 
-                          : "border-black/30 text-black hover:bg-black hover:text-white"
-                      }`}
+                      className={`font-geist text-[10px] font-bold px-4 py-2 border transition-all cursor-pointer ${isDarkMode
+                        ? "border-white/30 text-white hover:bg-white hover:text-black"
+                        : "border-black/30 text-black hover:bg-black hover:text-white"
+                        }`}
                     >
                       TRY AGAIN
                     </button>
@@ -962,41 +1094,43 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
 
                 {/* Loaded state */}
                 {!loadingDetail && !errorDetail && projectDetail && (
-                  <div className={`grid grid-cols-1 md:grid-cols-12 md:divide-x ${
-                    isDarkMode ? "md:divide-white/10" : "md:divide-black/10"
-                  }`}>
+                  <div className={`grid grid-cols-1 md:grid-cols-12 md:divide-x ${isDarkMode ? "md:divide-white/10" : "md:divide-black/10"
+                    }`}>
                     {/* Left Column (Main Info & Highlights) */}
                     <div className="col-span-12 md:col-span-8 p-5 sm:p-6 space-y-5">
-                      {/* Image (DESIGN only / any project with imageUrl) */}
-                      {activeProject.imageUrl && (
-                        <div className={`w-full aspect-video overflow-hidden border ${
-                          isDarkMode ? "border-white/10" : "border-black/10"
-                        }`}>
+                      {/* Image / Carousel (modal top) */}
+                      {activeProject.images && activeProject.images.length > 0 ? (
+                        <ImageCarousel
+                          images={activeProject.images}
+                          title={activeProject.title}
+                          isDarkMode={isDarkMode}
+                          aspectClass="aspect-video"
+                          objectFit="object-cover"
+                        />
+                      ) : activeProject.imageUrl && (
+                        <div className={`w-full aspect-video overflow-hidden border ${isDarkMode ? "border-white/10" : "border-black/10"
+                          }`}>
                           <img src={activeProject.imageUrl} alt={activeProject.title} className="w-full h-full object-cover" />
                         </div>
                       )}
 
                       {/* Objective */}
                       <div>
-                        <p className={`font-geist text-[9px] font-bold tracking-[0.25em] mb-1.5 ${
-                          isDarkMode ? "text-white/40" : "text-black/40"
-                        }`}>TUJUAN PROYEK</p>
-                        <p className={`font-geist text-xs sm:text-sm leading-relaxed ${
-                          isDarkMode ? "text-white/85" : "text-black/85"
-                        }`}>{projectDetail.objective}</p>
+                        <p className={`font-geist text-[9px] font-bold tracking-[0.25em] mb-1.5 ${isDarkMode ? "text-white/40" : "text-black/40"
+                          }`}>TUJUAN PROYEK</p>
+                        <p className={`font-geist text-xs sm:text-sm leading-relaxed ${isDarkMode ? "text-white/85" : "text-black/85"
+                          }`}>{projectDetail.objective}</p>
                       </div>
 
                       {/* Highlights */}
                       {projectDetail.highlights && projectDetail.highlights.length > 0 && (
                         <div>
-                          <p className={`font-geist text-[9px] font-bold tracking-[0.25em] mb-2 ${
-                            isDarkMode ? "text-white/40" : "text-black/40"
-                          }`}>HIGHLIGHTS</p>
+                          <p className={`font-geist text-[9px] font-bold tracking-[0.25em] mb-2 ${isDarkMode ? "text-white/40" : "text-black/40"
+                            }`}>HIGHLIGHTS</p>
                           <ul className="space-y-1.5">
                             {projectDetail.highlights.map((h, i) => (
-                              <li key={i} className={`font-geist text-xs leading-relaxed flex gap-2 ${
-                                isDarkMode ? "text-white/80" : "text-black/80"
-                              }`}>
+                              <li key={i} className={`font-geist text-xs leading-relaxed flex gap-2 ${isDarkMode ? "text-white/80" : "text-black/80"
+                                }`}>
                                 <span className="text-brand-blue shrink-0 font-bold">→</span>
                                 {h}
                               </li>
@@ -1012,9 +1146,8 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                         {/* Tech Stack */}
                         {projectDetail.techStack && projectDetail.techStack.length > 0 && (
                           <div>
-                            <p className={`font-geist text-[9px] font-bold tracking-[0.25em] mb-3 ${
-                              isDarkMode ? "text-white/40" : "text-black/40"
-                            }`}>TECH STACK</p>
+                            <p className={`font-geist text-[9px] font-bold tracking-[0.25em] mb-3 ${isDarkMode ? "text-white/40" : "text-black/40"
+                              }`}>TECH STACK</p>
                             <div className="flex flex-wrap gap-1.5">
                               {Array.from(
                                 new Set(projectDetail.techStack.flatMap((group) => group.items))
@@ -1023,11 +1156,10 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                                 .map((item) => (
                                   <span
                                     key={item}
-                                    className={`font-geist text-[9px] font-medium px-2.5 py-0.5 border ${
-                                      isDarkMode
-                                        ? "border-white/15 text-white/80 bg-white/5"
-                                        : "border-black/15 text-black/80 bg-black/5"
-                                    }`}
+                                    className={`font-geist text-[9px] font-medium px-2.5 py-0.5 border ${isDarkMode
+                                      ? "border-white/15 text-white/80 bg-white/5"
+                                      : "border-black/15 text-black/80 bg-black/5"
+                                      }`}
                                   >
                                     {item}
                                   </span>
@@ -1038,22 +1170,33 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                       </div>
 
                       {/* Links */}
-                      <div className={`flex flex-row gap-3 pt-5 border-t ${
-                        isDarkMode ? "border-white/10" : "border-black/10"
-                      }`}>
-                        {projectDetail.liveUrl && (
-                          <a href={projectDetail.liveUrl} target="_blank" rel="noopener noreferrer"
-                            className="font-geist text-[10px] font-bold tracking-widest px-4 py-2.5 bg-brand-blue text-white border border-brand-blue hover:bg-blue-700 transition-colors text-center flex-1">
-                            LIVE SITE ↗
-                          </a>
-                        )}
-                        {projectDetail.githubUrl && (
-                          <a href={projectDetail.githubUrl} target="_blank" rel="noopener noreferrer"
-                            className={`font-geist text-[10px] font-bold tracking-widest px-4 py-2.5 border transition-colors text-center flex-1 ${
-                              isDarkMode ? "border-white/30 text-white hover:bg-white hover:text-black" : "border-black/30 text-black hover:bg-black hover:text-white"
+                      <div className="flex flex-col gap-2.5 pt-5 border-t border-neutral-800">
+                        <div className="flex flex-row gap-3">
+                          {activeProject.deployment === "intranet" ? (
+                            <div className="font-geist text-[9px] sm:text-[10px] font-bold tracking-widest px-4 py-2.5 bg-amber-500/10 text-amber-500 border border-amber-500/20 text-center flex-1 select-none flex items-center justify-center gap-1.5">
+                              INTRANET
+                            </div>
+                          ) : (
+                            projectDetail.liveUrl && (
+                              <a href={projectDetail.liveUrl} target="_blank" rel="noopener noreferrer"
+                                className="font-geist text-[10px] font-bold tracking-widest px-4 py-2.5 bg-brand-blue text-white border border-brand-blue hover:bg-blue-700 transition-colors text-center flex-1">
+                                LIVE SITE ↗
+                              </a>
+                            )
+                          )}
+                          {projectDetail.githubUrl && (
+                            <a href={projectDetail.githubUrl} target="_blank" rel="noopener noreferrer"
+                              className={`font-geist text-[10px] font-bold tracking-widest px-4 py-2.5 border transition-colors text-center flex-1 ${isDarkMode ? "border-white/30 text-white hover:bg-white hover:text-black" : "border-black/30 text-black hover:bg-black hover:text-white"
+                                }`}>
+                              GITHUB ↗
+                            </a>
+                          )}
+                        </div>
+                        {activeProject.deployment === "intranet" && (
+                          <p className={`font-geist text-[9.5px] leading-relaxed mt-1 opacity-75 ${isDarkMode ? "text-white/40" : "text-black/45"
                             }`}>
-                            GITHUB ↗
-                          </a>
+                            * Proyek ini dideploy secara internal di server lokal PT Menara Terus Makmur. Kode sumber pada repositori GitHub publik di atas telah disanitasi sehingga data rahasia perusahaan tetap terjaga sepenuhnya.
+                          </p>
                         )}
                       </div>
                     </div>

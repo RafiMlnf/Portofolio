@@ -64,15 +64,6 @@ const barActions = [
     ),
   },
   {
-    id: "music",
-    label: "SETEL MUSIK",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-3.5 h-3.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 10l12-3M9 14a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm12-3a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
-      </svg>
-    ),
-  },
-  {
     id: "contact",
     label: "CONTACT ME",
     icon: (
@@ -161,10 +152,6 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
 
   const handleBarAction = (id: string, href?: string) => {
     if (id === "cv") { setIsCvOpen(true); return; }
-    if (id === "music") {
-      window.dispatchEvent(new CustomEvent("toggle-music-player"));
-      return;
-    }
     if (id === "contact") {
       document.querySelector("footer")?.scrollIntoView({ behavior: "smooth" });
       return;

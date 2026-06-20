@@ -9,7 +9,6 @@ import Skills from "../components/Skills";
 import Achievements from "../components/Achievements";
 import Projects from "../components/Projects";
 import AnimatedStatus from "../components/AnimatedStatus";
-import MusicPlayer from "../components/MusicPlayer";
 import CustomCursor from "../components/CustomCursor";
 import CRTOverlay from "../components/CRTOverlay";
 
@@ -554,9 +553,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-
-      {/* Floating Music Player */}
-      <MusicPlayer isDarkMode={isDarkMode} />
 
     </motion.div>
 
