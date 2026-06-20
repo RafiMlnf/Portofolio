@@ -13,9 +13,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link href="https://fonts.cdnfonts.com/css/ss-broad" rel="stylesheet" />
-      </head>
       <body className="bg-black text-white antialiased min-h-screen flex flex-col">
         {children}
       </body>

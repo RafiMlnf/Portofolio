@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    qualities: [50, 75],
+    qualities: [35, 40, 50, 75],
   },
 };
 

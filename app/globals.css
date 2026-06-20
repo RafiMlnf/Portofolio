@@ -1,11 +1,90 @@
-@import url('https://fonts.cdnfonts.com/css/ss-broad');
-@import url('https://fonts.cdnfonts.com/css/geist');
-@import url('https://fonts.cdnfonts.com/css/reverie');
-@import url('https://fonts.cdnfonts.com/css/gloock-2');
-@import url('https://fonts.cdnfonts.com/css/pixelify-sans');
-@import url('https://fonts.cdnfonts.com/css/tanamera');
-@import url('https://fonts.cdnfonts.com/css/wendy-neue');
-@import url('https://fonts.cdnfonts.com/css/glasfur-trial');
+/* CORS-Compliant and Self-Hosted Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Gloock&family=Pixelify+Sans:wght@400..700&display=swap');
+
+@font-face {
+  font-family: 'SS Broad';
+  src: url('/fonts/SSBroad.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'REVERIE';
+  src: url('/fonts/reverie-regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TANAMERA';
+  src: url('/fonts/Tanamera.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Wendy Neue';
+  src: url('/fonts/Wendy-Neue.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GLASFUR Trial';
+  src: url('/fonts/Glasfur-trial.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Geist Sans via CORS-friendly jsDelivr Fontsource */
+@font-face {
+  font-family: 'Geist';
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/geist-sans/files/geist-sans-latin-400-normal.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/geist-sans/files/geist-sans-latin-300-normal.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/geist-sans/files/geist-sans-latin-500-normal.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/geist-sans/files/geist-sans-latin-700-normal.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/geist-sans/files/geist-sans-latin-800-normal.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/geist-sans/files/geist-sans-latin-900-normal.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @import "tailwindcss";
 
 @theme inline {
