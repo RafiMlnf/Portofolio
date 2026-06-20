@@ -179,7 +179,7 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
             {/* Section tag */}
             <motion.div custom={0} variants={fadeUp} className={`flex items-center gap-6 w-full pb-6 mb-5 border-b ${border}`}>
               <span className={`font-geist text-[22px] font-extrabold tracking-[0.25em] uppercase ${fg}`}>PROFILE</span>
-              <div className={`flex-1 h-px ${isDarkMode ? "bg-white/8" : "bg-black/8"}`} />
+              <div className={`flex-1 h-px ${isDarkMode ? "bg-white" : "bg-black"}`} />
             </motion.div>
 
             {/* Name */}
@@ -452,7 +452,7 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
           <span className={`font-geist text-[12px] font-bold tracking-[0.35em] uppercase ${fg}`}>
             Beyond Technical
           </span>
-          <div className={`flex-1 h-px ${isDarkMode ? "bg-white/10" : "bg-black/10"}`} />
+          <div className={`flex-1 h-px ${isDarkMode ? "bg-white" : "bg-black"}`} />
         </div>
 
         {/* Two-column content */}

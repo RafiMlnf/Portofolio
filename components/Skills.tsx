@@ -129,10 +129,6 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
     ? "hover:bg-white/[0.05] hover:border-brand-blue/50"
     : "hover:bg-black/[0.03] hover:border-brand-blue/50";
 
-  // Group technical groups by columns
-  const col1Groups = techGroups.filter((g) => g.id === "frontend" || g.id === "mobile");
-  const col2Groups = techGroups.filter((g) => g.id === "backend" || g.id === "design");
-
   return (
     <section
       id="skills"
@@ -141,109 +137,72 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
       {/* ═══ SECTION HEADER ═══ */}
       <div className={`px-8 md:px-10 py-8 flex items-center gap-6 border-b ${border}`}>
         <span className={`font-geist text-[22px] font-extrabold tracking-[0.25em] uppercase ${fg}`}>SKILLS</span>
-        <div className={`flex-1 h-px ${isDarkMode ? "bg-white/8" : "bg-black/8"}`} />
+        <div className={`flex-1 h-px ${isDarkMode ? "bg-white" : "bg-black"}`} />
       </div>
 
-      {/* ═══ THREE COLUMN COMPACT GRID ═══ */}
+      {/* ═══ MAIN LAYOUT GRID ═══ */}
       <div className={`grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x ${isDarkMode ? "divide-white/[0.08]" : "divide-black/[0.08]"} border-b ${border}`}>
         
-        {/* COLUMN 1: Frontend & Mobile */}
-        <div className="flex flex-col p-6 sm:p-8 gap-8">
-          {col1Groups.map((group, gi) => (
-            <motion.div
-              key={group.id}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.1 }}
-              custom={gi}
-              variants={fadeUp}
-              className="flex flex-col gap-4"
-            >
-              <div className="flex items-center gap-3">
-                <span className="font-geist text-[8px] font-bold tracking-[0.25em] text-brand-blue">
-                  {group.number}
-                </span>
-                <span className={`font-geist text-[9px] font-extrabold tracking-[0.2em] uppercase ${fg}`}>
-                  {group.category}
-                </span>
-                <div className={`flex-1 h-px ${isDarkMode ? "bg-white/5" : "bg-black/5"}`} />
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {group.tools.map((tool) => (
-                  <div
-                    key={tool.name}
-                    className={`flex items-center gap-2.5 px-3 py-1.5 border ${border} ${bgCard} ${bgCardHover} transition-all duration-300`}
-                  >
-                    <img
-                      src={tool.iconUrl}
-                      alt={tool.name}
-                      className={`w-4 h-4 object-contain ${isDarkMode && tool.invertDark ? "invert" : ""}`}
-                    />
-                    <span className={`font-geist text-[9px] font-bold tracking-[0.1em] ${fg}`}>
-                      {tool.name}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* COLUMN 2: Backend & UI Design */}
-        <div className="flex flex-col p-6 sm:p-8 gap-8">
-          {col2Groups.map((group, gi) => (
-            <motion.div
-              key={group.id}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.1 }}
-              custom={gi + 2}
-              variants={fadeUp}
-              className="flex flex-col gap-4"
-            >
-              <div className="flex items-center gap-3">
-                <span className="font-geist text-[8px] font-bold tracking-[0.25em] text-brand-blue">
-                  {group.number}
-                </span>
-                <span className={`font-geist text-[9px] font-extrabold tracking-[0.2em] uppercase ${fg}`}>
-                  {group.category}
-                </span>
-                <div className={`flex-1 h-px ${isDarkMode ? "bg-white/5" : "bg-black/5"}`} />
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {group.tools.map((tool) => (
-                  <div
-                    key={tool.name}
-                    className={`flex items-center gap-2.5 px-3 py-1.5 border ${border} ${bgCard} ${bgCardHover} transition-all duration-300`}
-                  >
-                    <img
-                      src={tool.iconUrl}
-                      alt={tool.name}
-                      className="w-4 h-4 object-contain"
-                    />
-                    <span className={`font-geist text-[9px] font-bold tracking-[0.1em] ${fg}`}>
-                      {tool.name}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          ))}
+        {/* TECHNICAL SKILLS COLUMNS (SPAN 2) */}
+        <div className="lg:col-span-2 flex flex-col p-6 sm:p-8 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {techGroups.map((group, gi) => (
+              <motion.div
+                key={group.id}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.1 }}
+                custom={gi}
+                variants={fadeUp}
+                className="flex flex-col gap-4"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="font-geist text-[9px] font-bold tracking-[0.25em] text-brand-blue">
+                    {group.number}
+                  </span>
+                  <span className={`font-geist text-[10px] font-extrabold tracking-[0.2em] uppercase ${fg}`}>
+                    {group.category}
+                  </span>
+                  <div className={`flex-1 h-px ${isDarkMode ? "bg-white/10" : "bg-black/10"}`} />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  {group.tools.map((tool) => (
+                    <div
+                      key={tool.name}
+                      className={`flex flex-col items-center justify-center p-5 border text-center relative overflow-hidden transition-all duration-300 group/tool hover:-translate-y-1 cursor-pointer ${border} ${bgCard} ${bgCardHover} hover:shadow-[4px_4px_0px_#0033ff]`}
+                    >
+                      <div className="relative w-12 h-12 mb-3 flex items-center justify-center">
+                        <img
+                          src={tool.iconUrl}
+                          alt={tool.name}
+                          className={`w-10 h-10 object-contain transition-transform duration-300 group-hover/tool:scale-110 ${isDarkMode && tool.invertDark ? "invert" : ""}`}
+                        />
+                      </div>
+                      <span className={`font-geist text-[10px] sm:text-[11px] font-bold tracking-widest uppercase ${fg}`}>
+                        {tool.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
 
         {/* COLUMN 3: Non-Technical (Expandable Only) */}
         <div className="flex flex-col p-6 sm:p-8 gap-5">
           <div className="flex items-center gap-3">
-            <span className="font-geist text-[8px] font-bold tracking-[0.25em] text-brand-blue">
+            <span className="font-geist text-[9px] font-bold tracking-[0.25em] text-brand-blue">
               05
             </span>
-            <span className={`font-geist text-[9px] font-extrabold tracking-[0.2em] uppercase ${fg}`}>
+            <span className={`font-geist text-[10px] font-extrabold tracking-[0.2em] uppercase ${fg}`}>
               NON-TECHNICAL SKILLS
             </span>
-            <div className={`flex-1 h-px ${isDarkMode ? "bg-white/5" : "bg-black/5"}`} />
+            <div className={`flex-1 h-px ${isDarkMode ? "bg-white/10" : "bg-black/10"}`} />
           </div>
 
-          <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-3">
             {nonTechSkills.map((skill, idx) => {
               const isOpen = expandedSkill === skill.name;
               return (
@@ -254,27 +213,27 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
                   viewport={{ once: true, amount: 0.1 }}
                   custom={idx + 4}
                   variants={fadeUp}
-                  className={`border ${border} ${bgCard} transition-all duration-300 flex flex-col p-3.5`}
+                  className={`border ${border} ${bgCard} transition-all duration-300 flex flex-col p-4 cursor-pointer hover:border-brand-blue/30`}
+                  onClick={() => toggleSkill(skill.name)}
                 >
                   {/* Clickable Header */}
                   <div
-                    onClick={() => toggleSkill(skill.name)}
-                    className="flex items-center justify-between cursor-pointer select-none group"
+                    className="flex items-center justify-between select-none group"
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       <img
                         src={skill.iconUrl}
                         alt={skill.name}
-                        className="w-4 h-4 object-contain filter drop-shadow-[0_0_1px_rgba(0,51,255,0.4)]"
+                        className="w-5 h-5 object-contain filter drop-shadow-[0_0_1px_rgba(0,51,255,0.4)]"
                       />
-                      <span className={`font-geist text-[9px] font-bold tracking-[0.12em] uppercase ${fg} transition-colors group-hover:text-brand-blue`}>
+                      <span className={`font-geist text-[10px] sm:text-[11px] font-bold tracking-[0.12em] uppercase ${fg} transition-colors group-hover:text-brand-blue`}>
                         {skill.name}
                       </span>
                     </div>
                     <motion.span
                       animate={{ rotate: isOpen ? 90 : 0 }}
                       transition={{ duration: 0.2, ease: "easeInOut" }}
-                      className="text-[13px] leading-none select-none font-bold text-brand-blue"
+                      className="text-[14px] leading-none select-none font-bold text-brand-blue"
                     >
                       ›
                     </motion.span>
@@ -285,12 +244,12 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
                     {isOpen && (
                       <motion.div
                         initial={{ height: 0, opacity: 0, marginTop: 0 }}
-                        animate={{ height: "auto", opacity: 1, marginTop: 10 }}
+                        animate={{ height: "auto", opacity: 1, marginTop: 12 }}
                         exit={{ height: 0, opacity: 0, marginTop: 0 }}
                         transition={{ duration: 0.25, ease: "easeInOut" }}
                         className="overflow-hidden"
                       >
-                        <p className={`font-geist text-[10.5px] leading-relaxed font-light ${isDarkMode ? "text-white/50" : "text-black/50"}`}>
+                        <p className={`font-geist text-[11px] sm:text-[12px] leading-relaxed font-light ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
                           {skill.description}
                         </p>
                       </motion.div>

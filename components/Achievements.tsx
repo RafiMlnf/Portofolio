@@ -173,7 +173,7 @@ export default function Achievements({ isDarkMode }: { isDarkMode: boolean }) {
         >
           EXPERIENCE
         </span>
-        <div className={`flex-1 h-px ${isDarkMode ? "bg-white/[0.08]" : "bg-black/[0.08]"}`} />
+        <div className={`flex-1 h-px ${isDarkMode ? "bg-white" : "bg-black"}`} />
        </div>
 
       {/* ═══ TIMELINE ═══ */}

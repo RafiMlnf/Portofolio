@@ -497,6 +497,33 @@ const GithubIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
 );
 
 // ── Autoscroll Image Carousel (card & modal) ──
+// ── Lazy Loading Wrapper for Media Previews ──
+const LazyMedia = ({ children, heightClass = "aspect-video" }: { children: React.ReactNode; heightClass?: string }) => {
+  const [shouldRender, setShouldRender] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldRender(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "250px" } // load slightly in advance
+    );
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={containerRef} className={shouldRender ? "w-full" : `w-full relative ${heightClass}`}>
+      {shouldRender ? children : <div className="absolute inset-0 bg-[#0d0d0d] animate-pulse border border-white/5" />}
+    </div>
+  );
+};
+
 const ImageCarousel = ({
   images,
   title,
@@ -511,45 +538,72 @@ const ImageCarousel = ({
   objectFit?: string;
 }) => {
   const [current, setCurrent] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // auto-advance
   useEffect(() => {
+    if (!containerRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // auto-advance only when visible in the viewport
+  useEffect(() => {
+    if (!isVisible) {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      return;
+    }
     timerRef.current = setInterval(() => {
       setCurrent((prev) => (prev + 1) % images.length);
     }, 2800);
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [images.length]);
+  }, [images.length, isVisible]);
 
   const goTo = (i: number) => {
     setCurrent(i);
     if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % images.length);
-    }, 2800);
+    if (isVisible) {
+      timerRef.current = setInterval(() => {
+        setCurrent((prev) => (prev + 1) % images.length);
+      }, 2800);
+    }
   };
 
   return (
-    <div className={`w-full ${aspectClass} relative overflow-hidden border ${isDarkMode ? "border-white/10" : "border-black/10"} bg-[#121212] group/carousel`}>
-      {/* Slides */}
-      {images.map((src, i) => (
-        <div
-          key={src}
-          className={`absolute inset-0 transition-opacity duration-700 ${
-            i === current ? "opacity-100 z-10" : "opacity-0 z-0"
-          }`}
-        >
-          <Image
-            src={src}
-            alt={`${title} — ${i + 1}`}
-            fill
-            sizes="(max-width: 640px) 100vw, 600px"
-            className={`${objectFit} transition-transform duration-700 ${i === current ? "scale-100" : "scale-105"}`}
-            priority={i === 0}
-            quality={60}
-          />
-        </div>
-      ))}
+    <div ref={containerRef} className={`w-full ${aspectClass} relative overflow-hidden border ${isDarkMode ? "border-white/10" : "border-black/10"} bg-[#121212] group/carousel`}>
+      {/* Slides (only render current, previous, and next images to save memory) */}
+      {images.map((src, i) => {
+        const isNear = Math.abs(i - current) <= 1 || (current === 0 && i === images.length - 1) || (current === images.length - 1 && i === 0);
+        if (!isNear) return null;
+        return (
+          <div
+            key={src}
+            className={`absolute inset-0 transition-opacity duration-700 ${
+              i === current ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
+          >
+            <Image
+              src={src}
+              alt={`${title} — ${i + 1}`}
+              fill
+              sizes="(max-width: 640px) 100vw, 600px"
+              className={`${objectFit} transition-transform duration-700 ${i === current ? "scale-100" : "scale-105"}`}
+              priority={i === 0}
+              quality={40}
+            />
+          </div>
+        );
+      })}
 
       {/* Dot indicators */}
       <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
@@ -644,6 +698,9 @@ const IframePreview = ({ src, title, isDarkMode }: { src: string; title: string;
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [scale, setScale] = useState(0.25);
   const [height, setHeight] = useState(176);
+  const [shouldLoad, setShouldLoad] = useState(false);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+  const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -662,37 +719,110 @@ const IframePreview = ({ src, title, isDarkMode }: { src: string; title: string;
     return () => {
       window.removeEventListener("resize", handleResize);
       clearTimeout(timeout);
+      if (hoverTimer.current) clearTimeout(hoverTimer.current);
     };
   }, []);
+
+  const handleMouseEnter = () => {
+    if (shouldLoad) return;
+    hoverTimer.current = setTimeout(() => {
+      setShouldLoad(true);
+    }, 450); // 450ms debounce to prevent loading while fast scrolling
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimer.current) {
+      clearTimeout(hoverTimer.current);
+      hoverTimer.current = null;
+    }
+  };
+
+  const handleLoadClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShouldLoad(true);
+  };
+
+  const displayUrl = src.replace("https://", "").replace("http://", "").split("/")[0] || src;
 
   return (
     <div
       ref={wrapperRef}
-      style={{ height: `${height}px` }}
-      className={`w-full mb-4 border relative overflow-hidden bg-[#121212] group/iframe ${isDarkMode ? "border-white/10" : "border-black/10"
-        }`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      style={{ height: `${height + 24}px` }}
+      className={`w-full mb-4 border relative overflow-hidden bg-[#0d0d0d] group/iframe select-none flex flex-col justify-between ${
+        isDarkMode ? "border-white/10" : "border-black/10"
+      }`}
     >
-      <iframe
-        src={src}
-        title={title}
-        style={{
-          width: "1280px",
-          height: "720px",
-          transform: `scale(${scale})`,
-          transformOrigin: "top left",
-        }}
-        className="border-none pointer-events-none absolute top-0 left-0"
-        loading="lazy"
-      />
-      {/* Interaction hint overlay */}
-      <a
-        href={src}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="absolute inset-0 bg-black/40 opacity-0 group-hover/iframe:opacity-100 flex items-center justify-center transition-opacity duration-300 text-[10px] font-geist font-bold tracking-widest text-white backdrop-blur-[2px]"
-      >
-        OPEN LIVE SITE ↗
-      </a>
+      {/* Mockup Address Bar */}
+      <div className={`flex items-center gap-1.5 px-2 py-1.5 border-b text-[7px] font-mono tracking-wider ${
+        isDarkMode ? "bg-black/60 border-white/5 text-zinc-500" : "bg-neutral-100 border-black/5 text-neutral-500"
+      } z-20`}>
+        <div className="flex gap-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-red-500/60" />
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-500/60" />
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/60" />
+        </div>
+        <div className={`flex-1 text-center py-0.5 rounded px-2 text-[7px] truncate max-w-[150px] mx-auto ${
+          isDarkMode ? "bg-white/5 text-zinc-400" : "bg-black/5 text-neutral-600"
+        }`}>
+          {displayUrl}
+        </div>
+      </div>
+
+      {!shouldLoad ? (
+        <div 
+          onClick={handleLoadClick}
+          className="flex-1 flex flex-col items-center justify-center p-3 relative cursor-pointer hover:bg-brand-blue/5 transition-colors"
+        >
+          <div className="text-center space-y-2 z-10">
+            <div className={`font-mono text-[8px] tracking-[0.2em] font-bold ${
+              isDarkMode ? "text-zinc-500 group-hover/iframe:text-brand-blue" : "text-neutral-500 group-hover/iframe:text-brand-blue"
+            } transition-colors uppercase`}>
+              [ PREVIEW STANDBY ]
+            </div>
+            <div className="font-geist text-[9px] font-extrabold tracking-widest bg-brand-blue/10 border border-brand-blue/30 text-brand-blue px-2.5 py-1.5 group-hover/iframe:bg-brand-blue group-hover/iframe:text-white transition-all duration-300">
+              HOVER OR CLICK TO LOAD
+            </div>
+          </div>
+          <div className="absolute inset-0 opacity-[0.02] bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:10px_10px]" />
+        </div>
+      ) : (
+        <>
+          <iframe
+            src={src}
+            title={title}
+            onLoad={() => setIframeLoaded(true)}
+            style={{
+              width: "1280px",
+              height: "720px",
+              transform: `scale(${scale})`,
+              transformOrigin: "top left",
+              top: "24px",
+            }}
+            className={`border-none pointer-events-none absolute left-0 transition-opacity duration-500 ${
+              iframeLoaded ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
+          />
+          {!iframeLoaded && (
+            <div className="flex-1 flex flex-col items-center justify-center p-3 font-mono text-[8px] tracking-[0.2em] text-brand-blue animate-pulse">
+              CONNECTING TO PORT...
+            </div>
+          )}
+        </>
+      )}
+
+      {shouldLoad && iframeLoaded && (
+        <a
+          href={src}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          className="absolute inset-0 bg-black/45 opacity-0 group-hover/iframe:opacity-100 flex items-center justify-center transition-opacity duration-300 text-[10px] font-geist font-bold tracking-widest text-white backdrop-blur-[1px] z-30"
+        >
+          OPEN LIVE SITE ↗
+        </a>
+      )}
     </div>
   );
 };
@@ -704,6 +834,7 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
   const [projectDetail, setProjectDetail] = useState<ProjectDetail | null>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [errorDetail, setErrorDetail] = useState<string | null>(null);
+  const [visibleDesigns, setVisibleDesigns] = useState(12);
   useEffect(() => {
     const isLocked = !!activeProject || !!lightboxImage;
     const event = new CustomEvent("lock-scroll", { detail: { lock: isLocked } });
@@ -756,7 +887,7 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
       {/* ═══ SECTION HEADER ═══ */}
       <div className={`px-8 md:px-10 py-8 flex items-center gap-6 border-b ${border}`}>
         <span className={`font-geist text-[22px] font-extrabold tracking-[0.25em] uppercase ${fg}`}>PROJECTS</span>
-        <div className={`flex-1 h-px ${isDarkMode ? "bg-white/8" : "bg-black/8"}`} />
+        <div className={`flex-1 h-px ${isDarkMode ? "bg-white" : "bg-black"}`} />
         <span className={`font-geist text-[9px] font-bold tracking-[0.3em] uppercase ${fgMuted}`}>
           {PROJECTS_DATA.length} PROJECTS
         </span>
@@ -830,29 +961,37 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                       {/* Preview Container: Carousel / Single Image / Iframe / Github */}
                       {p.images && p.images.length > 0 ? (
                         <div className="mb-4">
-                          <ImageCarousel images={p.images} title={p.title} isDarkMode={isDarkMode} aspectClass="aspect-video" />
+                          <LazyMedia heightClass="aspect-video">
+                            <ImageCarousel images={p.images} title={p.title} isDarkMode={isDarkMode} aspectClass="aspect-video" />
+                          </LazyMedia>
                         </div>
                       ) : p.imageUrl ? (
-                        <div className={`w-full aspect-video mb-4 border relative overflow-hidden bg-[#121212] group/iframe ${isDarkMode ? "border-white/10" : "border-black/10"
-                          }`}>
-                          <Image
-                            src={p.imageUrl}
-                            alt={p.title}
-                            fill
-                            sizes="(max-width: 640px) 100vw, 300px"
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                            priority={p.id === 9}
-                            quality={50}
-                          />
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 text-[9px] font-geist font-bold tracking-widest text-white backdrop-blur-[1px]">
-                            OPEN PROJECT DETAILS ↗
+                        <LazyMedia heightClass="aspect-video">
+                          <div className={`w-full aspect-video mb-4 border relative overflow-hidden bg-[#121212] group/iframe ${isDarkMode ? "border-white/10" : "border-black/10"
+                            }`}>
+                            <Image
+                              src={p.imageUrl}
+                              alt={p.title}
+                              fill
+                              sizes="(max-width: 640px) 100vw, 300px"
+                              className="object-cover transition-transform duration-500 group-hover:scale-105"
+                              priority={p.id === 9}
+                              quality={40}
+                            />
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 text-[9px] font-geist font-bold tracking-widest text-white backdrop-blur-[1px]">
+                              OPEN PROJECT DETAILS ↗
+                            </div>
                           </div>
-                        </div>
+                        </LazyMedia>
                       ) : p.liveUrl && (
                         p.liveUrl.includes("github.com") ? (
-                          <GithubPreview src={p.liveUrl} isDarkMode={isDarkMode} />
+                          <LazyMedia heightClass="h-32">
+                            <GithubPreview src={p.liveUrl} isDarkMode={isDarkMode} />
+                          </LazyMedia>
                         ) : (
-                          <IframePreview src={p.liveUrl} title={p.title} isDarkMode={isDarkMode} />
+                          <LazyMedia heightClass="h-[120px] sm:h-[150px] md:h-[180px]">
+                            <IframePreview src={p.liveUrl} title={p.title} isDarkMode={isDarkMode} />
+                          </LazyMedia>
                         )
                       )}
 
@@ -923,31 +1062,41 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                       {/* Preview Container: Carousel / Single Image / Intranet / Iframe / Github */}
                       {p.images && p.images.length > 0 ? (
                         <div className="mb-4">
-                          <ImageCarousel images={p.images} title={p.title} isDarkMode={isDarkMode} aspectClass="aspect-video" />
+                          <LazyMedia heightClass="aspect-video">
+                            <ImageCarousel images={p.images} title={p.title} isDarkMode={isDarkMode} aspectClass="aspect-video" />
+                          </LazyMedia>
                         </div>
                       ) : p.imageUrl ? (
-                        <div className={`w-full aspect-video mb-4 border relative overflow-hidden bg-[#121212] group/iframe ${isDarkMode ? "border-white/10" : "border-black/10"
-                          }`}>
-                          <Image
-                            src={p.imageUrl}
-                            alt={p.title}
-                            fill
-                            sizes="(max-width: 640px) 100vw, 300px"
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                            priority={p.id === 9}
-                            quality={50}
-                          />
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 text-[9px] font-geist font-bold tracking-widest text-white backdrop-blur-[1px]">
-                            OPEN PROJECT DETAILS ↗
+                        <LazyMedia heightClass="aspect-video">
+                          <div className={`w-full aspect-video mb-4 border relative overflow-hidden bg-[#121212] group/iframe ${isDarkMode ? "border-white/10" : "border-black/10"
+                            }`}>
+                            <Image
+                              src={p.imageUrl}
+                              alt={p.title}
+                              fill
+                              sizes="(max-width: 640px) 100vw, 300px"
+                              className="object-cover transition-transform duration-500 group-hover:scale-105"
+                              priority={p.id === 9}
+                              quality={40}
+                            />
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 text-[9px] font-geist font-bold tracking-widest text-white backdrop-blur-[1px]">
+                              OPEN PROJECT DETAILS ↗
+                            </div>
                           </div>
-                        </div>
+                        </LazyMedia>
                       ) : p.deployment === "intranet" ? (
-                        <IntranetPreview isDarkMode={isDarkMode} title={p.title} />
+                        <LazyMedia heightClass="h-32">
+                          <IntranetPreview isDarkMode={isDarkMode} title={p.title} />
+                        </LazyMedia>
                       ) : p.liveUrl && (
                         p.liveUrl.includes("github.com") ? (
-                          <GithubPreview src={p.liveUrl} isDarkMode={isDarkMode} />
+                          <LazyMedia heightClass="h-32">
+                            <GithubPreview src={p.liveUrl} isDarkMode={isDarkMode} />
+                          </LazyMedia>
                         ) : (
-                          <IframePreview src={p.liveUrl} title={p.title} isDarkMode={isDarkMode} />
+                          <LazyMedia heightClass="h-[120px] sm:h-[150px] md:h-[180px]">
+                            <IframePreview src={p.liveUrl} title={p.title} isDarkMode={isDarkMode} />
+                          </LazyMedia>
                         )
                       )}
 
@@ -988,33 +1137,54 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
           </div>
         ) : (
           /* DESIGN category */
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full animate-fadeIn">
-            {[...PROJECTS_DATA]
-              .filter((p) => p.category === "DESIGN")
-              .sort((a, b) => parseInt(b.year) - parseInt(a.year))
-              .map((p) => (
-                <div
-                  key={p.id}
-                  onClick={() => p.imageUrl && setLightboxImage({ src: p.imageUrl, title: p.title })}
-                  className={`overflow-hidden aspect-[3/4] bg-neutral-900 group relative border transition-all duration-300 cursor-pointer ${isDarkMode ? "border-white/10" : "border-black/10"
-                    }`}
-                >
-                  <Image
-                    src={p.imageUrl || ""}
-                    alt={p.title}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    priority={p.id === 3 || p.id === 6}
-                    quality={50}
-                  />
-                  <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200 z-10">
-                    <span className="text-[10px] tracking-widest font-bold text-white bg-black/60 px-3 py-1.5 border border-white/20">
-                      VIEW FULL IMAGE
-                    </span>
+          <div className="space-y-8 w-full animate-fadeIn">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
+              {[...PROJECTS_DATA]
+                .filter((p) => p.category === "DESIGN")
+                .sort((a, b) => parseInt(b.year) - parseInt(a.year))
+                .slice(0, visibleDesigns)
+                .map((p) => (
+                  <div
+                    key={p.id}
+                    onClick={() => p.imageUrl && setLightboxImage({ src: p.imageUrl, title: p.title })}
+                    className={`overflow-hidden aspect-[3/4] bg-neutral-900 group relative border transition-all duration-300 cursor-pointer ${isDarkMode ? "border-white/10" : "border-black/10"
+                      }`}
+                  >
+                    <LazyMedia heightClass="aspect-[3/4]">
+                      <Image
+                        src={p.imageUrl || ""}
+                        alt={p.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        priority={p.id === 3 || p.id === 6}
+                        quality={35}
+                      />
+                    </LazyMedia>
+                    <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200 z-10">
+                      <span className="text-[10px] tracking-widest font-bold text-white bg-black/60 px-3 py-1.5 border border-white/20">
+                        VIEW FULL IMAGE
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+            </div>
+
+            {/* Load More Button */}
+            {visibleDesigns < PROJECTS_DATA.filter((p) => p.category === "DESIGN").length && (
+              <div className="flex justify-center pt-4">
+                <button
+                  onClick={() => setVisibleDesigns((prev) => prev + 12)}
+                  className={`px-6 py-3 border font-geist text-[10px] md:text-xs font-bold tracking-widest transition-all duration-300 flex items-center gap-2.5 cursor-pointer ${
+                    isDarkMode
+                      ? "border-white/20 hover:border-white text-white bg-[#0e0e0e] hover:shadow-[4px_4px_0px_#0033ff]"
+                      : "border-black/20 hover:border-black text-black bg-white hover:shadow-[4px_4px_0px_#0033ff]"
+                  }`}
+                >
+                  LOAD MORE WORK (+{PROJECTS_DATA.filter((p) => p.category === "DESIGN").length - visibleDesigns} REMAINING)
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
