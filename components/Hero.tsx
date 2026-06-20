@@ -205,6 +205,13 @@ export default function Hero({ isDarkMode }: { isDarkMode: boolean }) {
     // Initial size setup
     handleResize();
 
+    // Re-initialize letters once custom fonts have finished loading to prevent overlap/clumping
+    if (typeof document !== "undefined" && document.fonts) {
+      document.fonts.ready.then(() => {
+        handleResize();
+      });
+    }
+
     // PHYSICS & RENDER LOOP
     const updatePhysics = () => {
       const letters = lettersRef.current;
