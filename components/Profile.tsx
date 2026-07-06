@@ -449,7 +449,7 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
       >
         {/* Header row */}
         <div className={`px-8 md:px-10 py-6 flex items-center gap-6 border-b ${border}`}>
-          <span className={`font-geist text-[12px] font-bold tracking-[0.35em] uppercase ${fg}`}>
+          <span className={`font-sans text-[12px] font-bold tracking-[0.35em] uppercase ${fg}`}>
             Beyond Technical
           </span>
           <div className={`flex-1 h-px ${isDarkMode ? "bg-white" : "bg-black"}`} />
@@ -459,20 +459,20 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
         <div className={`grid grid-cols-1 md:grid-cols-2 border-b ${border}`}>
           {/* Left */}
           <div className={`px-8 md:px-10 py-10 border-b md:border-b-0 ${border}`}>
-            <p className={`font-geist text-[13px] leading-[1.85] font-light ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
+            <p className={`font-sans text-[13px] leading-[1.85] font-light ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
               Saya tipe yang lebih banyak diam. Bukan berarti tidak ada yang mau disampaikan — lebih ke saya lebih suka mengamati dulu, baca situasi, pahami polanya, baru bicara kalau memang perlu. Orang yang baru kenal saya mungkin butuh waktu lebih untuk benar-benar tahu saya seperti apa, dan itu tidak masalah. Saya tidak berusaha membuat diri sulit dipahami — memang begitu adanya.
             </p>
-            <p className={`font-geist text-[13px] leading-[1.85] font-light mt-5 ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
+            <p className={`font-sans text-[13px] leading-[1.85] font-light mt-5 ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
               Ada satu momen yang cukup berkesan — diminta jadi speaker webinar di salah satu universitas. Buat orang lain mungkin biasa, tapi buat saya yang cenderung diam, itu semacam pembuktian kecil. Ternyata kalau memang situasinya mengharuskan saya hadir penuh, saya bisa melakukannya.
             </p>
           </div>
 
           {/* Right */}
           <div className={`px-8 md:px-10 py-10 md:border-l ${border}`}>
-            <p className={`font-geist text-[13px] leading-[1.85] font-light ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
+            <p className={`font-sans text-[13px] leading-[1.85] font-light ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
               Ekspresi saya biasanya keluar lewat visual — desain jadi semacam bahasa lain buat saya. Untuk musik, saya lebih ke pendengar yang serius; cari makna di balik lirik, pergi ke konser, duduk sendiri sambil dengerin album dari awal sampai akhir. Buat saya musik bukan sekadar latar, ada sesuatu yang lebih dalam di sana.
             </p>
-            <p className={`font-geist text-[13px] leading-[1.85] font-light mt-5 ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
+            <p className={`font-sans text-[13px] leading-[1.85] font-light mt-5 ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
               Soal skill non-teknis — saya tidak terlalu yakin dengan daftar yang saya buat sendiri, tapi orang-orang di sekitar saya bilang saya bisa menenangkan situasi yang mulai kacau, dan saya tidak panik mudah. Mungkin itu yang dimaksud EQ. Entahlah, saya juga masih belajar mengenal diri sendiri.
             </p>
           </div>

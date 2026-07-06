@@ -103,7 +103,7 @@ export default function AnimatedStatus() {
       animate={{ width: boxWidth }}
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="bg-brand-blue text-white font-bold text-[9px] sm:text-[10px] md:text-xs tracking-widest overflow-hidden relative flex items-center justify-center"
-      style={{ height: "24px" }}
+      style={{ height: "24px", fontFamily: "'SS Broad', sans-serif" }}
     >
       <div className="absolute inset-0 flex items-center justify-center">
         <div ref={contentRef} className="w-max flex items-center justify-center px-3">

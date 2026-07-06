@@ -132,11 +132,11 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
   return (
     <section
       id="skills"
-      className={`relative w-full select-none font-geist ${isDarkMode ? "bg-black" : "bg-[#f4f4f0]"}`}
+      className={`relative w-full select-none font-sans ${isDarkMode ? "bg-black" : "bg-[#f4f4f0]"}`}
     >
       {/* ═══ SECTION HEADER ═══ */}
-      <div className={`px-8 md:px-10 py-8 flex items-center gap-6 border-b ${border}`}>
-        <span className={`font-geist text-[22px] font-extrabold tracking-[0.25em] uppercase ${fg}`}>SKILLS</span>
+      <div className={`px-4 md:px-8 lg:px-10 py-8 flex items-center gap-6 border-b ${border}`}>
+        <span className={`font-sans text-[44px] font-extrabold tracking-[0.05em] ${fg}`}>Skills</span>
         <div className={`flex-1 h-px ${isDarkMode ? "bg-white" : "bg-black"}`} />
       </div>
 
@@ -157,10 +157,10 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
                 className="flex flex-col gap-4"
               >
                 <div className="flex items-center gap-3">
-                  <span className="font-geist text-[9px] font-bold tracking-[0.25em] text-brand-blue">
+                  <span className="font-sans text-[9px] font-bold tracking-[0.25em] text-brand-blue">
                     {group.number}
                   </span>
-                  <span className={`font-geist text-[10px] font-extrabold tracking-[0.2em] uppercase ${fg}`}>
+                  <span className={`font-sans text-[10px] font-extrabold tracking-[0.2em] uppercase ${fg}`}>
                     {group.category}
                   </span>
                   <div className={`flex-1 h-px ${isDarkMode ? "bg-white/10" : "bg-black/10"}`} />
@@ -179,7 +179,7 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
                           className={`w-10 h-10 object-contain transition-transform duration-300 group-hover/tool:scale-110 ${isDarkMode && tool.invertDark ? "invert" : ""}`}
                         />
                       </div>
-                      <span className={`font-geist text-[10px] sm:text-[11px] font-bold tracking-widest uppercase ${fg}`}>
+                      <span className={`font-sans text-[10px] sm:text-[11px] font-bold tracking-widest uppercase ${fg}`}>
                         {tool.name}
                       </span>
                     </div>
@@ -193,10 +193,10 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
         {/* COLUMN 3: Non-Technical (Expandable Only) */}
         <div className="flex flex-col p-6 sm:p-8 gap-5">
           <div className="flex items-center gap-3">
-            <span className="font-geist text-[9px] font-bold tracking-[0.25em] text-brand-blue">
+            <span className="font-sans text-[9px] font-bold tracking-[0.25em] text-brand-blue">
               05
             </span>
-            <span className={`font-geist text-[10px] font-extrabold tracking-[0.2em] uppercase ${fg}`}>
+            <span className={`font-sans text-[10px] font-extrabold tracking-[0.2em] uppercase ${fg}`}>
               NON-TECHNICAL SKILLS
             </span>
             <div className={`flex-1 h-px ${isDarkMode ? "bg-white/10" : "bg-black/10"}`} />
@@ -226,7 +226,7 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
                         alt={skill.name}
                         className="w-5 h-5 object-contain filter drop-shadow-[0_0_1px_rgba(0,51,255,0.4)]"
                       />
-                      <span className={`font-geist text-[10px] sm:text-[11px] font-bold tracking-[0.12em] uppercase ${fg} transition-colors group-hover:text-brand-blue`}>
+                      <span className={`font-sans text-[10px] sm:text-[11px] font-bold tracking-[0.12em] uppercase ${fg} transition-colors group-hover:text-brand-blue`}>
                         {skill.name}
                       </span>
                     </div>
@@ -249,7 +249,7 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
                         transition={{ duration: 0.25, ease: "easeInOut" }}
                         className="overflow-hidden"
                       >
-                        <p className={`font-geist text-[11px] sm:text-[12px] leading-relaxed font-light ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
+                        <p className={`font-sans text-[11px] sm:text-[12px] leading-relaxed font-light ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
                           {skill.description}
                         </p>
                       </motion.div>

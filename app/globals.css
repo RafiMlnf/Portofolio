@@ -1,5 +1,6 @@
 /* CORS-Compliant and Self-Hosted Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Gloock&family=Pixelify+Sans:wght@400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
 
 @font-face {
   font-family: 'SS Broad';
@@ -41,56 +42,14 @@
   font-display: swap;
 }
 
-/* Geist Sans via CORS-friendly jsDelivr Fontsource */
-@font-face {
-  font-family: 'Geist';
-  src: url('https://cdn.jsdelivr.net/npm/@fontsource/geist-sans/files/geist-sans-latin-400-normal.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Geist';
-  src: url('https://cdn.jsdelivr.net/npm/@fontsource/geist-sans/files/geist-sans-latin-300-normal.woff2') format('woff2');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Geist';
-  src: url('https://cdn.jsdelivr.net/npm/@fontsource/geist-sans/files/geist-sans-latin-500-normal.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Geist';
-  src: url('https://cdn.jsdelivr.net/npm/@fontsource/geist-sans/files/geist-sans-latin-700-normal.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Geist';
-  src: url('https://cdn.jsdelivr.net/npm/@fontsource/geist-sans/files/geist-sans-latin-800-normal.woff2') format('woff2');
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Geist';
-  src: url('https://cdn.jsdelivr.net/npm/@fontsource/geist-sans/files/geist-sans-latin-900-normal.woff2') format('woff2');
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
+
 
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: 'SS Broad', sans-serif;
-  --font-display: 'SS Broad', sans-serif;
-  --font-geist: 'Geist', sans-serif;
+  --font-sans: 'Google Sans', sans-serif;
+  --font-display: 'Google Sans', sans-serif;
+  --font-geist: 'Google Sans', sans-serif;
   --font-reverie: 'REVERIE', sans-serif;
   --font-gloock: 'Gloock', serif;
   --font-pixelify: 'Pixelify Sans', sans-serif;
@@ -179,7 +138,7 @@
   body {
     background-color: #000;
     color: #fff;
-    font-family: 'SS Broad', sans-serif;
+    font-family: 'Google Sans', sans-serif;
   }
 }
 
@@ -338,4 +297,11 @@ html.lenis body {
   transform: translate(-50%, -50%) scale(0.1);
   border-radius: 50%;
   animation: crystal-halo-anim 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
+}
+
+/* Force Google Sans on Geist and Sans elements */
+.font-geist, .font-sans {
+  font-family: 'Google Sans', sans-serif !important;
+}
+
+

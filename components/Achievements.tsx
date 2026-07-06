@@ -164,20 +164,20 @@ export default function Achievements({ isDarkMode }: { isDarkMode: boolean }) {
   return (
     <section
       id="experience"
-      className={`relative w-full select-none font-geist ${isDarkMode ? "bg-black" : "bg-[#f4f4f0]"}`}
+      className={`relative w-full select-none font-sans ${isDarkMode ? "bg-black" : "bg-[#f4f4f0]"}`}
     >
       {/* ═══ SECTION HEADER ═══ */}
-      <div className={`px-8 md:px-10 py-8 flex items-center gap-6 border-b ${border}`}>
+      <div className={`px-4 md:px-8 lg:px-10 py-8 flex items-center gap-6 border-b ${border}`}>
         <span
-          className={`font-geist text-[22px] font-extrabold tracking-[0.25em] uppercase ${fg}`}
+          className={`font-sans text-[44px] font-extrabold tracking-[0.05em] ${fg}`}
         >
-          EXPERIENCE
+          Experience
         </span>
         <div className={`flex-1 h-px ${isDarkMode ? "bg-white" : "bg-black"}`} />
        </div>
 
       {/* ═══ TIMELINE ═══ */}
-      <div className="px-8 md:px-10 py-10 md:py-14">
+      <div className="px-4 md:px-8 lg:px-10 py-10 md:py-14">
         <div className="relative max-w-3xl">
           {/* Vertical spine line */}
           <motion.div
@@ -292,18 +292,18 @@ export default function Achievements({ isDarkMode }: { isDarkMode: boolean }) {
                       {/* Left info */}
                       <div className="flex flex-col gap-0.5 min-w-0">
                         <span
-                          className={`self-start font-geist text-[7.5px] font-bold tracking-[0.35em] uppercase px-1.5 py-0.5 mb-1`}
+                          className={`self-start font-sans text-[7.5px] font-bold tracking-[0.35em] uppercase px-1.5 py-0.5 mb-1`}
                           style={{ color: accent, border: `1px solid ${accent}44` }}
                         >
                           {cfg.label}
                         </span>
                         <h3
-                          className={`font-geist text-[14px] font-extrabold tracking-tight leading-tight ${fg}`}
+                          className={`font-sans text-[14px] font-extrabold tracking-tight leading-tight ${fg}`}
                         >
                           {item.role}
                         </h3>
                         <span
-                          className="font-geist text-[11px] font-medium tracking-[0.03em]"
+                          className="font-sans text-[11px] font-medium tracking-[0.03em]"
                           style={{ color: accent }}
                         >
                           {item.company}
@@ -314,13 +314,13 @@ export default function Achievements({ isDarkMode }: { isDarkMode: boolean }) {
                       <div className="flex items-center gap-4 flex-shrink-0">
                         <div className="flex flex-col items-end gap-1">
                           <span
-                            className={`font-geist text-[12px] font-bold tracking-[0.1em] uppercase ${fgMuted}`}
+                            className={`font-sans text-[12px] font-bold tracking-[0.1em] uppercase ${fgMuted}`}
                           >
                             {item.period}
                           </span>
                           {item.location && (
                             <span
-                              className={`font-geist text-[10px] tracking-[0.05em] ${fgMuted}`}
+                              className={`font-sans text-[10px] tracking-[0.05em] ${fgMuted}`}
                             >
                               {item.location}
                             </span>
@@ -329,7 +329,7 @@ export default function Achievements({ isDarkMode }: { isDarkMode: boolean }) {
                         <motion.span
                           animate={{ rotate: isExpanded ? 90 : 0 }}
                           transition={{ duration: 0.2, ease: "easeInOut" }}
-                          className={`font-geist text-[18px] font-light leading-none ${fgMuted}`}
+                          className={`font-sans text-[18px] font-light leading-none ${fgMuted}`}
                         >
                           ›
                         </motion.span>
@@ -351,7 +351,7 @@ export default function Achievements({ isDarkMode }: { isDarkMode: boolean }) {
                             className={`pb-6 pt-4 border-t ${border}`}
                           >
                             <p
-                              className={`font-geist text-[11.5px] leading-relaxed tracking-[0.02em] mb-4 ${isDarkMode ? "text-white/55" : "text-black/50"}`}
+                              className={`font-sans text-[11.5px] leading-relaxed tracking-[0.02em] mb-4 ${isDarkMode ? "text-white/55" : "text-black/50"}`}
                             >
                               {item.description}
                             </p>
@@ -405,7 +405,7 @@ export default function Achievements({ isDarkMode }: { isDarkMode: boolean }) {
                             {/* Sub-projects grid for MTM */}
                             {item.subProjects && item.subProjects.length > 0 && (
                               <div className={`mt-6 flex flex-col border-t pt-5 gap-4 ${border}`}>
-                                <span className={`font-geist text-[8px] font-bold tracking-[0.35em] uppercase ${fgMuted}`}>
+                                <span className={`font-sans text-[8px] font-bold tracking-[0.35em] uppercase ${fgMuted}`}>
                                   PROJECT SCOPE
                                 </span>
                                 <div className="flex flex-col gap-3">
@@ -416,16 +416,16 @@ export default function Achievements({ isDarkMode }: { isDarkMode: boolean }) {
                                     >
                                       {/* Sub-project header */}
                                       <div className="flex items-center gap-3">
-                                        <span className={`font-geist text-[8px] font-bold tracking-[0.15em] uppercase ${isDarkMode ? "text-white/30" : "text-black/25"}`}>
+                                        <span className={`font-sans text-[8px] font-bold tracking-[0.15em] uppercase ${isDarkMode ? "text-white/30" : "text-black/25"}`}>
                                           {String(si + 1).padStart(2, "0")}
                                         </span>
                                         <div className="w-3 h-px bg-brand-blue" />
-                                        <span className={`font-geist text-[10px] font-bold tracking-[0.2em] uppercase ${isDarkMode ? "text-white/80" : "text-black/75"}`}>
+                                        <span className={`font-sans text-[10px] font-bold tracking-[0.2em] uppercase ${isDarkMode ? "text-white/80" : "text-black/75"}`}>
                                           {sub.name}
                                         </span>
                                       </div>
                                       {/* Description */}
-                                      <p className={`font-geist text-[11px] leading-relaxed font-light ${isDarkMode ? "text-white/50" : "text-black/45"}`}>
+                                      <p className={`font-sans text-[11px] leading-relaxed font-light ${isDarkMode ? "text-white/50" : "text-black/45"}`}>
                                         {sub.description}
                                       </p>
                                       {/* Stack tags */}
@@ -434,7 +434,7 @@ export default function Achievements({ isDarkMode }: { isDarkMode: boolean }) {
                                           {sub.stack.map((t) => (
                                             <span
                                               key={t}
-                                              className={`font-geist text-[7px] font-bold tracking-[0.2em] uppercase px-1.5 py-0.5 border ${border} ${fgMuted}`}
+                                              className={`font-sans text-[7px] font-bold tracking-[0.2em] uppercase px-1.5 py-0.5 border ${border} ${fgMuted}`}
                                             >
                                               {t}
                                             </span>
