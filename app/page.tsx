@@ -556,13 +556,6 @@ export default function Home() {
           <div className="opacity-50">
             © {new Date().getFullYear()} RAFI MAULANA FIRDAUS.
           </div>
-          <Link
-            href="/editor"
-            className="font-mono text-[9px] px-2.5 py-1 border border-white/20 hover:border-brand-blue hover:text-brand-blue transition-colors flex items-center gap-1.5"
-          >
-            <span>⚡</span>
-            <span>CMS / EDITOR</span>
-          </Link>
         </div>
       </footer>
       </div>
