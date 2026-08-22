@@ -45,6 +45,29 @@ export default function PortfolioEditor() {
     if (saved === "light") setIsDarkMode(false);
   }, []);
 
+  const [isPushing, setIsPushing] = useState(false);
+
+  const pushToLocalSource = async () => {
+    setIsPushing(true);
+    try {
+      const res = await fetch("/api/save-portfolio-data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(store),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast("Source code (portfolioData.ts) berhasil di-update!");
+      } else {
+        alert("Gagal menyimpan ke source code: " + (data.error || "Unknown error"));
+      }
+    } catch (err) {
+      alert("Error: Gagal menghubungi server lokal.");
+    } finally {
+      setIsPushing(false);
+    }
+  };
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
@@ -737,6 +760,25 @@ export default function PortfolioEditor() {
                 <p className={`text-xs leading-relaxed ${fgMuted}`}>
                   Sistem ini tidak memerlukan database eksternal. Perubahan otomatis tersimpan di browser Anda via <strong>LocalStorage</strong>. Untuk menjadikannya permanen di Vercel build secara global, Anda dapat mengunduh atau menyalin kode data JSON/TS di bawah ini.
                 </p>
+              </div>
+
+              {/* Push directly to local files in development mode */}
+              <div className="p-4 border-2 border-brand-blue bg-brand-blue/5 space-y-3">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-sm font-extrabold text-brand-blue">⚡ SIMPAN KE SOURCE CODE (LOCAL PUSH)</h3>
+                    <p className={`text-[11px] leading-relaxed ${fgMuted}`}>
+                      Klik untuk memperbarui file <code>lib/portfolioData.ts</code> secara otomatis agar bisa langsung di-commit & push ke Vercel.
+                    </p>
+                  </div>
+                  <button
+                    onClick={pushToLocalSource}
+                    disabled={isPushing}
+                    className="w-full sm:w-auto px-5 py-2.5 bg-brand-blue text-white text-xs font-extrabold tracking-wider border border-brand-blue hover:bg-blue-700 transition-colors shrink-0 shadow-[3px_3px_0px_#000] cursor-pointer disabled:opacity-50"
+                  >
+                    {isPushing ? "SEDANG MENYIMPAN..." : "PUSH KE SOURCE FILE"}
+                  </button>
+                </div>
               </div>
 
               {/* Action Buttons Grid */}
