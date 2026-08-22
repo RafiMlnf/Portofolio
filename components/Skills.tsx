@@ -132,7 +132,7 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
   return (
     <section
       id="skills"
-      className={`relative w-full select-none font-sans ${isDarkMode ? "bg-black" : "bg-[#f4f4f0]"}`}
+      className="relative w-full select-none font-sans"
     >
       {/* ═══ SECTION HEADER ═══ */}
       <div className={`px-4 md:px-8 lg:px-10 py-8 flex items-center gap-6 border-b ${border}`}>

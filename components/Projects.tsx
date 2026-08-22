@@ -4,504 +4,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
 
-interface ProjectDetail {
-  objective: string;
-  techStack: { label: string; items: string[] }[];
-  highlights: string[];
-  githubUrl?: string;
-  liveUrl?: string;
-}
-
-interface Project {
-  id: number;
-  title: string;
-  category: string;
-  year: string;
-  date?: string;
-  favorite?: boolean;
-  desc: string;
-  tags: string[];
-  liveUrl?: string;
-  imageUrl?: string;
-  images?: string[];   // multi-image autoscroll carousel
-  status?: string;
-  deployment?: "intranet";
-}
-
-const PROJECTS_DATA: Project[] = [
-  // ── HEAVIEST: AI + Fullstack + DSP ──
-  {
-    id: 1,
-    title: "SOLFEGGIO ANALYZER",
-    category: "DEVELOPMENT",
-    year: "2026",
-    date: "2026-05-15",
-    desc: "Mesin analisis musik bertenaga AI yang genre-aware. Menganalisis audio dengan client-side DSP, Groq LLM, dan pencarian lirik hybrid tanpa perlu upload.",
-    tags: ["Next.js", "TypeScript"],
-    liveUrl: "https://solfeggio-analyzer.vercel.app/",
-    status: "AI AUDIO LAB",
-  },
-  {
-    id: 15,
-    title: "WIGLESCO",
-    category: "DEVELOPMENT",
-    year: "2026",
-    date: "2026-06-26",
-    favorite: true,
-    desc: "Foto editor efek 3D Wigglegram & Parallax berbasis AI (Depth Anything V2). Ubah satu foto biasa jadi videonimasi kaya kamera analog Nishika N8000.",
-    tags: ["Flutter", "Next.js", "FastAPI", "ONNX Runtime", "PyTorch", "CUDA"],
-    liveUrl: "https://github.com/RafiMlnf/Wiglesco",
-    status: "3D VISION LAB",
-  },
-  {
-    id: 12,
-    title: "DELIVERY ORDER VENDOR",
-    category: "DEVELOPMENT",
-    year: "2026",
-    date: "2026-04-20",
-    desc: "Sistem monitoring performa logistik vendor (KPI & DO Generator) PT Menara Terus Makmur (Astra Otoparts Group) dengan custom SVG charting engine dan pemrosesan data spreadsheet Excel SAP.",
-    tags: ["Next.js", "React 19", "TypeScript", "Tailwind CSS"],
-    liveUrl: "https://github.com/RafiMlnf/DOV",
-    imageUrl: "/assets/img/ssproject/dov-flow.jpeg",
-    status: "ENTERPRISE SYSTEM",
-    deployment: "intranet",
-  },
-  // ── HEAVY: Fullstack Weighbridge System ──
-  {
-    id: 13,
-    title: "WEIGHTING TRUCK",
-    category: "DEVELOPMENT",
-    year: "2026",
-    date: "2026-04-10",
-    desc: "Sistem jembatan timbang (weighbridge) truk logistik PT Menara Terus Makmur (Astra Otoparts Group) untuk pencatatan otomatis berat gross, tare, dan net terintegrasi database PostgreSQL.",
-    tags: ["Next.js", "PostgreSQL", "Prisma ORM", "TypeScript", "Tailwind CSS", "NextAuth.js"],
-    liveUrl: "https://github.com/RafiMlnf/Truck-Weighting",
-    status: "ENTERPRISE SYSTEM",
-    deployment: "intranet",
-  },
-  {
-    id: 16,
-    title: "MTM STANDART",
-    category: "DEVELOPMENT",
-    year: "2026",
-    date: "2026-07-02",
-    desc: "Template Next.js terstandarisasi untuk mempercepat pengembangan aplikasi internal PT Menara Terus Makmur (Astra Otoparts Group) dengan komponen desain siap pakai.",
-    tags: ["Next.js", "TypeScript", "Tailwind CSS"],
-    liveUrl: "https://github.com/RafiMlnf/MTMStandart",
-    status: "DEVELOPER TOOL",
-  },
-  // ── HEAVY: Fullstack Backend + Real DB + GPS ──
-  {
-    id: 9,
-    title: "ELINA PKL TRACKER",
-    category: "DEVELOPMENT",
-    year: "2025",
-    date: "2025-08-25",
-    desc: "Sistem monitoring Prakerin (PKL) berbasis web untuk jurusan Elektronika Industri SMKN 2 Garut dengan presensi GPS dan jurnal digital.",
-    tags: ["Native PHP", "MySQL", "Tailwind CSS"],
-    liveUrl: "https://github.com/RafiMlnf/ELINA",
-    imageUrl: "/assets/img/ssproject/elina.png",
-    status: "MONITORING SYSTEM",
-  },
-  // ── HEAVY: Fullstack + Cloud CDN ──
-  {
-    id: 8,
-    title: "TADIKA CIRCLE ARCHIVE",
-    category: "DEVELOPMENT",
-    year: "2025",
-    date: "2025-06-14",
-    desc: "Platform arsip digital privat untuk sirkel pertemanan — menyimpan foto, cerita hangout, dan trip timeline dengan Cloudinary CDN.",
-    tags: ["Next.js", "TypeScript", "Tailwind", "Cloudinary", "Upstash"],
-    liveUrl: "https://github.com/RafiMlnf/Tadika",
-    status: "PERSONAL ARCHIVE",
-    images: [
-      "/assets/img/tdk/tdk1.png",
-      "/assets/img/tdk/tdk2.png",
-      "/assets/img/tdk/tdk3.png",
-    ],
-  },
-  {
-    id: 14,
-    title: "CHATMD",
-    category: "DEVELOPMENT",
-    year: "2026",
-    date: "2026-03-05",
-    desc: "Aplikasi pesan instan privat intranet dengan sistem token discovery tanpa database. Beroperasi sepenuhnya di RAM dengan enkripsi AES untuk keamanan komunikasi lokal.",
-    tags: ["Python", "Node.js", "WebSocket"],
-    liveUrl: "https://github.com/RafiMlnf/ChatMD",
-    status: "INTRANET CHAT",
-    images: [
-      "/assets/img/ssproject/CMD1.png",
-      "/assets/img/ssproject/CMD2.png",
-    ],
-  },
-  // ── MEDIUM-HIGH: Low-level Cross-compilation (C → Wasm) ──
-  {
-    id: 4,
-    title: "JS VS WASM BENCHMARK",
-    category: "DEVELOPMENT",
-    year: "2026",
-    date: "2026-02-12",
-    desc: "Eksperimen perbandingan kecepatan eksekusi JavaScript vs WebAssembly langsung di browser menggunakan Emscripten & C source.",
-    tags: ["WebAssembly", "C", "Emscripten", "JavaScript"],
-    liveUrl: "https://jsvswasm.vercel.app/",
-    status: "PERFORMANCE LAB",
-  },
-  // ── MEDIUM: Native Mobile (Java + Android SDK) ──
-  {
-    id: 10,
-    title: "MOBILE DEV MODULES",
-    category: "DEVELOPMENT",
-    year: "2024",
-    date: "2024-11-20",
-    desc: "Repositori tugas akademik Pemrograman Mobile 1 — kumpulan modul Android Studio dari Hello World hingga Fragment & Maps integration.",
-    tags: ["Java", "Android Studio"],
-    liveUrl: "https://github.com/RafiMlnf/AndroidStudio-1",
-    status: "MOBILE DEV LAB",
-  },
-  // ── MEDIUM: Fullstack Booking Simulation (Vanilla HTML/CSS/JS + Bootstrap) ──
-  {
-    id: 11,
-    title: "RPL KONSERKU",
-    category: "DEVELOPMENT",
-    year: "2024",
-    date: "2024-05-02",
-    desc: "Sistem informasi pemesanan tiket konser berbasis web dengan simulasi otorisasi multi-role, katalog dinamis, dan kalkulator kuota real-time.",
-    tags: ["HTML5", "CSS3", "Bootstrap", "Vanilla JS"],
-    liveUrl: "https://rpl-konser-ku.vercel.app",
-    status: "SYSTEM SIMULATION",
-  },
-  {
-    id: 17,
-    title: "AUTO ITALIC",
-    category: "DEVELOPMENT",
-    year: "2026",
-    date: "2026-07-06",
-    desc: "Alat pendeteksi kata/istilah asing atau non-baku dalam dokumen laporan akademis (Sempro/Skripsi) yang otomatis memformat teks dengan format miring (italic).",
-    tags: ["Python", "HTML5", "Vanilla JS", "CSS"],
-    liveUrl: "https://auto-italic.vercel.app/",
-    status: "TEXT UTILITY",
-  },
-  // ── LIGHT: Frontend only ──
-  {
-    id: 7,
-    title: "UX RESEARCH TOOLKIT",
-    category: "DEVELOPMENT",
-    year: "2026",
-    date: "2026-01-18",
-    desc: "Toolkit riset UX komprehensif dengan Persona Template, Journey Map, dan Usability Checklist — dikembangkan sebagai tugas Metodologi Penelitian.",
-    tags: ["HTML5", "CSS", "JavaScript"],
-    liveUrl: "https://ux-research-tool.vercel.app/",
-    status: "UTILITY TOOLKIT",
-  },
-  // ── DESIGN: Complete 34 Local Assets Gallery ──
-  {
-    id: 100,
-    title: "ARTBOARD STUDY II",
-    category: "DESIGN",
-    year: "2025",
-    desc: "Komposisi brutalist yang mengeksplorasi penskalaan tipografi kontras tinggi dan grid digital yang ketat.",
-    tags: ["Layout", "Brutalist", "Figma"],
-    imageUrl: "/assets/img/test/Artboard 2.png",
-  },
-  {
-    id: 101,
-    title: "BACKEND GRAPHICS LABS",
-    category: "DESIGN",
-    year: "2026",
-    desc: "Infografis teknis yang memetakan skema database relasional dan alur operasi backend.",
-    tags: ["Infographic", "Photoshop"],
-    imageUrl: "/assets/img/test/BE.png",
-  },
-  {
-    id: 102,
-    title: "COVER BUKU EDITORIAL",
-    category: "DESIGN",
-    year: "2025",
-    desc: "Desain cover buku editorial bergaya brutalist menggunakan perataan kolom asimetris.",
-    tags: ["Layout", "Typography", "Figma"],
-    imageUrl: "/assets/img/test/CoverBuku.png",
-  },
-  {
-    id: 103,
-    title: "SOCIAL MEDIA BUNDLE I",
-    category: "DESIGN",
-    year: "2025",
-    desc: "Template desain modular yang dikurasi untuk estetika pemasaran media sosial kontemporer.",
-    tags: ["Social Media", "Figma", "Marketing"],
-    imageUrl: "/assets/img/test/FEED1.png",
-  },
-  {
-    id: 104,
-    title: "FPOSTER GEOMETRIC ART",
-    category: "DESIGN",
-    year: "2025",
-    desc: "Poster vektor kontras tinggi dengan memanfaatkan tata letak geometris dan wireframe yang rumit.",
-    tags: ["Poster", "Vector", "Illustrator"],
-    imageUrl: "/assets/img/test/FPOSTER.png",
-  },
-  {
-    id: 105,
-    title: "FAST UPB CAMPAIGN",
-    category: "DESIGN",
-    year: "2024",
-    desc: "Tata letak promosi acara yang dirancang untuk program kampus fast-track dan kampanye akademik.",
-    tags: ["Branding", "Banner", "Photoshop"],
-    imageUrl: "/assets/img/test/IGA4-FASTUPB.png",
-  },
-  {
-    id: 106,
-    title: "MAULID NABI DIGITAL ART",
-    category: "DESIGN",
-    year: "2024",
-    desc: "Ilustrasi ucapan hari besar keagamaan digital dengan penekanan pada tulisan vektor yang bersih.",
-    tags: ["Vector", "Social Media"],
-    imageUrl: "/assets/img/test/IGA4-MAULIDNABI.png",
-  },
-  {
-    id: 107,
-    title: "S3 LOGO SYMBOL",
-    category: "DESIGN",
-    year: "2024",
-    desc: "Studi tanda merek minimalis yang berpusat pada geometri inti dan palet monokrom.",
-    tags: ["Logo", "Identity", "Illustrator"],
-    imageUrl: "/assets/img/test/IGA4_LOGOS3.png",
-  },
-  {
-    id: 108,
-    title: "S4 EMBLEM CONCEPTS",
-    category: "DESIGN",
-    year: "2024",
-    desc: "Emblem merek teknis bergaya brutalist yang dirancang untuk infrastruktur digital dan keamanan siber.",
-    tags: ["Logo", "Branding", "Illustrator"],
-    imageUrl: "/assets/img/test/IGA4_LOGOS4.png",
-  },
-  {
-    id: 109,
-    title: "KEDAI SULTAN BRANDING",
-    category: "DESIGN",
-    year: "2026",
-    desc: "Branding komersial, identitas visual, dan desain kolateral produk promosi.",
-    tags: ["Branding", "Packaging", "Figma"],
-    imageUrl: "/assets/img/test/KEDAISULTAN.png",
-  },
-  {
-    id: 110,
-    title: "LOGO S7 V2 LOCKUPS",
-    category: "DESIGN",
-    year: "2025",
-    desc: "Desain logo sekunder yang disempurnakan dengan menonjolkan bentuk seimbang dan keserbagunaan tata letak.",
-    tags: ["Logo", "Identity"],
-    imageUrl: "/assets/img/test/LOGO S7 V2.png",
-  },
-  {
-    id: 111,
-    title: "WEBHOOK INTEGRATOR MARK",
-    category: "DESIGN",
-    year: "2025",
-    desc: "Tanda digital modern yang memvisualisasikan webhook real-time dan konektivitas API.",
-    tags: ["Logo", "Tech Style", "Illustrator"],
-    imageUrl: "/assets/img/test/LOGO WEBHOOK (2).png",
-  },
-  {
-    id: 112,
-    title: "MOLE STRUCTURE POSTER",
-    category: "DESIGN",
-    year: "2025",
-    desc: "Poster brutalist komprehensif yang menampilkan grid berdampak tinggi dan outline modular.",
-    tags: ["Poster", "Brutalist", "Figma"],
-    imageUrl: "/assets/img/test/MOLE.png",
-  },
-  {
-    id: 113,
-    title: "METODOLOGI PENELITIAN POSTER",
-    category: "DESIGN",
-    year: "2025",
-    desc: "Tata letak poster akademik yang menjelaskan metodologi penelitian dan struktur alur kerja.",
-    tags: ["Poster", "Academic", "Layout"],
-    imageUrl: "/assets/img/test/POSTER - S7METOPEN.png",
-  },
-  {
-    id: 114,
-    title: "TYPOGRAPHY EXHIBIT II",
-    category: "DESIGN",
-    year: "2025",
-    desc: "Poster cetak hitam-putih yang ramping dengan menekankan huruf modular dan hierarki visual.",
-    tags: ["Poster", "Typography"],
-    imageUrl: "/assets/img/test/POSTER 2.png",
-  },
-  {
-    id: 115,
-    title: "BACKEND TECH BINDER",
-    category: "DESIGN",
-    year: "2025",
-    desc: "Poster infografis informatif yang menampilkan arsitektur API dan sistem server.",
-    tags: ["Poster", "Backend", "Photoshop"],
-    imageUrl: "/assets/img/test/PosterBE.png",
-  },
-  {
-    id: 116,
-    title: "MOBILE DB ARCHITECTURE",
-    category: "DESIGN",
-    year: "2024",
-    desc: "Diagram modular terperinci yang menggambarkan database client-server pada perangkat mobile.",
-    tags: ["Poster", "Infographic"],
-    imageUrl: "/assets/img/test/PosterMBD2.png",
-  },
-  {
-    id: 117,
-    title: "PENGOLAHAN CITRA CITADEL I",
-    category: "DESIGN",
-    year: "2025",
-    desc: "Desain grafis konseptual yang menampilkan langkah-langkah pemrosesan citra digital tingkat lanjut.",
-    tags: ["Poster", "Creative", "Photoshop"],
-    imageUrl: "/assets/img/test/PosterPCD1.png",
-  },
-  {
-    id: 118,
-    title: "SPATIAL IMAGE FILTERING II",
-    category: "DESIGN",
-    year: "2025",
-    desc: "Tata letak poster edukatif yang menganalisis filter domain spasial dan kernel matriks.",
-    tags: ["Poster", "Grid", "Academic"],
-    imageUrl: "/assets/img/test/PosterPCD2.png",
-  },
-  {
-    id: 119,
-    title: "SEDOT WC SYSTEM CONTRAST",
-    category: "DESIGN",
-    year: "2026",
-    desc: "Tata letak eksperimental yang mengontraskan iklan layanan masyarakat dengan grid minimalis modern.",
-    tags: ["Brutalist", "Creative"],
-    imageUrl: "/assets/img/test/PosterSedotWC.png",
-  },
-  {
-    id: 120,
-    title: "REKAP PERJALANAN BOGOR 2024",
-    category: "DESIGN",
-    year: "2024",
-    desc: "Jurnal kolase visual yang merekap pengalaman perjalanan regional dan fotografi lanskap.",
-    tags: ["Layout", "Y2K Style"],
-    imageUrl: "/assets/img/test/RekapBogor2024.png",
-  },
-  {
-    id: 121,
-    title: "BLUE GRADIENT TECH POSTER",
-    category: "DESIGN",
-    year: "2024",
-    desc: "Poster acara AI & Teknologi yang dirancang dengan gradien neon biru yang halus.",
-    tags: ["Poster", "Gradient", "Photoshop"],
-    imageUrl: "/assets/img/test/Salinan dari Blue Gradient Technology Poster (1).png",
-  },
-  {
-    id: 122,
-    title: "PANGANDARAN EVENT BANNER",
-    category: "DESIGN",
-    year: "2023",
-    desc: "Tata letak spanduk luar ruangan format lebar untuk merayakan acara gathering musim panas.",
-    tags: ["Banner", "Event", "Illustrator"],
-    imageUrl: "/assets/img/test/Spanduk_Pangandaran23.png",
-  },
-  {
-    id: 123,
-    title: "TO BE A ROCK EXPERIMENT",
-    category: "DESIGN",
-    year: "2025",
-    desc: "Karya cetak tipografi artistik yang mengeksplorasi kontras, skala visual, dan gaya retro.",
-    tags: ["Poster", "Art", "Brutalist"],
-    imageUrl: "/assets/img/test/ToBeARockAndNotToRoll.png",
-  },
-  {
-    id: 124,
-    title: "EDITORIAL GRID CONCEPT II",
-    category: "DESIGN",
-    year: "2025",
-    desc: "Tata letak template mockup website kepadatan tinggi yang menekankan partisi konten terstruktur.",
-    tags: ["Web", "Layout", "Figma"],
-    imageUrl: "/assets/img/test/WEB2.png",
-  },
-  {
-    id: 125,
-    title: "SOCIAL HIGHLIGHT SYSTEM I",
-    category: "DESIGN",
-    year: "2024",
-    desc: "Koleksi sampul sorotan Instagram yang dikurasi dengan menggunakan ikon geometris khusus.",
-    tags: ["Icons", "Social Media"],
-    imageUrl: "/assets/img/test/highlight1.png",
-  },
-  {
-    id: 126,
-    title: "JERSEY FULL BG BLACK",
-    category: "DESIGN",
-    year: "2024",
-    desc: "Desain cetak jersey olahraga bertema gelap dengan fitur aksen neon biru digital.",
-    tags: ["Jersey", "Merchandise", "Illustrator"],
-    imageUrl: "/assets/img/test/jerseyfullBG.png",
-  },
-  {
-    id: 127,
-    title: "JERSEY FULL WG NEON",
-    category: "DESIGN",
-    year: "2024",
-    desc: "Desain cetak jersey olahraga bertema terang dengan memanfaatkan garis-garis neon hijau cerah.",
-    tags: ["Jersey", "Merchandise", "Illustrator"],
-    imageUrl: "/assets/img/test/jerseyfullWG.png",
-  },
-  {
-    id: 128,
-    title: "CORE STRUCTURAL POSTER",
-    category: "DESIGN",
-    year: "2024",
-    desc: "Poster tipografi konseptual modern yang menampilkan batas tepi (borders) berdampak tinggi.",
-    tags: ["Poster", "Layout"],
-    imageUrl: "/assets/img/test/poster.png",
-  },
-  {
-    id: 129,
-    title: "BOGOR RETROSCAP II",
-    category: "DESIGN",
-    year: "2024",
-    desc: "Tata letak grid foto Y2K nostalgia yang mengabadikan momen-momen seru makrab mahasiswa.",
-    tags: ["Poster", "Y2K Style", "Layout"],
-    imageUrl: "/assets/img/test/posterbogor2.png",
-  },
-  {
-    id: 130,
-    title: "AVATAR CUSTOM LABS II",
-    category: "DESIGN",
-    year: "2025",
-    desc: "Grafis avatar profil minimalis yang berfokus pada pengembang untuk digunakan di berbagai platform.",
-    tags: ["Vector", "Icon"],
-    imageUrl: "/assets/img/test/ppgithub2.png",
-  },
-  {
-    id: 131,
-    title: "PCD TUTORIAL THUMBNAIL",
-    category: "DESIGN",
-    year: "2025",
-    desc: "Template thumbnail digital kontras tinggi untuk mengoptimalkan rasio klik video tutorial.",
-    tags: ["Thumbnail", "Layout", "Photoshop"],
-    imageUrl: "/assets/img/test/tmbPCD.png",
-  },
-  {
-    id: 132,
-    title: "UKM BOLA MARKETING FEED",
-    category: "DESIGN",
-    year: "2024",
-    desc: "Desain grafis dan tata letak media sosial dinamis untuk mempromosikan klub olahraga bola.",
-    tags: ["Social Media", "Branding", "Illustrator"],
-    imageUrl: "/assets/img/test/ukmbolav1.png",
-  },
-  {
-    id: 133,
-    title: "TADIKA COLLAGE WALLPAPER",
-    category: "DESIGN",
-    year: "2025",
-    desc: "Kolase visual resolusi tinggi untuk wallpaper desktop lebar yang menampilkan kenangan perjalanan.",
-    tags: ["Collage", "Wallpaper", "Figma"],
-    imageUrl: "/assets/img/test/wptadika2v2.png",
-  },
-];
+import { usePortfolioData } from "@/lib/usePortfolioData";
+import { Project, ProjectDetail } from "@/lib/portfolioData";
 
 // Y2K & Brutalist Icons
 const FloppyIcon = ({ className = "w-3 h-3" }: { className?: string }) => (
@@ -582,12 +86,14 @@ const ImageCarousel = ({
   isDarkMode,
   aspectClass = "aspect-video",
   objectFit = "object-cover",
+  onImageClick,
 }: {
   images: string[];
   title: string;
   isDarkMode: boolean;
   aspectClass?: string;
   objectFit?: string;
+  onImageClick?: (src: string) => void;
 }) => {
   const [current, setCurrent] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
@@ -632,7 +138,11 @@ const ImageCarousel = ({
   };
 
   return (
-    <div ref={containerRef} className={`w-full ${aspectClass} relative overflow-hidden border ${isDarkMode ? "border-white/10" : "border-black/10"} bg-[#121212] group/carousel`}>
+    <div
+      ref={containerRef}
+      onClick={onImageClick ? () => onImageClick(images[current]) : undefined}
+      className={`w-full ${aspectClass} relative overflow-hidden border ${isDarkMode ? "border-white/10" : "border-black/10"} bg-[#121212] group/carousel ${onImageClick ? "cursor-zoom-in" : ""}`}
+    >
       {/* Slides (only render current, previous, and next images to save memory) */}
       {images.map((src, i) => {
         const isNear = Math.abs(i - current) <= 1 || (current === 0 && i === images.length - 1) || (current === images.length - 1 && i === 0);
@@ -677,7 +187,7 @@ const ImageCarousel = ({
 
       {/* Hover hint overlay */}
       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/carousel:opacity-100 flex items-center justify-center transition-opacity duration-300 text-[9px] font-sans font-bold tracking-widest text-white backdrop-blur-[1px] z-30">
-        OPEN PROJECT DETAILS ↗
+        {onImageClick ? "VIEW FULLSCREEN ↗" : "OPEN PROJECT DETAILS ↗"}
       </div>
     </div>
   );
@@ -941,6 +451,7 @@ const IframePreview = ({ src, title, isDarkMode }: { src: string; title: string;
 };
 
 export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
+  const { projects: PROJECTS_DATA, projectDetails } = usePortfolioData();
   const [selectedCategory, setSelectedCategory] = useState("DEVELOPMENT");
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [lightboxImage, setLightboxImage] = useState<{ src: string; title: string } | null>(null);
@@ -948,6 +459,7 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [errorDetail, setErrorDetail] = useState<string | null>(null);
   const [visibleDesigns, setVisibleDesigns] = useState(12);
+
   useEffect(() => {
     const isLocked = !!activeProject || !!lightboxImage;
     const event = new CustomEvent("lock-scroll", { detail: { lock: isLocked } });
@@ -958,16 +470,25 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
       window.dispatchEvent(cleanupEvent);
     };
   }, [activeProject, lightboxImage]);
+
   const handleProjectClick = async (p: Project) => {
     setActiveProject(p);
     setProjectDetail(null);
-    setLoadingDetail(true);
     setErrorDetail(null);
 
+    // 1. Direct local lookup for instant zero-latency modal view
+    const detailKey = String(p.id);
+    if (projectDetails && projectDetails[detailKey]) {
+      setProjectDetail(projectDetails[detailKey]);
+      setLoadingDetail(false);
+      return;
+    }
+
+    setLoadingDetail(true);
     try {
       const res = await fetch(`/api/project-detail?id=${p.id}`);
       if (!res.ok) {
-        throw new Error("Gagal mengambil detail proyek dari database.");
+        throw new Error("Gagal mengambil detail proyek.");
       }
       const data = await res.json();
       setProjectDetail(data);
@@ -985,7 +506,7 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
   return (
     <section
       id="projects"
-      className={`relative w-full select-none overflow-hidden font-sans ${isDarkMode ? "bg-black" : "bg-[#f4f4f0]"}`}
+      className="relative w-full select-none overflow-hidden font-sans"
     >
       {/* Background Y2K Dotted Matrix Pattern */}
       <div className={`absolute inset-0 opacity-[0.03] pointer-events-none ${isDarkMode ? "text-white" : "text-black"}`}>
@@ -1001,9 +522,6 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
       <div className={`px-4 md:px-8 lg:px-10 py-8 flex items-center gap-6 border-b ${border}`}>
         <span className={`font-sans text-[44px] font-extrabold tracking-[0.05em] ${fg}`}>Projects</span>
         <div className={`flex-1 h-px ${isDarkMode ? "bg-white" : "bg-black"}`} />
-        <span className={`font-sans text-[9px] font-bold tracking-[0.3em] uppercase ${fgMuted}`}>
-          {PROJECTS_DATA.length} PROJECTS
-        </span>
       </div>
 
       {/* Filter and Cards Content */}
@@ -1052,7 +570,7 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
                 {[...PROJECTS_DATA]
-                  .filter((p) => p.category === "DEVELOPMENT" && [12, 9, 11, 7, 13, 16].includes(p.id))
+                  .filter((p) => p.category === "DEVELOPMENT" && [12, 9, 11, 7, 13, 16, 18].includes(p.id))
                   .sort((a, b) => {
                     const dateA = a.date || a.year;
                     const dateB = b.date || b.year;
@@ -1103,14 +621,6 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
 
                       {/* Detail Container */}
                       <div className="p-4 flex-1 flex flex-col justify-between">
-                        {/* Status & Year */}
-                        <div className="flex justify-between items-center mb-3 text-[8px] font-sans font-bold tracking-widest">
-                          <span className="flex items-center text-brand-blue uppercase">
-                            {p.status || p.category}
-                          </span>
-                          <span className="opacity-60">{p.year}</span>
-                        </div>
-
                         {/* Title & Description */}
                         <div className="mb-4">
                           <h3 className="font-sans text-xs sm:text-sm font-bold tracking-wider mb-1.5 group-hover:text-brand-blue transition-colors flex items-center gap-1.5">
@@ -1133,9 +643,12 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                               </div>
                             ))}
                           </div>
-                          {/* Arrow */}
-                          <div className="text-brand-blue font-bold text-sm sm:text-base group-hover:translate-x-1.5 transition-transform duration-300">
-                            →
+                          {/* Year & Arrow */}
+                          <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-sans opacity-60 font-medium">{p.year}</span>
+                            <div className="text-brand-blue font-bold text-sm sm:text-base group-hover:translate-x-1.5 transition-transform duration-300">
+                              →
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1209,14 +722,6 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
 
                       {/* Detail Container */}
                       <div className="p-4 flex-1 flex flex-col justify-between">
-                        {/* Status & Year */}
-                        <div className="flex justify-between items-center mb-3 text-[8px] font-sans font-bold tracking-widest">
-                          <span className="flex items-center text-brand-blue uppercase">
-                            {p.status || p.category}
-                          </span>
-                          <span className="opacity-60">{p.year}</span>
-                        </div>
-
                         {/* Title & Description */}
                         <div className="mb-4">
                           <h3 className="font-sans text-xs sm:text-sm font-bold tracking-wider mb-1.5 group-hover:text-brand-blue transition-colors flex items-center gap-1.5">
@@ -1239,9 +744,12 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                               </div>
                             ))}
                           </div>
-                          {/* Arrow */}
-                          <div className="text-brand-blue font-bold text-sm sm:text-base group-hover:translate-x-1.5 transition-transform duration-300">
-                            →
+                          {/* Year & Arrow */}
+                          <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-sans opacity-60 font-medium">{p.year}</span>
+                            <div className="text-brand-blue font-bold text-sm sm:text-base group-hover:translate-x-1.5 transition-transform duration-300">
+                              →
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1327,10 +835,6 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                 <div className={`flex items-start justify-between p-5 border-b ${isDarkMode ? "border-white/10" : "border-black/10"
                   }`}>
                   <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <CategoryIcon category={activeProject.category} className="w-3 h-3 text-brand-blue" />
-                      <span className="font-sans text-[9px] font-bold tracking-[0.25em] text-brand-blue">{activeProject.category} · {activeProject.year}</span>
-                    </div>
                     <h2 className={`font-sans text-lg font-extrabold tracking-wider ${isDarkMode ? "text-white" : "text-black"}`}>
                       {activeProject.title}
                     </h2>
@@ -1376,58 +880,22 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                     </button>
                   </div>
                 )}
-
-                {/* Loaded state */}
+{/* Loaded state */}
                 {!loadingDetail && !errorDetail && projectDetail && (
                   <div className={`grid grid-cols-1 md:grid-cols-12 md:divide-x ${isDarkMode ? "md:divide-white/10" : "md:divide-black/10"
                     }`}>
-                    {/* Left Column (Main Info & Highlights) */}
-                    <div className="col-span-12 md:col-span-8 p-5 sm:p-6 space-y-5">
-                      {/* Image / Carousel (modal top) */}
-                      {activeProject.images && activeProject.images.length > 0 ? (
-                        <ImageCarousel
-                          images={activeProject.images}
-                          title={activeProject.title}
-                          isDarkMode={isDarkMode}
-                          aspectClass="aspect-video"
-                          objectFit="object-cover"
-                        />
-                      ) : activeProject.imageUrl && (
-                        <div className={`w-full aspect-video overflow-hidden border ${isDarkMode ? "border-white/10" : "border-black/10"
-                          }`}>
-                          <img src={activeProject.imageUrl} alt={activeProject.title} className="w-full h-full object-cover" />
-                        </div>
-                      )}
-
-                      {/* Objective */}
-                      <div>
-                        <p className={`font-sans text-[9px] font-bold tracking-[0.25em] mb-1.5 ${isDarkMode ? "text-white/40" : "text-black/40"
-                          }`}>TUJUAN PROYEK</p>
-                        <p className={`font-sans text-xs sm:text-sm leading-relaxed ${isDarkMode ? "text-white/85" : "text-black/85"
-                          }`}>{projectDetail.objective}</p>
-                      </div>
-
-                      {/* Highlights */}
-                      {projectDetail.highlights && projectDetail.highlights.length > 0 && (
-                        <div>
-                          <p className={`font-sans text-[9px] font-bold tracking-[0.25em] mb-2 ${isDarkMode ? "text-white/40" : "text-black/40"
-                            }`}>HIGHLIGHTS</p>
-                          <ul className="space-y-1.5">
-                            {projectDetail.highlights.map((h, i) => (
-                              <li key={i} className={`font-sans text-xs leading-relaxed flex gap-2 ${isDarkMode ? "text-white/80" : "text-black/80"
-                                }`}>
-                                <span className="text-brand-blue shrink-0 font-bold">→</span>
-                                {h}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-
                     {/* Right Column (Tech Stack & Action Links) */}
                     <div className="col-span-12 md:col-span-4 p-5 sm:p-6 flex flex-col justify-between space-y-6">
                       <div>
+                        {/* Intranet badge above tech stack */}
+                        {activeProject.deployment === "intranet" && (
+                          <div className="mb-4">
+                            <span className="font-sans text-[9px] sm:text-[10px] font-bold tracking-widest px-3 py-1.5 bg-amber-500/10 text-amber-500 border border-amber-500/20 select-none inline-flex items-center gap-1.5 uppercase">
+                              ⚡ Intranet Project
+                            </span>
+                          </div>
+                        )}
+
                         {/* Tech Stack */}
                         {projectDetail.techStack && projectDetail.techStack.length > 0 && (
                           <div>
@@ -1456,34 +924,81 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
 
                       {/* Links */}
                       <div className="flex flex-col gap-2.5 pt-5 border-t border-neutral-800">
-                        <div className="flex flex-row gap-3">
-                          {activeProject.deployment === "intranet" ? (
-                            <div className="font-sans text-[9px] sm:text-[10px] font-bold tracking-widest px-4 py-2.5 bg-amber-500/10 text-amber-500 border border-amber-500/20 text-center flex-1 select-none flex items-center justify-center gap-1.5">
-                              INTRANET
-                            </div>
-                          ) : (
-                            projectDetail.liveUrl && (
+                        {activeProject.deployment !== "intranet" && (
+                          <div className="flex flex-row gap-3">
+                            {projectDetail.liveUrl && (
                               <a href={projectDetail.liveUrl} target="_blank" rel="noopener noreferrer"
                                 className="font-sans text-[10px] font-bold tracking-widest px-4 py-2.5 bg-brand-blue text-white border border-brand-blue hover:bg-blue-700 transition-colors text-center flex-1">
                                 LIVE SITE ↗
                               </a>
-                            )
-                          )}
-                          {projectDetail.githubUrl && (
-                            <a href={projectDetail.githubUrl} target="_blank" rel="noopener noreferrer"
-                              className={`font-sans text-[10px] font-bold tracking-widest px-4 py-2.5 border transition-colors text-center flex-1 ${isDarkMode ? "border-white/30 text-white hover:bg-white hover:text-black" : "border-black/30 text-black hover:bg-black hover:text-white"
-                                }`}>
-                              GITHUB ↗
-                            </a>
-                          )}
-                        </div>
+                            )}
+                            {projectDetail.githubUrl && (
+                              <a href={projectDetail.githubUrl} target="_blank" rel="noopener noreferrer"
+                                className={`font-sans text-[10px] font-bold tracking-widest px-4 py-2.5 border transition-colors text-center flex-1 ${isDarkMode ? "border-white/30 text-white hover:bg-white hover:text-black" : "border-black/30 text-black hover:bg-black hover:text-white"
+                                  }`}>
+                                GITHUB ↗
+                              </a>
+                            )}
+                          </div>
+                        )}
                         {activeProject.deployment === "intranet" && (
                           <p className={`font-sans text-[9.5px] leading-relaxed mt-1 opacity-75 ${isDarkMode ? "text-white/40" : "text-black/45"
                             }`}>
-                            * Proyek ini dideploy secara internal di server lokal PT Menara Terus Makmur. Kode sumber pada repositori GitHub publik di atas telah disanitasi sehingga data rahasia perusahaan tetap terjaga sepenuhnya.
+                            * Proyek ini di-deploy secara internal pada server lokal PT Menara Terus Makmur. Tautan repositori kode dan demonstrasi publik dinonaktifkan untuk menjaga keamanan data korporasi.
                           </p>
                         )}
                       </div>
+                    </div>
+
+                    {/* Left Column (Main Info & Highlights) */}
+                    <div className="col-span-12 md:col-span-8 p-5 sm:p-6 space-y-5">
+                      {/* Image / Carousel (modal top) */}
+                      {activeProject.images && activeProject.images.length > 0 ? (
+                        <ImageCarousel
+                          images={activeProject.images}
+                          title={activeProject.title}
+                          isDarkMode={isDarkMode}
+                          aspectClass="aspect-video"
+                          objectFit="object-cover"
+                          onImageClick={(src) => setLightboxImage({ src, title: activeProject.title })}
+                        />
+                      ) : activeProject.imageUrl && (
+                        <div
+                          onClick={() => setLightboxImage({ src: activeProject.imageUrl!, title: activeProject.title })}
+                          className={`w-full aspect-video overflow-hidden border cursor-zoom-in group/img relative ${isDarkMode ? "border-white/10" : "border-black/10"
+                            }`}
+                        >
+                          <img src={activeProject.imageUrl} alt={activeProject.title} className="w-full h-full object-cover transition-transform duration-300 group-hover/img:scale-105" />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity duration-300 text-[9px] font-sans font-bold tracking-widest text-white backdrop-blur-[1px] z-30">
+                            VIEW FULLSCREEN ↗
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Objective */}
+                      <div>
+                        <p className={`font-sans text-[9px] font-bold tracking-[0.25em] mb-1.5 ${isDarkMode ? "text-white/40" : "text-black/40"
+                          }`}>TUJUAN PROYEK</p>
+                        <p className={`font-sans text-xs sm:text-sm leading-relaxed ${isDarkMode ? "text-white/85" : "text-black/85"
+                          }`}>{projectDetail.objective}</p>
+                      </div>
+
+                      {/* Highlights */}
+                      {projectDetail.highlights && projectDetail.highlights.length > 0 && (
+                        <div>
+                          <p className={`font-sans text-[9px] font-bold tracking-[0.25em] mb-2 ${isDarkMode ? "text-white/40" : "text-black/40"
+                            }`}>HIGHLIGHTS</p>
+                          <ul className="space-y-1.5">
+                            {projectDetail.highlights.map((h, i) => (
+                              <li key={i} className={`font-sans text-xs leading-relaxed flex gap-2 ${isDarkMode ? "text-white/80" : "text-black/80"
+                                }`}>
+                                <span className="text-brand-blue shrink-0 font-bold">→</span>
+                                {h}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

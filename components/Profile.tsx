@@ -2,6 +2,7 @@
 
 import React from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
+import { usePortfolioData } from "@/lib/usePortfolioData";
 
 /* ─── Animation Variants ─── */
 const fadeUp = {
@@ -74,8 +75,79 @@ const barActions = [
   },
 ];
 
+/* ── Profile Grid Canvas (100% pixel-perfect alignment with global PixelGlow) ── */
+function ProfileGridCanvas({ isDarkMode }: { isDarkMode: boolean }) {
+  const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
+
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const render = () => {
+      const rect = canvas.getBoundingClientRect();
+      const displayW = Math.round(rect.width);
+      const displayH = Math.round(rect.height);
+
+      if (canvas.width !== displayW || canvas.height !== displayH) {
+        canvas.width = displayW;
+        canvas.height = displayH;
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const CELL = 64;
+      const scrollY = window.scrollY;
+      ctx.strokeStyle = isDarkMode ? "rgba(255, 255, 255, 0.035)" : "rgba(0, 0, 0, 0.035)";
+      ctx.lineWidth = 1;
+
+      // Match global document coordinates (x = c * 64, y = r * 64)
+      const startCol = Math.floor(rect.left / CELL);
+      const endCol = Math.ceil((rect.left + rect.width) / CELL);
+
+      ctx.beginPath();
+      for (let c = startCol; c <= endCol; c++) {
+        const localX = Math.round(c * CELL - rect.left) + 0.5;
+        ctx.moveTo(localX, 0);
+        ctx.lineTo(localX, canvas.height);
+      }
+
+      const docTop = rect.top + scrollY;
+      const startRow = Math.floor(docTop / CELL);
+      const endRow = Math.ceil((docTop + rect.height) / CELL);
+
+      for (let r = startRow; r <= endRow; r++) {
+        const localY = Math.round(r * CELL - docTop) + 0.5;
+        ctx.moveTo(0, localY);
+        ctx.lineTo(canvas.width, localY);
+      }
+      ctx.stroke();
+    };
+
+    render();
+    window.addEventListener("resize", render);
+    window.addEventListener("scroll", render, { passive: true });
+
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined") {
+      ro = new ResizeObserver(render);
+      ro.observe(canvas);
+    }
+
+    return () => {
+      window.removeEventListener("resize", render);
+      window.removeEventListener("scroll", render);
+      ro?.disconnect();
+    };
+  }, [isDarkMode]);
+
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />;
+}
+
 /* ─── Component ─── */
 export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
+  const { profile } = usePortfolioData();
   const [isCvOpen, setIsCvOpen] = React.useState(false);
   const [isShimmering, setIsShimmering] = React.useState(false);
   const shimmerTimeoutRef = React.useRef<any>(null);
@@ -98,14 +170,14 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
     "var(--font-geist, 'Geist', sans-serif)"
   ], []);
 
-  const [displayText, setDisplayText] = React.useState("Rafi");
+  const fullText = profile.name || "Rafi";
+  const [displayText, setDisplayText] = React.useState(fullText);
   const [fontIndex, setFontIndex] = React.useState(7); // default starting with Geist
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [typingSpeed, setTypingSpeed] = React.useState(1200); // initial pause
 
   React.useEffect(() => {
     let timer: NodeJS.Timeout;
-    const fullText = "Rafi";
 
     const handleTyping = () => {
       if (!isDeleting) {
@@ -164,7 +236,7 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
       <section
         ref={containerRef}
         id="profile"
-        className={`relative w-full select-none overflow-visible flex flex-col ${isDarkMode ? "bg-black" : "bg-[#f4f4f0]"}`}
+        className="relative w-full select-none overflow-visible flex flex-col"
         style={{ height: "calc(100vh - 57px)" }}
       >
         {/* ═══ MAIN 3-COLUMN GRID ═══ */}
@@ -215,13 +287,13 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
                   className={`block font-medium tracking-normal ${fgMuted}`}
                   style={{ fontSize: "clamp(15px, 1.5vw, 21px)", lineHeight: 1.25 }}
                 >
-                  Maulana Firdaus
+                  {profile.fullName || "Maulana Firdaus"}
                 </span>
               </motion.h2>
 
-              <motion.div custom={2} variants={fadeUp} className="mt-4">
-                <span className={`font-display block text-[11px] font-bold tracking-[0.4em] uppercase ${fgMuted}`}>
-                  CIKARANG, INDONESIA
+              <motion.div custom={2} variants={fadeUp} className="mt-2">
+                <span className={`block text-xs font-semibold uppercase ${fgMuted}`}>
+                  {profile.location || "CIKARANG, INDONESIA"}
                 </span>
               </motion.div>
             </div>
@@ -233,7 +305,7 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
                 className={`text-[13px] leading-[1.75] font-light ${isDarkMode ? "text-white/55" : "text-black/55"}`}
                 style={{ fontFamily: "'Geist', sans-serif" }}
               >
-                Kreator dengan latar belakang kuat di bidang visual dan pembangunan — graphic design, musik, dan pengembangan digital.
+                {profile.bio || "Kreator dengan latar belakang kuat di bidang visual dan pembangunan — graphic design, musik, dan pengembangan digital."}
               </p>
             </motion.div>
 
@@ -242,16 +314,8 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
 
           {/* ── CENTER COLUMN — Photo ── */}
           <div className="flex-1 relative flex items-end justify-center overflow-hidden min-w-0">
-            {/* Subtle grid overlay */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                backgroundImage: isDarkMode
-                  ? "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)"
-                  : "linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px)",
-                backgroundSize: "60px 60px",
-              }}
-            />
+            {/* Subtle grid overlay — synchronized with global PixelGlow */}
+            <ProfileGridCanvas isDarkMode={isDarkMode} />
 
             {/* Photo — sits at bottom, bleeds to edges */}
             <motion.div
@@ -260,18 +324,17 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
               custom={0}
               variants={fadeIn}
               className="relative w-full flex justify-center"
-              style={{ height: "90%" }}
+              style={{ height: "100%" }}
             >
               <img
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80&fit=crop&crop=face"
-                alt="rAFI mAULANA fIRDAUS"
-                className="h-full object-cover object-top"
+                src={profile.photoUrl || "/assets/img/profile/porto1.png"}
+                alt={profile.fullName || "rAFI mAULANA fIRDAUS"}
+                className="h-full object-contain object-bottom"
                 style={{
-                  maxWidth: "340px",
+                  maxWidth: "490px",
                   width: "100%",
                   filter: isDarkMode ? "grayscale(0.15)" : "grayscale(0.05)",
-                  maskImage: "linear-gradient(to top, transparent 0%, black 18%, black 100%)",
-                  WebkitMaskImage: "linear-gradient(to top, transparent 0%, black 18%, black 100%)",
+                  transform: "translateY(40px)",
                 }}
               />
 
@@ -295,7 +358,7 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
               </span>
               <span className={`font-display text-[9px] font-bold tracking-[0.25em] uppercase ${isDarkMode ? "text-amber-400" : "text-amber-600"}`}>
-                CONSIDERING INTERESTING OFFERS
+                {profile.availability || "CONSIDERING INTERESTING OFFERS"}
               </span>
             </motion.div>
 
@@ -305,34 +368,30 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
                 CURRENTLY
               </span>
               <div className="flex flex-col gap-2 items-end">
-                <div className="flex flex-col gap-0.5 items-end">
-                  <span className={`font-display text-[10px] font-bold tracking-[0.15em] uppercase ${isDarkMode ? "text-white/80" : "text-black/75"}`}>
-                    Full Stack Web Developer
-                  </span>
-                  <span
-                    className={`text-[11px] leading-[1.5] font-light text-right ${isDarkMode ? "text-white/50" : "text-black/45"}`}
-                    style={{ fontFamily: "'Geist', sans-serif" }}
-                  >
-                    Magang @ PT Menara Terus Makmur
-                  </span>
-                  <span
-                    className={`font-display text-[8px] font-bold tracking-[0.25em] uppercase ${fgMuted}`}
-                  >
-                    Cikarang, Jawa Barat
-                  </span>
-                </div>
-                <div className={`w-full h-px ${isDarkMode ? "bg-white/8" : "bg-black/8"}`} />
-                <div className="flex flex-col gap-0.5 items-end">
-                  <span className={`font-display text-[10px] font-bold tracking-[0.15em] uppercase ${isDarkMode ? "text-white/80" : "text-black/75"}`}>
-                    Mahasiswa Semester Akhir
-                  </span>
-                  <span
-                    className={`text-[11px] leading-[1.5] font-light text-right ${isDarkMode ? "text-white/50" : "text-black/45"}`}
-                    style={{ fontFamily: "'Geist', sans-serif" }}
-                  >
-                    Sedang menyusun skripsi
-                  </span>
-                </div>
+                {(profile.currently && profile.currently.length > 0 ? profile.currently : [
+                  { role: "Full Stack Web Developer & UI QA Tester", place: "Magang @ PT Menara Terus Makmur", location: "Cikarang, Jawa Barat" },
+                  { role: "Mahasiswa Semester Akhir", place: "Sedang menyusun skripsi" }
+                ]).map((item, idx) => (
+                  <React.Fragment key={idx}>
+                    {idx > 0 && <div className={`w-full h-px ${isDarkMode ? "bg-white/8" : "bg-black/8"}`} />}
+                    <div className="flex flex-col gap-0.5 items-end">
+                      <span className={`font-display text-[10px] font-bold tracking-[0.15em] uppercase ${isDarkMode ? "text-white/80" : "text-black/75"}`}>
+                        {item.role}
+                      </span>
+                      <span
+                        className={`text-[11px] leading-[1.5] font-light text-right ${isDarkMode ? "text-white/50" : "text-black/45"}`}
+                        style={{ fontFamily: "'Geist', sans-serif" }}
+                      >
+                        {item.place}
+                      </span>
+                      {item.location && (
+                        <span className={`font-display text-[8px] font-bold tracking-[0.25em] uppercase ${fgMuted}`}>
+                          {item.location}
+                        </span>
+                      )}
+                    </div>
+                  </React.Fragment>
+                ))}
               </div>
             </motion.div>
 
@@ -345,19 +404,16 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
                 PASSION
               </span>
               <div className="flex flex-col gap-1.5 items-end">
-                {[
-                  { label: "Design Graphic", icon: "✦" },
-                  { label: "Visual", icon: "✦" },
-                  { label: "UI/UX Design", icon: "✦" },
-                  { label: "Music Enthusiast", icon: "✦" },
-                ].map((item) => (
-                  <div key={item.label} className="flex items-center gap-2 flex-row-reverse">
-                    <span className="text-brand-blue text-[8px] flex-shrink-0">{item.icon}</span>
+                {(profile.passions && profile.passions.length > 0 ? profile.passions : [
+                  "Design Graphic", "Visual", "UI/UX Design", "Music Enthusiast"
+                ]).map((item, i) => (
+                  <div key={i} className="flex items-center gap-2 flex-row-reverse">
+                    <span className="text-brand-blue text-[8px] flex-shrink-0">✦</span>
                     <span
                       className={`text-[12px] font-light ${isDarkMode ? "text-white/55" : "text-black/55"}`}
                       style={{ fontFamily: "'Geist', sans-serif" }}
                     >
-                      {item.label}
+                      {item}
                     </span>
                   </div>
                 ))}
@@ -391,7 +447,7 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
             }}
           >
             <div
-              className={`relative flex items-center gap-0 overflow-hidden backdrop-blur-md ${isDarkMode ? "bg-white/5 border border-white/10" : "bg-black/5 border border-black/10"}`}
+              className={`relative flex items-center gap-0 overflow-hidden backdrop-blur-md ${isDarkMode ? "bg-[#0c0c0c]/90 border border-white/10" : "bg-[#f4f4f0]/90 border border-black/10"}`}
             >
               {isShimmering && (
                 <motion.div 
@@ -435,49 +491,6 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
           </motion.div>
         </motion.div>
       </section>
-
-      {/* GAP/SPACING KOSONG BETWEEN PROFILE AND BEYOND TECHNICAL === */}
-      <div className="w-full h-16 md:h-24" />
-
-      {/* ═══ BEYOND TECHNICAL ═══ */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.15 }}
-        transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-        className={`w-full border-t ${border} ${isDarkMode ? "bg-black" : "bg-[#f4f4f0]"}`}
-      >
-        {/* Header row */}
-        <div className={`px-8 md:px-10 py-6 flex items-center gap-6 border-b ${border}`}>
-          <span className={`font-sans text-[12px] font-bold tracking-[0.35em] uppercase ${fg}`}>
-            Beyond Technical
-          </span>
-          <div className={`flex-1 h-px ${isDarkMode ? "bg-white" : "bg-black"}`} />
-        </div>
-
-        {/* Two-column content */}
-        <div className={`grid grid-cols-1 md:grid-cols-2 border-b ${border}`}>
-          {/* Left */}
-          <div className={`px-8 md:px-10 py-10 border-b md:border-b-0 ${border}`}>
-            <p className={`font-sans text-[13px] leading-[1.85] font-light ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
-              Saya tipe yang lebih banyak diam. Bukan berarti tidak ada yang mau disampaikan — lebih ke saya lebih suka mengamati dulu, baca situasi, pahami polanya, baru bicara kalau memang perlu. Orang yang baru kenal saya mungkin butuh waktu lebih untuk benar-benar tahu saya seperti apa, dan itu tidak masalah. Saya tidak berusaha membuat diri sulit dipahami — memang begitu adanya.
-            </p>
-            <p className={`font-sans text-[13px] leading-[1.85] font-light mt-5 ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
-              Ada satu momen yang cukup berkesan — diminta jadi speaker webinar di salah satu universitas. Buat orang lain mungkin biasa, tapi buat saya yang cenderung diam, itu semacam pembuktian kecil. Ternyata kalau memang situasinya mengharuskan saya hadir penuh, saya bisa melakukannya.
-            </p>
-          </div>
-
-          {/* Right */}
-          <div className={`px-8 md:px-10 py-10 md:border-l ${border}`}>
-            <p className={`font-sans text-[13px] leading-[1.85] font-light ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
-              Ekspresi saya biasanya keluar lewat visual — desain jadi semacam bahasa lain buat saya. Untuk musik, saya lebih ke pendengar yang serius; cari makna di balik lirik, pergi ke konser, duduk sendiri sambil dengerin album dari awal sampai akhir. Buat saya musik bukan sekadar latar, ada sesuatu yang lebih dalam di sana.
-            </p>
-            <p className={`font-sans text-[13px] leading-[1.85] font-light mt-5 ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
-              Soal skill non-teknis — saya tidak terlalu yakin dengan daftar yang saya buat sendiri, tapi orang-orang di sekitar saya bilang saya bisa menenangkan situasi yang mulai kacau, dan saya tidak panik mudah. Mungkin itu yang dimaksud EQ. Entahlah, saya juga masih belajar mengenal diri sendiri.
-            </p>
-          </div>
-        </div>
-      </motion.section>
 
       {/* ═══ CV DRAWER ═══ */}
       <AnimatePresence>

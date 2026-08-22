@@ -59,7 +59,7 @@ const EXPERIENCE: ExperienceEntry[] = [
   {
     id: "exp-01",
     type: "INTERNSHIP",
-    role: "Full Stack Web Developer",
+    role: "Full Stack Web Developer & UI QA Tester",
     company: "PT Menara Terus Makmur (Astra Otoparts Group)",
     period: "Mei 2026 – Sekarang",
     location: "Bekasi, Indonesia · On-site",
@@ -164,7 +164,7 @@ export default function Achievements({ isDarkMode }: { isDarkMode: boolean }) {
   return (
     <section
       id="experience"
-      className={`relative w-full select-none font-sans ${isDarkMode ? "bg-black" : "bg-[#f4f4f0]"}`}
+      className="relative w-full select-none font-sans"
     >
       {/* ═══ SECTION HEADER ═══ */}
       <div className={`px-4 md:px-8 lg:px-10 py-8 flex items-center gap-6 border-b ${border}`}>

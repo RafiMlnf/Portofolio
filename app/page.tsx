@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import Lenis from "lenis";
 import { motion } from "motion/react";
 import Hero from "../components/Hero";
@@ -11,6 +12,7 @@ import Projects from "../components/Projects";
 import AnimatedStatus from "../components/AnimatedStatus";
 import CustomCursor from "../components/CustomCursor";
 import CRTOverlay from "../components/CRTOverlay";
+import PixelGlowOverlay from "../components/PixelGlowOverlay";
 
 const contacts = [
   {
@@ -356,13 +358,16 @@ export default function Home() {
           : { x: 0, y: 0 }
       }
       transition={{ duration: 0.35, ease: "easeInOut" }}
-      className={`w-full min-h-screen flex flex-col font-sans transition-all duration-300 ${
+      className={`w-full min-h-screen flex flex-col font-sans transition-all duration-300 relative ${
         isDarkMode ? "bg-black text-white" : "bg-[#f4f4f0] text-black"
       } ${isCrtOn ? "crt-active-warp" : ""}`}
     >
+      {/* Pixel glow background overlay — sits on base background behind all cards and buttons */}
+      <PixelGlowOverlay isDarkMode={isDarkMode} />
 
-      {/* FIXED NAVBAR */}
-      <header className={`w-full sticky top-0 z-50 py-4 px-4 md:py-6 md:px-8 lg:px-10 transition-colors duration-300 ${isDarkMode ? "bg-black/90 backdrop-blur-md text-white" : "bg-[#f4f4f0]/90 backdrop-blur-md text-black"
+      <div className="relative z-10 flex flex-col w-full">
+        {/* FIXED NAVBAR */}
+        <header className={`w-full sticky top-0 z-50 py-4 px-4 md:py-6 md:px-8 lg:px-10 transition-colors duration-300 ${isDarkMode ? "bg-black/90 backdrop-blur-md text-white" : "bg-[#f4f4f0]/90 backdrop-blur-md text-black"
         }`}>
         <nav className="flex items-center gap-1 sm:gap-2 w-full font-display text-[9px] sm:text-[10px] md:text-xs font-bold tracking-widest">
           {[
@@ -475,8 +480,8 @@ export default function Home() {
       {/* GAP/SPACING KOSONG BETWEEN PROJECTS AND FOOTER === */}
       <div className="w-full h-16 md:h-24" />
 
-      {/* FOOTER (DARK OVERHAUL) */}
-      <footer className="w-full bg-[#050505] text-white pt-16 md:pt-24 pb-8 select-none border-t border-neutral-900 mt-20">
+      {/* FOOTER */}
+      <footer className="w-full text-white pt-16 md:pt-24 pb-8 select-none border-t border-neutral-900/60 mt-20">
         {/* Top Content: Big brutalist typography */}
         <div className="px-4 md:px-8 lg:px-10 mb-12 md:mb-20">
           <h2 style={{ fontFamily: "'SS Broad', sans-serif", letterSpacing: "1px" }} className="font-display text-6xl sm:text-7xl md:text-[100px] lg:text-[130px] font-normal leading-[0.85] flex flex-col items-start">
@@ -547,12 +552,20 @@ export default function Home() {
 
 
         {/* Bottom Copyright & Links */}
-        <div className="px-4 md:px-8 lg:px-10 flex flex-col md:flex-row justify-between items-center gap-8 text-[9px] sm:text-[10px] md:text-xs font-display tracking-widest font-bold">
+        <div className="px-4 md:px-8 lg:px-10 flex flex-col md:flex-row justify-between items-center gap-4 text-[9px] sm:text-[10px] md:text-xs font-display tracking-widest font-bold">
           <div className="opacity-50">
-            © {new Date().getFullYear()} rAFI MAuLANA fIRDAUs.
+            © {new Date().getFullYear()} RAFI MAULANA FIRDAUS.
           </div>
+          <Link
+            href="/editor"
+            className="font-mono text-[9px] px-2.5 py-1 border border-white/20 hover:border-brand-blue hover:text-brand-blue transition-colors flex items-center gap-1.5"
+          >
+            <span>⚡</span>
+            <span>CMS / EDITOR</span>
+          </Link>
         </div>
       </footer>
+      </div>
 
     </motion.div>
 
