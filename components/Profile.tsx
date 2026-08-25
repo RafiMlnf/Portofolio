@@ -259,8 +259,7 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
               <motion.h2
                 custom={1}
                 variants={fadeUp}
-                className={`font-geist font-extrabold tracking-tighter leading-none ${fg}`}
-                style={{ fontFamily: "'Geist', sans-serif" }}
+                className={`font-sans font-extrabold tracking-tighter leading-none ${fg}`}
               >
                 <div 
                   className="relative block" 
@@ -303,7 +302,6 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
               <div className="w-[2px] flex-shrink-0 self-stretch bg-brand-blue mt-1" />
               <p
                 className={`text-[13px] leading-[1.75] font-light ${isDarkMode ? "text-white/55" : "text-black/55"}`}
-                style={{ fontFamily: "'Geist', sans-serif" }}
               >
                 {profile.bio || "Kreator dengan latar belakang kuat di bidang visual dan pembangunan — graphic design, musik, dan pengembangan digital."}
               </p>
@@ -380,7 +378,6 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
                       </span>
                       <span
                         className={`text-[11px] leading-[1.5] font-light text-right ${isDarkMode ? "text-white/50" : "text-black/45"}`}
-                        style={{ fontFamily: "'Geist', sans-serif" }}
                       >
                         {item.place}
                       </span>
@@ -411,7 +408,6 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
                     <span className="text-brand-blue text-[8px] flex-shrink-0">✦</span>
                     <span
                       className={`text-[12px] font-light ${isDarkMode ? "text-white/55" : "text-black/55"}`}
-                      style={{ fontFamily: "'Geist', sans-serif" }}
                     >
                       {item}
                     </span>

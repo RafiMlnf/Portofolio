@@ -65,18 +65,18 @@ const EXPERIENCE: ExperienceEntry[] = [
     location: "Bekasi, Indonesia · On-site",
     description:
       "Bergabung dalam Tim Digitalisasi internal PT Menara Terus Makmur (member of Astra Otoparts), perusahaan manufaktur komponen otomotif terkemuka. Bertanggung jawab penuh merancang dan membangun sistem digitalisasi operasional pabrik.",
-    stack: ["Next.js", "PostgreSQL", "Prisma ORM", "Tailwind CSS", "TypeScript"],
+    stack: ["Next.js", "PostgreSQL", "Tailwind CSS", "TypeScript"],
     images: ["", "", ""],
     subProjects: [
       {
         name: "WEIGHTING TRUCK",
         description: "Sistem jembatan timbang (weighbridge) truk logistik PT Menara Terus Makmur (Astra Otoparts Group) untuk pencatatan otomatis berat gross, tare, dan net terintegrasi database PostgreSQL.",
-        stack: ["Next.js", "PostgreSQL", "Prisma ORM", "TypeScript", "Tailwind CSS", "NextAuth.js"],
+        stack: ["Next.js", "PostgreSQL", "TypeScript", "Tailwind CSS", "NextAuth.js"],
       },
       {
         name: "DOV",
         description: "Sistem monitoring performa logistik vendor (KPI & DO Generator) dengan custom SVG charting engine dan pemrosesan data spreadsheet Excel SAP untuk mengotomatiskan kalkulasi KPI dari data SAP secara real-time.",
-        stack: ["Next.js", "NestJS (v11)", "TypeScript", "PostgreSQL", "Prisma Client", "Tailwind CSS", "Custom SVG Chart", "Excel Parser"],
+        stack: ["Next.js", "NestJS (v11)", "TypeScript", "PostgreSQL", "Tailwind CSS", "Custom SVG Chart", "Excel Parser"],
       },
       {
         name: "MPS",
@@ -379,8 +379,8 @@ export default function Achievements({ isDarkMode }: { isDarkMode: boolean }) {
                                             : "w-full max-w-[200px] aspect-video"
                                         } ${
                                           isDarkMode 
-                                            ? "border-white/10 hover:border-white/20 bg-white/[0.02]" 
-                                            : "border-black/10 hover:border-black/20 bg-black/[0.02]"
+                                            ? "border-white/10 hover:border-white/20 bg-black" 
+                                            : "border-black/10 hover:border-black/20 bg-white"
                                         }`}
                                       >
                                         <motion.img
@@ -393,7 +393,7 @@ export default function Achievements({ isDarkMode }: { isDarkMode: boolean }) {
                                               : "h-full object-cover aspect-video group-hover:scale-105"
                                           }`}
                                         />
-                                        <div className="absolute bottom-2 right-2 bg-black/60 px-2 py-1 text-[8px] font-mono text-white/80 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                                        <div className="absolute bottom-2 right-2 bg-black/60 px-2 py-1 text-[8px] font-sans font-bold text-white/80 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
                                           {isZoomed ? "CLICK TO COLLAPSE" : "CLICK TO EXPAND"}
                                         </div>
                                       </motion.div>
@@ -412,7 +412,7 @@ export default function Achievements({ isDarkMode }: { isDarkMode: boolean }) {
                                   {item.subProjects.map((sub, si) => (
                                     <div
                                       key={sub.name}
-                                      className={`flex flex-col gap-2 p-4 border ${isDarkMode ? "border-white/[0.07] bg-white/[0.02]" : "border-black/[0.07] bg-black/[0.02]"}`}
+                                      className={`flex flex-col gap-2 p-4 border ${isDarkMode ? "border-white/[0.07] bg-black" : "border-black/[0.07] bg-white"}`}
                                     >
                                       {/* Sub-project header */}
                                       <div className="flex items-center gap-3">
@@ -434,7 +434,7 @@ export default function Achievements({ isDarkMode }: { isDarkMode: boolean }) {
                                           {sub.stack.map((t) => (
                                             <span
                                               key={t}
-                                              className={`font-sans text-[7px] font-bold tracking-[0.2em] uppercase px-1.5 py-0.5 border ${border} ${fgMuted}`}
+                                              className={`font-sans text-[7px] font-bold tracking-[0.2em] uppercase px-1.5 py-0.5 border ${border} ${fgMuted} ${isDarkMode ? "bg-black" : "bg-white"}`}
                                             >
                                               {t}
                                             </span>

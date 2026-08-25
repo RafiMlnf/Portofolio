@@ -32,7 +32,7 @@ export function usePortfolioData() {
 
     // Listen to cross-tab storage updates
     const handleStorage = (e: StorageEvent) => {
-      if (e.key === "portfolio_studio_data_v1" || !e.key) {
+      if (e.key === "portfolio_studio_data_v2" || !e.key) {
         setStore(getStoredPortfolioData());
       }
     };

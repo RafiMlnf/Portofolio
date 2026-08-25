@@ -50,6 +50,10 @@ const techGroups = [
     number: "03",
     tools: [
       {
+        name: "NestJS",
+        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nestjs/nestjs-original.svg",
+      },
+      {
         name: "PHP",
         iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg",
       },
@@ -60,10 +64,6 @@ const techGroups = [
       {
         name: "MySQL",
         iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg",
-      },
-      {
-        name: "Redis",
-        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg",
       },
     ],
   },
@@ -124,10 +124,10 @@ export default function Skills({ isDarkMode }: { isDarkMode: boolean }) {
 
   const border = isDarkMode ? "border-white/[0.08]" : "border-black/[0.08]";
   const fg = isDarkMode ? "text-white" : "text-black";
-  const bgCard = isDarkMode ? "bg-white/[0.02]" : "bg-black/[0.01]";
+  const bgCard = isDarkMode ? "bg-black" : "bg-white";
   const bgCardHover = isDarkMode
-    ? "hover:bg-white/[0.05] hover:border-brand-blue/50"
-    : "hover:bg-black/[0.03] hover:border-brand-blue/50";
+    ? "hover:bg-black hover:border-brand-blue/60"
+    : "hover:bg-white hover:border-brand-blue/60";
 
   return (
     <section

@@ -141,7 +141,6 @@ export const DEFAULT_PROJECTS: Project[] = [
     "tags": [
       "Next.js",
       "NestJS",
-      "Prisma ORM",
       "TypeScript",
       "Tailwind CSS",
       "PostgreSQL",
@@ -163,7 +162,6 @@ export const DEFAULT_PROJECTS: Project[] = [
     "tags": [
       "Next.js",
       "PostgreSQL",
-      "Prisma ORM",
       "TypeScript",
       "Tailwind CSS",
       "NextAuth.js"
@@ -807,8 +805,7 @@ export const DEFAULT_PROJECT_DETAILS: Record<string, ProjectDetail> = {
       {
         "label": "Storage & CDN",
         "items": [
-          "Cloudinary CDN",
-          "Upstash Redis"
+          "Cloudinary CDN"
         ]
       }
     ],
@@ -890,7 +887,6 @@ export const DEFAULT_PROJECT_DETAILS: Record<string, ProjectDetail> = {
         "label": "Database & Auth",
         "items": [
           "PostgreSQL",
-          "Prisma ORM",
           "NextAuth.js"
         ]
       }
@@ -1025,7 +1021,6 @@ export const DEFAULT_PROJECT_DETAILS: Record<string, ProjectDetail> = {
         "items": [
           "NestJS",
           "TypeScript",
-          "Prisma ORM",
           "PostgreSQL",
           "Docker"
         ]
@@ -1052,7 +1047,7 @@ export const DEFAULT_PROJECT_DETAILS: Record<string, ProjectDetail> = {
   }
 };
 
-const STORAGE_KEY = "portfolio_studio_data_v1";
+const STORAGE_KEY = "portfolio_studio_data_v2";
 export const PORTFOLIO_UPDATED_EVENT = "portfolio-data-updated";
 
 export function getInitialPortfolioStore(): PortfolioStore {

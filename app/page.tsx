@@ -481,7 +481,7 @@ export default function Home() {
       <div className="w-full h-16 md:h-24" />
 
       {/* FOOTER */}
-      <footer className="w-full text-white pt-16 md:pt-24 pb-8 select-none border-t border-neutral-900/60 mt-20">
+      <footer className="w-full bg-black text-white pt-16 md:pt-24 pb-8 select-none border-t border-neutral-800 mt-20 relative z-20">
         {/* Top Content: Big brutalist typography */}
         <div className="px-4 md:px-8 lg:px-10 mb-12 md:mb-20">
           <h2 style={{ fontFamily: "'SS Broad', sans-serif", letterSpacing: "1px" }} className="font-display text-6xl sm:text-7xl md:text-[100px] lg:text-[130px] font-normal leading-[0.85] flex flex-col items-start">
@@ -527,7 +527,6 @@ export default function Home() {
                   </span>
                   {/* Handle */}
                   <span
-                    style={{ fontFamily: "'Geist', sans-serif" }}
                     className="text-xs sm:text-sm font-light truncate transition-colors duration-150 group-hover:text-brand-blue text-white/40 pt-0.5"
                   >
                     {c.handle}

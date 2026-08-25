@@ -314,6 +314,8 @@ const getTechIconUrl = (tag: string, isDarkMode: boolean) => {
     slug = "python";
   } else if (t.includes("node")) {
     slug = "nodedotjs";
+  } else if (t.includes("nestjs") || t.includes("nest")) {
+    slug = "nestjs";
   } else if (t.includes("postgresql")) {
     slug = "postgresql";
   } else if (t.includes("mysql")) {
@@ -544,7 +546,7 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                 {cat === "DEVELOPMENT" && <OSWindowIcon className="w-3 h-3" />}
                 {cat === "DESIGN" && <SparkleIcon className="w-3 h-3" />}
                 <span>{cat}</span>
-                <span className={`text-[8px] sm:text-[9px] font-mono px-1.5 py-0.5 border ${selectedCategory === cat
+                <span className={`text-[8px] sm:text-[9px] font-sans font-bold px-1.5 py-0.5 border ${selectedCategory === cat
                   ? "bg-white/20 border-white/30 text-white"
                   : isDarkMode
                     ? "bg-white/5 border-white/10 text-white/60"
@@ -563,9 +565,6 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
             {/* Grid 1: Enterprise & Information Systems */}
             <div className="space-y-6">
               <div className="flex items-center gap-4">
-                <h3 className={`font-sans text-xs sm:text-sm font-extrabold tracking-[0.2em] ${fg}`}>
-                  ENTERPRISE & INFORMATION SYSTEMS
-                </h3>
                 <div className={`flex-1 h-px ${isDarkMode ? "bg-white/10" : "bg-black/10"}`} />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
@@ -580,11 +579,31 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                     <div
                       key={p.id}
                       onClick={() => handleProjectClick(p)}
-                      className={`border flex flex-col justify-between transition-all duration-300 group relative hover:-translate-y-1 hover:shadow-[4px_4px_0px_#0033ff] cursor-pointer overflow-hidden ${isDarkMode
-                        ? "border-white/10 hover:border-white bg-[#0e0e0e]"
-                        : "border-black/10 hover:border-black bg-white"
+                      className={`border flex flex-col justify-between transition-all duration-300 group relative hover:-translate-y-1 cursor-pointer overflow-hidden ${
+                        p.favorite
+                          ? isDarkMode
+                            ? "border-transparent bg-[#0e0e0e] shadow-[0_0_15px_rgba(234,179,8,0.12)] hover:shadow-[4px_4px_0px_#eab308]"
+                            : "border-transparent bg-white shadow-[0_0_15px_rgba(234,179,8,0.15)] hover:shadow-[4px_4px_0px_#eab308]"
+                          : isDarkMode
+                            ? "border-white/10 hover:border-white bg-[#0e0e0e] hover:shadow-[4px_4px_0px_#0033ff]"
+                            : "border-black/10 hover:border-black bg-white hover:shadow-[4px_4px_0px_#0033ff]"
                         }`}
                     >
+                      {/* Animated Gold Shimmer Frame for Starred/Favorite Project */}
+                      {p.favorite && (
+                        <div
+                          className="absolute inset-0 pointer-events-none z-30"
+                          style={{
+                            border: "1.5px solid transparent",
+                            background: "linear-gradient(90deg, #996515 0%, #ffd700 25%, #fffbe6 50%, #ffd700 75%, #996515 100%) border-box",
+                            WebkitMask: "linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)",
+                            WebkitMaskComposite: "xor",
+                            maskComposite: "exclude",
+                            animation: "gold-shimmer 2.5s linear infinite",
+                            backgroundSize: "200% 100%",
+                          }}
+                        />
+                      )}
                       {/* Preview Container: Carousel / Single Image / Iframe / Github */}
                       {p.images && p.images.length > 0 ? (
                         <LazyMedia heightClass="aspect-video">
@@ -626,10 +645,10 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                           <h3 className="font-sans text-xs sm:text-sm font-bold tracking-wider mb-1.5 group-hover:text-brand-blue transition-colors flex items-center gap-1.5">
                             <span>{p.title}</span>
                             {p.favorite && (
-                              <StarIcon className="w-3.5 h-3.5 text-amber-400 drop-shadow-[0_0_4px_rgba(234,179,8,0.5)] shrink-0" />
+                              <StarIcon className="w-3.5 h-3.5 text-amber-400 drop-shadow-[0_0_6px_rgba(234,179,8,0.7)] shrink-0" />
                             )}
                           </h3>
-                          <p className="font-sans text-[10px] sm:text-[11px] font-light leading-relaxed opacity-85">
+                          <p className={`font-sans text-[11px] font-light leading-relaxed tracking-normal ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
                             {p.desc}
                           </p>
                         </div>
@@ -677,11 +696,31 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                     <div
                       key={p.id}
                       onClick={() => handleProjectClick(p)}
-                      className={`border flex flex-col justify-between transition-all duration-300 group relative hover:-translate-y-1 hover:shadow-[4px_4px_0px_#0033ff] cursor-pointer overflow-hidden ${isDarkMode
-                        ? "border-white/10 hover:border-white bg-[#0e0e0e]"
-                        : "border-black/10 hover:border-black bg-white"
+                      className={`border flex flex-col justify-between transition-all duration-300 group relative hover:-translate-y-1 cursor-pointer overflow-hidden ${
+                        p.favorite
+                          ? isDarkMode
+                            ? "border-transparent bg-[#0e0e0e] shadow-[0_0_15px_rgba(234,179,8,0.12)] hover:shadow-[4px_4px_0px_#eab308]"
+                            : "border-transparent bg-white shadow-[0_0_15px_rgba(234,179,8,0.15)] hover:shadow-[4px_4px_0px_#eab308]"
+                          : isDarkMode
+                            ? "border-white/10 hover:border-white bg-[#0e0e0e] hover:shadow-[4px_4px_0px_#0033ff]"
+                            : "border-black/10 hover:border-black bg-white hover:shadow-[4px_4px_0px_#0033ff]"
                         }`}
                     >
+                      {/* Animated Gold Shimmer Frame for Starred/Favorite Project */}
+                      {p.favorite && (
+                        <div
+                          className="absolute inset-0 pointer-events-none z-30"
+                          style={{
+                            border: "1.5px solid transparent",
+                            background: "linear-gradient(90deg, #996515 0%, #ffd700 25%, #fffbe6 50%, #ffd700 75%, #996515 100%) border-box",
+                            WebkitMask: "linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)",
+                            WebkitMaskComposite: "xor",
+                            maskComposite: "exclude",
+                            animation: "gold-shimmer 2.5s linear infinite",
+                            backgroundSize: "200% 100%",
+                          }}
+                        />
+                      )}
                       {/* Preview Container: Carousel / Single Image / Intranet / Iframe / Github */}
                       {p.images && p.images.length > 0 ? (
                         <LazyMedia heightClass="aspect-video">
@@ -727,10 +766,10 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                           <h3 className="font-sans text-xs sm:text-sm font-bold tracking-wider mb-1.5 group-hover:text-brand-blue transition-colors flex items-center gap-1.5">
                             <span>{p.title}</span>
                             {p.favorite && (
-                              <StarIcon className="w-3.5 h-3.5 text-amber-400 drop-shadow-[0_0_4px_rgba(234,179,8,0.5)] shrink-0" />
+                              <StarIcon className="w-3.5 h-3.5 text-amber-400 drop-shadow-[0_0_6px_rgba(234,179,8,0.7)] shrink-0" />
                             )}
                           </h3>
-                          <p className="font-sans text-[10px] sm:text-[11px] font-light leading-relaxed opacity-85">
+                          <p className={`font-sans text-[11px] font-light leading-relaxed tracking-normal ${isDarkMode ? "text-white/60" : "text-black/60"}`}>
                             {p.desc}
                           </p>
                         </div>
@@ -855,7 +894,7 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                       <div className="w-2.5 h-6 bg-brand-blue animate-[pulse_0.8s_infinite_300ms]" />
                       <div className="w-2.5 h-6 bg-brand-blue animate-[pulse_0.8s_infinite_450ms]" />
                     </div>
-                    <p className={`font-mono text-[9px] tracking-[0.2em] font-bold ${isDarkMode ? "text-white/60" : "text-black/60"
+                    <p className={`font-sans text-[9px] tracking-[0.2em] font-bold ${isDarkMode ? "text-white/60" : "text-black/60"
                       }`}>RETRIEVING_DATABASE_RECORD...</p>
                   </div>
                 )}
@@ -910,8 +949,8 @@ export default function Projects({ isDarkMode }: { isDarkMode: boolean }) {
                                   <span
                                     key={item}
                                     className={`font-sans text-[9px] font-medium px-2.5 py-0.5 border ${isDarkMode
-                                      ? "border-white/15 text-white/80 bg-white/5"
-                                      : "border-black/15 text-black/80 bg-black/5"
+                                      ? "border-white/15 text-white/80 bg-black"
+                                      : "border-black/15 text-black/80 bg-white"
                                       }`}
                                   >
                                     {item}
