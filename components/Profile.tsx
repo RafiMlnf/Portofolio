@@ -158,7 +158,7 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
     };
   }, []);
 
-  /* ── Typing Animation & Font Cycle ── */
+  /* ── Font Cycle Animation (Vertical Scroll / Slide-up Fade) ── */
   const fonts = React.useMemo(() => [
     "var(--font-reverie, 'REVERIE', sans-serif)",
     "var(--font-gloock, 'Gloock', serif)",
@@ -171,45 +171,21 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
   ], []);
 
   const fullText = profile.name || "Rafi";
-  const [displayText, setDisplayText] = React.useState(fullText);
   const [fontIndex, setFontIndex] = React.useState(7); // default starting with Geist
-  const [isDeleting, setIsDeleting] = React.useState(false);
-  const [typingSpeed, setTypingSpeed] = React.useState(1200); // initial pause
 
   React.useEffect(() => {
-    let timer: NodeJS.Timeout;
+    const interval = setInterval(() => {
+      setFontIndex((prev) => {
+        let nextIndex;
+        do {
+          nextIndex = Math.floor(Math.random() * fonts.length);
+        } while (nextIndex === prev && fonts.length > 1);
+        return nextIndex;
+      });
+    }, 2500);
 
-    const handleTyping = () => {
-      if (!isDeleting) {
-        if (displayText === fullText) {
-          setIsDeleting(true);
-          setTypingSpeed(1200); // pause 1.2s when full
-          return;
-        }
-        const nextText = fullText.slice(0, displayText.length + 1);
-        setDisplayText(nextText);
-        setTypingSpeed(60); // fast snappy typing
-      } else {
-        if (displayText === "") {
-          setIsDeleting(false);
-          let nextFontIndex;
-          do {
-            nextFontIndex = Math.floor(Math.random() * fonts.length);
-          } while (nextFontIndex === fontIndex && fonts.length > 1);
-
-          setFontIndex(nextFontIndex);
-          setTypingSpeed(250); // fast transition pause
-          return;
-        }
-        const nextText = fullText.slice(0, displayText.length - 1);
-        setDisplayText(nextText);
-        setTypingSpeed(30); // super fast deleting
-      }
-    };
-
-    timer = setTimeout(handleTyping, typingSpeed);
-    return () => clearTimeout(timer);
-  }, [displayText, isDeleting, typingSpeed, fontIndex, fonts]);
+    return () => clearInterval(interval);
+  }, [fonts]);
 
   const containerRef = React.useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
@@ -259,32 +235,38 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
               <motion.h2
                 custom={1}
                 variants={fadeUp}
-                className={`font-sans font-extrabold tracking-tighter leading-none ${fg}`}
+                className={`font-sans font-extrabold tracking-tighter leading-none flex flex-col gap-0.5 ${fg}`}
               >
                 <div 
-                  className="relative block" 
+                  className="relative block overflow-hidden" 
                   style={{ 
                     fontSize: "clamp(48px, 4.8vw, 76px)", 
-                    height: "0.9em"
+                    height: "1.25em"
                   }}
                 >
-                  <span 
-                    className="absolute left-0 bottom-0 block font-normal whitespace-nowrap" 
-                    style={{ 
-                      fontSize: "1em", 
-                      lineHeight: 0.9,
-                      fontFamily: fonts[fontIndex],
-                      textTransform: "none",
-                      fontWeight: "normal"
-                    }}
-                  >
-                    {displayText}
-                    <span className="inline-block w-[3px] h-[0.85em] ml-1 bg-brand-blue animate-caret-blink" style={{ verticalAlign: "middle" }} />
-                  </span>
+                  <AnimatePresence mode="wait">
+                    <motion.span 
+                      key={fontIndex}
+                      initial={{ y: "80%", opacity: 0 }}
+                      animate={{ y: "0%", opacity: 1 }}
+                      exit={{ y: "-80%", opacity: 0 }}
+                      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                      className="absolute inset-0 flex items-center font-normal whitespace-nowrap" 
+                      style={{ 
+                        fontSize: "1em", 
+                        lineHeight: 1.2,
+                        fontFamily: fonts[fontIndex],
+                        textTransform: "none",
+                        fontWeight: "normal"
+                      }}
+                    >
+                      {fullText}
+                    </motion.span>
+                  </AnimatePresence>
                 </div>
                 <span
-                  className={`block font-medium tracking-normal ${fgMuted}`}
-                  style={{ fontSize: "clamp(15px, 1.5vw, 21px)", lineHeight: 1.25 }}
+                  className={`block font-medium tracking-normal -mt-1.5 ${fgMuted}`}
+                  style={{ fontSize: "clamp(15px, 1.5vw, 21px)", lineHeight: 1.2 }}
                 >
                   {profile.fullName || "Maulana Firdaus"}
                 </span>
@@ -298,10 +280,10 @@ export default function Profile({ isDarkMode }: { isDarkMode: boolean }) {
             </div>
 
             {/* Bio */}
-            <motion.div custom={3} variants={fadeUp} className="flex gap-3 items-start">
+            <motion.div custom={3} variants={fadeUp} className="flex gap-3 items-start mt-6">
               <div className="w-[2px] flex-shrink-0 self-stretch bg-brand-blue mt-1" />
               <p
-                className={`text-[13px] leading-[1.75] font-light ${isDarkMode ? "text-white/55" : "text-black/55"}`}
+                className={`text-[11.5px] leading-[1.65] font-normal tracking-normal ${isDarkMode ? "text-white/60" : "text-black/60"}`}
               >
                 {profile.bio || "Kreator dengan latar belakang kuat di bidang visual dan pembangunan — graphic design, musik, dan pengembangan digital."}
               </p>
